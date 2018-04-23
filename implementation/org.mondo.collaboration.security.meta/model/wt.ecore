@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="wt" nsURI="http://wt/access-control" nsPrefix="wt">
+  <eClassifiers xsi:type="ecore:EClass" name="Module">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="provides" upperBound="-1"
+        eType="#//Signal" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="consumes" upperBound="-1"
+        eType="#//Signal"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Composite" eSuperTypes="#//Module">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="vendor" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="protectedIP" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="submodules" upperBound="-1"
+        eType="#//Module" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Control" eSuperTypes="#//Module">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cycle" eType="#//Cycle"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Cycle">
+    <eLiterals name="high"/>
+    <eLiterals name="medium" value="1"/>
+    <eLiterals name="low" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ControlUnitType">
+    <eLiterals name="FanCtrl"/>
+    <eLiterals name="HeaterCtrl" value="1"/>
+    <eLiterals name="PumpCtrl" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Signal"/>
+</ecore:EPackage>

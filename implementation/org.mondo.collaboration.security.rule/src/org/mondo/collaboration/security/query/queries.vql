@@ -1,0 +1,31 @@
+package org.mondo.collaboration.security.query
+
+import "http://wt/access-control"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern objectModule(module : Module) {
+	Module(module);
+}
+
+pattern objectControlWithType(control : Control, type) {
+	Control.type(control, type);
+}
+
+pattern objectCompositeWithType(composite : Composite, type) {
+	find submodules+(composite,control);
+	Control.type(control, type);
+}
+
+pattern submodules(parent:Composite,child:Module) {
+	Composite.submodules(parent,child);
+}
+
+pattern protectedModuleReadsSignal(module : Composite, signal : Signal) {
+	Module.consumes(module, signal);
+	Composite.protectedIP(module, true);
+}
+
+pattern protectedModuleVendor(module : Composite, vendor) {
+	Composite.vendor(module, vendor);
+	Composite.protectedIP(module, true);
+}

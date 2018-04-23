@@ -1,0 +1,45 @@
+package org.mondo.collaboration.security.batch.strong;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+import org.mondo.collaboration.policy.rules.AccessibilityLevel;
+import org.mondo.collaboration.policy.rules.OperationType;
+import org.mondo.collaboration.security.batch.Asset;
+import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
+import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
+import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Judgement;
+
+import com.google.common.collect.Sets;
+
+public class AllowReadFromObjectToContainer implements IConsequence{
+	
+	private AllowReadFromObjectToContainer() {
+	}
+	
+	public static IConsequence instance = new AllowReadFromObjectToContainer();
+
+	@Override
+	public Set<Judgement> propagate(Judgement judgement) {
+		HashSet<Judgement> consequences = Sets.newHashSet();
+
+		if(judgement.getAsset() instanceof ObjectAsset) {
+			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
+				if(judgement.getOperation() == OperationType.READ) {
+					EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
+					if(object.eContainer() != null) {
+						ObjectAsset objAsset = new Asset.ObjectAsset(object.eContainer());
+					    consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority(), judgement.getResolution()));
+					    ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
+					    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+					}
+			    }
+		    }
+		}
+		
+		return consequences;
+	}
+
+}

@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Accesscontrol
+Bundle-SymbolicName: org.mondo.collaboration.security.batch
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.emf.common,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
+ org.mondo.collaboration.policy,
+ org.eclipse.viatra.query.patternlanguage,
+ org.eclipse.viatra.query.patternlanguage.emf,
+ org.eclipse.viatra.query.runtime,
+ org.eclipse.viatra.query.runtime.base.itc,
+ org.eclipse.xtext,
+ com.google.guava,
+ org.apache.log4j,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend
+Export-Package: org.mondo.collaboration.security.batch
+

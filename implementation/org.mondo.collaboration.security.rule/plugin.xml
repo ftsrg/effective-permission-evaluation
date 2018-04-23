@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.mondo.collaboration.security.query.Queries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.mondo.collaboration.security.query.Queries" id="org.mondo.collaboration.security.query.Queries">
+      <query-specification fqn="org.mondo.collaboration.security.query.objectModule"/>
+      <query-specification fqn="org.mondo.collaboration.security.query.objectControlWithType"/>
+      <query-specification fqn="org.mondo.collaboration.security.query.objectCompositeWithType"/>
+      <query-specification fqn="org.mondo.collaboration.security.query.submodules"/>
+      <query-specification fqn="org.mondo.collaboration.security.query.protectedModuleReadsSignal"/>
+      <query-specification fqn="org.mondo.collaboration.security.query.protectedModuleVendor"/>
+    </group>
+  </extension>
+</plugin>
