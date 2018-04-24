@@ -75,7 +75,7 @@ class RulesGenerator extends AbstractGenerator {
 		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObject") || x.name.equals("effectiveJudgementOnAttribute") || x.name.equals("effectiveJudgementOnReference")]	    
 	}
 	
-	static def collectVQLFiles(AccessControlModel model) {
+	static def collectVQLFiles(AccessControlModel model, Resource instanceModel) {
 		#[  
 			model.eResource.className+"_helper_pattern.vql",
 		    model.eResource.className+"_explicit_judgement.vql",
@@ -83,7 +83,8 @@ class RulesGenerator extends AbstractGenerator {
 		    model.eResource.className+"_judgement.vql", 
 		    model.eResource.className+"_domination_higher_priority.vql", 
 		    model.eResource.className+"_domination_same_priority.vql", 
-		    model.eResource.className+"_consequence.vql"
+		    model.eResource.className+"_consequence.vql",
+		    instanceModel.contents.head.eClass.EPackage.name+"_gen.vql"
 		 ]
 	}
 	
