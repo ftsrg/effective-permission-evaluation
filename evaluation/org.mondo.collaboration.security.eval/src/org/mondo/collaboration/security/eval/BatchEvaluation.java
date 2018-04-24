@@ -2,18 +2,34 @@ package org.mondo.collaboration.security.eval;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.mondo.collaboration.policy.rules.User;
 import org.mondo.collaboration.security.batch.Judgement;
 import org.mondo.collaboration.security.batch.RuleManager;
 
 public class BatchEvaluation extends AbstractEvaluation {
-	private static Logger LOGGER = Logger.getLogger(BatchEvaluation.class);
+	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
+	public static final int[] LIMIT_SIZES = { 10, 50, 100 };
+	public static final int[] USER_SIZES = { 10, 50, 100 };
+	public static final int REPEAT = 1;
 
 	public static void main(String[] args) throws ViatraQueryException {
 		BatchEvaluation evaluation = new BatchEvaluation();
-		evaluation.evaluate(args);
+		
+		System.out.println("Model_size;Limit_size;User_size;Time;Memory");
+		for (int modelSize : MODEL_SIZES) {
+			for (int limitSize : LIMIT_SIZES) {
+				for (int userSize : USER_SIZES) {
+					if (userSize > limitSize) {
+						break;
+					}
+					String[] arguments = evaluation.getArguments(modelSize, limitSize, userSize, REPEAT, args);
+					evaluation.evaluate(arguments);
+				}
+			}
+		}
+		
+		// evaluation.evaluate(args);
 	}
 
 	@Override
@@ -21,23 +37,24 @@ public class BatchEvaluation extends AbstractEvaluation {
 		RuleManager ruleManager = new RuleManager(getInstanceModelResource(), getAccessControlModel());
 		ruleManager.initialize();
 
+		System.gc();
+		System.gc();
+		System.gc();
 		Runtime runtime = Runtime.getRuntime();
+		long startMemory = runtime.totalMemory() - runtime.freeMemory();
+		long startTime = System.nanoTime();
 
-		LOGGER.info("User;Time;Memory");
 		for (User user : getCollaborators()) {
-			for (int i = 0; i < getRepeatNumber(); i++) {
-				long startUser = System.nanoTime();
-				System.gc();
-				long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
-
-				List<Judgement> permissions = ruleManager.calculateEffectivePermissions(user);
-
-				long endUser = System.nanoTime();
-				long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-
-				LOGGER.info(user.getName() + ";" + (endUser - startUser) + ";" + (usedMemoryAfter - usedMemoryBefore));
-			}
+			List<Judgement> permissions = ruleManager.calculateEffectivePermissions(user);
 		}
+		
+		long endMemory = runtime.totalMemory() - runtime.freeMemory();
+		long endTime = System.nanoTime();
+		
+		double time = Math.round((endTime - startTime) * Math.pow(10, -6) * 100.0) / 100.0;
+		double memory = Math.round((endMemory - startMemory) * Math.pow(10, -6) * 100.0) / 100.0;
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + time + ";" + memory);
+		
 	}
 
 }
