@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toSet;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
@@ -22,16 +23,20 @@ import wt.WtFactory;
 import wt.WtPackage;
 
 public abstract class AbstractEvaluation {
+	private static Logger LOGGER = Logger.getLogger(AbstractEvaluation.class);
 
 	private static final String REPEAT_ARG = "-repeat";
-	private static final String LIMIT_SIZE_ARG = "-limit_size";
-	private static final String USER_SIZE_ARG = "-user_size";
-	private static final String MODEL_SIZE_ARG = "-model_size";
+	private static final String LIMIT_SIZE_ARG = "-limit-user";
+	private static final String USER_SIZE_ARG = "-user-size";
+	private static final String MODEL_SIZE_ARG = "-model-size";
 	protected HashMap<String, String> mainArgs;
 
 	private XtextResourceSet resourceSet;
 	private Resource instanceModel;
 	private Resource accessControlModel;
+	
+	private long instanceModelMemory;
+	private long accessControlModelMemory;
 
 	protected void processArgs(String[] args) {
 		mainArgs = new HashMap<String, String>();
@@ -58,9 +63,22 @@ public abstract class AbstractEvaluation {
 	protected void loadResources() {
 		URI instanceUri = URI.createURI(String.format(Generator.MODEL_PATH, getModelSize(), getLimitSize()));
 		URI accessUri = URI.createURI(String.format(Generator.RULE_PATH, getLimitSize()));
+		
+		Runtime runtime = Runtime.getRuntime();
+		System.gc();
+		System.gc();
+		System.gc();
+		System.gc();
+		System.gc();
 
+		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
 		instanceModel = resourceSet.getResource(instanceUri, true);
+		long usedMemoryDuring = runtime.totalMemory() - runtime.freeMemory();
 		accessControlModel = resourceSet.getResource(accessUri, true);
+		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+		
+		LOGGER.info("Instance model memory: " + (usedMemoryDuring-usedMemoryBefore));
+		LOGGER.info("Access control model memory: " + (usedMemoryAfter-usedMemoryDuring));
 	}
 
 	protected abstract void doEvaluation() throws ViatraQueryException;
@@ -121,4 +139,22 @@ public abstract class AbstractEvaluation {
 
 		return Integer.valueOf(mainArgs.get(LIMIT_SIZE_ARG));
 	}
+
+	public long getInstanceModelMemory() {
+		return instanceModelMemory;
+	}
+
+	public void setInstanceModelMemory(long instanceModelMemory) {
+		this.instanceModelMemory = instanceModelMemory;
+	}
+
+	public long getAccessControlModelMemory() {
+		return accessControlModelMemory;
+	}
+
+	public void setAccessControlModelMemory(long accessControlModelMemory) {
+		this.accessControlModelMemory = accessControlModelMemory;
+	}
+	
+	
 }
