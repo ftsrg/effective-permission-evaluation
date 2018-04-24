@@ -55,11 +55,11 @@ class AccessControlFileGenerator {
 	
 	def static generateDefaultRules() '''
 	// IP protected modules
-	rule denyProtectedSignalRead deny RW to restrictedGroup {
+	rule denyProtectedSignalRead deny R to restrictedGroup {
 		from query "protectedModuleReadsSignal"
-		select attr (module : protectedIP)
+		select obj (signal)
 	}		
-	rule denyProtectedVendor deny RW to restrictedGroup {
+	rule denyProtectedVendor deny R to restrictedGroup {
 		from query "protectedModuleVendor"
 		select attr (module : vendor)
 	}		
