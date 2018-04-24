@@ -13,14 +13,13 @@ import wt.WtPackage;
 public class Generator {
 
 	public static final String MODEL_PATH = "../org.mondo.collaboration.security.eval.generated.artifacts/instances/model-%04d-%04d.xmi";
-	public static final String RULE_PATH = "../org.mondo.collaboration.security.eval.generated.artifacts/rules/rules-%04d.rules";
+	public static final String RULE_PATH = "../org.mondo.collaboration.security.eval.generated.artifacts/rules/rules_%04d.rules";
 	public static final String INCREMENTAL_RULE_BASE_PATH = "../org.mondo.collaboration.security.eval.generated.artifacts/rules/incremental-%04d/";
 	
 	public static class ExecuteModeGeneration {
 		
 		public static final int[] MODEL_SIZES = {13, 25, 38, 50, 63, 75, 88, 100, 150, 200, 250, 300, 350};
 		public static final int[] CTRL_TYPE_SIZES = {10,20,30,40,50,60,70,80,90,100};
-		
 		
 		public static void main(String[] args) throws Exception {
 			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
@@ -50,8 +49,7 @@ public class Generator {
 		public static void main(String[] args) {
 			StandaloneRulesGenerator generator = new StandaloneRulesGenerator();
 			for (int user : USER_SIZES) {
-				generator.generate(WtPackage.eINSTANCE, String.format(INCREMENTAL_RULE_BASE_PATH, user));
-				generator.generate(String.format(RULE_PATH, user), String.format(INCREMENTAL_RULE_BASE_PATH, user));
+				generator.generateAllInOne(String.format(RULE_PATH, user), WtPackage.eINSTANCE, String.format(INCREMENTAL_RULE_BASE_PATH, user));
 			}
 			
 		}

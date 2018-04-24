@@ -6,11 +6,11 @@ package org.mondo.collaboration.security.increment
 import java.util.ArrayList
 import java.util.List
 import java.util.TreeSet
-import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
@@ -28,7 +28,6 @@ import org.mondo.collaboration.policy.rules.ResolutionType
 import org.mondo.collaboration.policy.rules.Role
 import org.mondo.collaboration.policy.rules.Rule
 import org.mondo.collaboration.policy.rules.User
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 
 /**
  * Generates code from your AccessControlModel files on save.
@@ -56,6 +55,12 @@ class RulesGenerator extends AbstractGenerator {
 		fsa.generateFile(metamodel.name+"_gen.vql", generateMetaModelPattern(metamodel))
 	}
 	
+	public def void doGenerateAllInOne(Resource resource, EPackage metamodel, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		val model = resource.contents.head as AccessControlModel;
+		val priorities = model.priorities
+	    fsa.generateFile(model.eResource.className+"_all_in_one.vql", generateAllInOne(model, metamodel, priorities));
+	}
+	
 	public def void doGenerate(AccessControlModel model, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		val priorities = model.priorities
 	    fsa.generateFile(model.eResource.className+"_helper_pattern.vql", generateHelperPattern(model));
@@ -68,7 +73,7 @@ class RulesGenerator extends AbstractGenerator {
 	}
 	
 	static def mainVQLFile(AccessControlModel model) {
-		model.eResource.className+"_effective_judgement.vql"	    
+		model.eResource.className+"_all_in_one.vql"	    
 	}
 	
 	static def mainQuerySpecification(PatternModel model) {
@@ -76,16 +81,17 @@ class RulesGenerator extends AbstractGenerator {
 	}
 	
 	static def collectVQLFiles(AccessControlModel model, Resource instanceModel) {
-		#[  
-			model.eResource.className+"_helper_pattern.vql",
-		    model.eResource.className+"_explicit_judgement.vql",
-		    model.eResource.className+"_effective_judgement.vql",
-		    model.eResource.className+"_judgement.vql", 
-		    model.eResource.className+"_domination_higher_priority.vql", 
-		    model.eResource.className+"_domination_same_priority.vql", 
-		    model.eResource.className+"_consequence.vql",
-		    instanceModel.contents.head.eClass.EPackage.name+"_gen.vql"
-		 ]
+		#[ model.eResource.className+"_all_in_one.vql" ]
+//		#[  
+//			model.eResource.className+"_helper_pattern.vql",
+//		    model.eResource.className+"_explicit_judgement.vql",
+//		    model.eResource.className+"_effective_judgement.vql",
+//		    model.eResource.className+"_judgement.vql", 
+//		    model.eResource.className+"_domination_higher_priority.vql", 
+//		    model.eResource.className+"_domination_same_priority.vql", 
+//		    model.eResource.className+"_consequence.vql",
+//		    instanceModel.contents.head.eClass.EPackage.name+"_gen.vql"
+//		 ]
 	}
 	
 	static def className(Resource resource) {
@@ -93,16 +99,37 @@ class RulesGenerator extends AbstractGenerator {
 		return name.substring(0, name.indexOf('.'))
 	}
 	
-	def generateImport() '''
-    package org.mondo.collaboration.security.increment.policy
+	def generateAllInOne(AccessControlModel model, EPackage metamodel, TreeSet<Integer> priorities) '''
+	«generateImport(metamodel.nsURI)»
+	
+	«generateHelperPattern(model, false)»
+	«generateExplicitJudgementPattern(model, false)»
+	«generateEffectiveJudgementPattern(priorities, false)»
+	«generateJudgementAtPattern(priorities, false)»
+	«generateDominationHigherPriorityPattern(model, priorities, false)»
+	«generateDominationSamePriorityPattern(model, priorities, false)»
+	«generateConsequencePattern(priorities, false)»
+	«generateMetaModelPattern(metamodel, false)»
+	'''
+	
+	def generateImport() {
+		generateImport("http://WTSpec4M/5.0M")
+	}
+    
+	def generateImport(String nsUri) '''
+    package org.mondo.collaboration.security.query
 
     import "http://www.eclipse.org/emf/2002/Ecore"
     import "http://www.mondo.org/collaboration/policy/Rules"
-    import "http://WTSpec4M/5.0M"
+    import "«nsUri»"
     '''	
 
-    def generateHelperPattern(AccessControlModel AccessControlModel) '''
-    «generateImport»
+	def generateHelperPattern(AccessControlModel model) {
+		generateHelperPattern(model, true)
+	}
+	
+    def generateHelperPattern(AccessControlModel model, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     pattern readWriteOperation(operation) = {
     	operation == OperationType::READ;
@@ -110,20 +137,24 @@ class RulesGenerator extends AbstractGenerator {
     	operation == OperationType::WRITE;
     }
     
-    «FOR rule: AccessControlModel.policy.rules SEPARATOR "\n\n" AFTER "\n"»
+    «FOR rule: model.policy.rules SEPARATOR "\n\n" AFTER "\n"»
         «rule.generateAssetHelperPattern»
         «rule.generateUserHelperPattern»
     «ENDFOR»
     
     pattern allUsers(user: java String) {
-    	«FOR user: AccessControlModel.roles.usersOfRoleList SEPARATOR "\n} or {"»
+    	«FOR user: model.roles.usersOfRoleList SEPARATOR "\n} or {"»
     	user == "«user.name»";
     	«ENDFOR»
     }
     '''
     
-    def generateExplicitJudgementPattern(AccessControlModel model) '''
-    «generateImport»
+    def generateExplicitJudgementPattern(AccessControlModel model) {
+    	generateExplicitJudgementPattern(model, true)
+    }
+    
+    def generateExplicitJudgementPattern(AccessControlModel model, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     pattern explicitJudgementOnObject(user : java String, object : EObject, operation, access, priority : java Integer)
     {
@@ -254,8 +285,11 @@ class RulesGenerator extends AbstractGenerator {
         priority == eval(-1);
     '''
     
-    def generateEffectiveJudgementPattern(TreeSet<Integer> priorities) '''
-    «generateImport»
+    def generateEffectiveJudgementPattern(TreeSet<Integer> priorities) {
+    	generateEffectiveJudgementPattern(priorities, true)
+    }
+    def generateEffectiveJudgementPattern(TreeSet<Integer> priorities, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     pattern effectiveJudgementOnObject(user: java String, object: EObject, operation, access)
     {
@@ -349,8 +383,12 @@ class RulesGenerator extends AbstractGenerator {
     «ENDFOR»
     '''
     
-    def generateDominationHigherPriorityPattern(AccessControlModel AccessControlModel, TreeSet<Integer> priorities) '''
-    «generateImport»
+    def generateDominationHigherPriorityPattern(AccessControlModel model, TreeSet<Integer> priorities) {
+    	generateDominationHigherPriorityPattern(model, priorities, true)
+    }
+    
+    def generateDominationHigherPriorityPattern(AccessControlModel model, TreeSet<Integer> priorities, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     pattern dominationOnObject_of_default(user: java String, object: EObject, operation)
     {
@@ -419,8 +457,12 @@ class RulesGenerator extends AbstractGenerator {
         «ENDIF»«ENDFOR»
     '''
     
-    def generateDominationSamePriorityPattern(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «generateImport»
+    def generateDominationSamePriorityPattern(AccessControlModel model, TreeSet<Integer> priorities) {
+    	generateDominationSamePriorityPattern(model, priorities, true)
+    }
+    
+    def generateDominationSamePriorityPattern(AccessControlModel model, TreeSet<Integer> priorities, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     «model.generateResolutionPattern»
     
@@ -452,8 +494,12 @@ class RulesGenerator extends AbstractGenerator {
     «ENDFOR»    
     '''
     
-    def generateJudgementAtPattern(TreeSet<Integer> priorities) '''
-    «generateImport»
+    def generateJudgementAtPattern(TreeSet<Integer> priorities) {
+    	generateJudgementAtPattern(priorities, true)
+    }    
+    
+    def generateJudgementAtPattern(TreeSet<Integer> priorities, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     «generateJudgementAtDefaultPattern»
     
@@ -557,8 +603,12 @@ class RulesGenerator extends AbstractGenerator {
     }
     '''
     
-    def generateConsequencePattern(TreeSet<Integer> priorities) '''
-    «generateImport»
+    def generateConsequencePattern(TreeSet<Integer> priorities) {
+    	generateConsequencePattern(priorities, true)
+    }
+    
+    def generateConsequencePattern(TreeSet<Integer> priorities, boolean requiredImport) '''
+    «if(requiredImport) generateImport»
     
     «FOR prio: priorities»
     «prio.generateStrongConsequenceOnObject»
@@ -771,7 +821,7 @@ class RulesGenerator extends AbstractGenerator {
 		for(Binding binding : rule.bindings) {
 			if(binding.variable.equals(parameter)){
 				if(binding.bind.valueString !== null) {
-					return binding.bind.valueString;
+					return "\"" + binding.bind.valueString + "\"";
 				} else {
 					return binding.bind.valueInteger;
 				}
@@ -834,26 +884,30 @@ class RulesGenerator extends AbstractGenerator {
 		}
 		return priorities;
 	}
+
+	def generateMetaModelPattern(EPackage metamodel) {
+		generateMetaModelPattern(metamodel, true)
+	}
 	
-	def generateMetaModelPattern(EPackage metamodel) '''
-«generateImport»
-
-«metamodel.generateAttributeAssetPattern»
-
-«metamodel.generateReferenceAssetPattern»
-
-«generateContainmentReferencePattern»
-
-«generateIdAttributePattern»
-
-«metamodel.generateContainsPattern»
-
-«metamodel.generateObjectAssetPattern»
-
-«metamodel.generateRootPattern»
-
-«generateObjectAssetWithoutRootPattern»
-'''
+	def generateMetaModelPattern(EPackage metamodel, boolean requiredImport) '''
+	«if(requiredImport) generateImport»
+	
+	«metamodel.generateAttributeAssetPattern»
+	
+	«metamodel.generateReferenceAssetPattern»
+	
+	«generateContainmentReferencePattern»
+	
+	«generateIdAttributePattern»
+	
+	«metamodel.generateContainsPattern»
+	
+	«metamodel.generateObjectAssetPattern»
+	
+	«metamodel.generateRootPattern»
+	
+	«generateObjectAssetWithoutRootPattern»
+	'''
 
     def generateAttributeAssetPattern(EPackage metamodel)'''
 pattern attributeAsset(source : EObject, value: java Object, attribute : EAttribute) {
@@ -924,10 +978,10 @@ pattern root(object: EObject) {
 	'''
 	
 	def generateObjectAssetWithoutRootPattern()'''
-pattern objectAssetWithoutRoot(object: EObject) {
-	find objectAsset(object);
-	neg find root(object);
-}
+	pattern objectAssetWithoutRoot(object: EObject) {
+		find objectAsset(object);
+		neg find root(object);
+	}
 	'''
 
     def generateAttributeConstraints(EClass eClass)'''

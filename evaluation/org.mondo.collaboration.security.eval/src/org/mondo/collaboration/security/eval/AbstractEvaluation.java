@@ -8,6 +8,8 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -25,13 +27,15 @@ import wt.WtPackage;
 public abstract class AbstractEvaluation {
 	private static Logger LOGGER = Logger.getLogger(AbstractEvaluation.class);
 
+	private static final String ECORE_ARG = "-ecore";
 	private static final String REPEAT_ARG = "-repeat";
 	private static final String LIMIT_SIZE_ARG = "-limit-user";
 	private static final String USER_SIZE_ARG = "-user-size";
 	private static final String MODEL_SIZE_ARG = "-model-size";
 	protected HashMap<String, String> mainArgs;
 
-	private XtextResourceSet resourceSet;
+	private ResourceSet modelResourceSet;
+	private XtextResourceSet helperResourceSet;
 	private Resource instanceModel;
 	private Resource accessControlModel;
 	
@@ -39,6 +43,9 @@ public abstract class AbstractEvaluation {
 	private long accessControlModelMemory;
 
 	protected void processArgs(String[] args) {
+		if(args.length % 2 != 0) {
+			throw new IllegalArgumentException("Missing argument parameter!");
+		}
 		mainArgs = new HashMap<String, String>();
 
 		for (int i = 0; i < args.length; i++) {
@@ -50,6 +57,8 @@ public abstract class AbstractEvaluation {
 				mainArgs.put(LIMIT_SIZE_ARG, args[i + 1]);
 			if (args[i].trim().startsWith(REPEAT_ARG))
 				mainArgs.put(REPEAT_ARG, args[i + 1]);
+			if (args[i].trim().startsWith(ECORE_ARG))
+				mainArgs.put(ECORE_ARG, args[i + 1]);
 		}
 	}
 
@@ -62,6 +71,7 @@ public abstract class AbstractEvaluation {
 
 	protected void loadResources() {
 		URI instanceUri = URI.createURI(String.format(Generator.MODEL_PATH, getModelSize(), getLimitSize()));
+		URI ecoreUri = URI.createFileURI(getEcoreFilePath());
 		URI accessUri = URI.createURI(String.format(Generator.RULE_PATH, getLimitSize()));
 		
 		Runtime runtime = Runtime.getRuntime();
@@ -71,14 +81,17 @@ public abstract class AbstractEvaluation {
 		System.gc();
 		System.gc();
 
+		modelResourceSet.getResource(ecoreUri, true);
 		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
-		instanceModel = resourceSet.getResource(instanceUri, true);
+		instanceModel = modelResourceSet.getResource(instanceUri, true);
 		long usedMemoryDuring = runtime.totalMemory() - runtime.freeMemory();
-		accessControlModel = resourceSet.getResource(accessUri, true);
+		accessControlModel = helperResourceSet.getResource(accessUri, true);
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 		
 		LOGGER.info("Instance model memory: " + (usedMemoryDuring-usedMemoryBefore));
 		LOGGER.info("Access control model memory: " + (usedMemoryAfter-usedMemoryDuring));
+	
+		
 	}
 
 	protected abstract void doEvaluation() throws ViatraQueryException;
@@ -91,8 +104,10 @@ public abstract class AbstractEvaluation {
 		Injector injector = new RulesStandaloneSetup().createInjectorAndDoEMFRegistration();
 		new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 
-		resourceSet = injector.getInstance(XtextResourceSet.class);
-		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		helperResourceSet = injector.getInstance(XtextResourceSet.class);
+		helperResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+		
+		modelResourceSet = new ResourceSetImpl();
 	}
 
 	protected Resource getInstanceModelResource() {
@@ -107,9 +122,13 @@ public abstract class AbstractEvaluation {
 		return getAccessControlModel().getRoles().stream().filter(x -> x instanceof User).map(x -> (User) x)
 				.limit(getUserSize()).collect(toSet());
 	}
-
-	protected XtextResourceSet getResourceSet() {
-		return resourceSet;
+	
+	public XtextResourceSet getHelperResourceSet() {
+		return helperResourceSet;
+	}
+	
+	public ResourceSet getModelResourceSet() {
+		return modelResourceSet;
 	}
 	
 	protected int getRepeatNumber() {
@@ -133,6 +152,13 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(USER_SIZE_ARG));
 	}
 
+	protected String getEcoreFilePath() {
+		if (mainArgs.get(ECORE_ARG) == null)
+			throw new IllegalArgumentException();
+
+		return mainArgs.get(ECORE_ARG);
+	}
+	
 	protected int getLimitSize() {
 		if (mainArgs.get(LIMIT_SIZE_ARG) == null)
 			throw new IllegalArgumentException();
