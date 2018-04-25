@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toSet;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -25,8 +24,6 @@ import wt.WtFactory;
 import wt.WtPackage;
 
 public abstract class AbstractEvaluation {
-	private static Logger LOGGER = Logger.getLogger(AbstractEvaluation.class);
-
 	private static final String ECORE_ARG = "-ecore";
 	private static final String REPEAT_ARG = "-repeat";
 	private static final String LIMIT_SIZE_ARG = "-limit-user";
@@ -66,7 +63,9 @@ public abstract class AbstractEvaluation {
 		processArgs(args);
 		initialize();
 		loadResources();
-		doEvaluation();
+		for(int i = 0; i < getRepeatNumber(); i++) {
+			doEvaluation();
+		}
 	}
 
 	protected void loadResources() {
@@ -88,8 +87,8 @@ public abstract class AbstractEvaluation {
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
 		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 		
-		LOGGER.info("Instance model memory: " + (usedMemoryDuring-usedMemoryBefore));
-		LOGGER.info("Access control model memory: " + (usedMemoryAfter-usedMemoryDuring));
+//		System.out.println("Instance model memory: " + (usedMemoryDuring-usedMemoryBefore) * Math.pow(10, -6));
+//		System.out.println("Access control model memory: " + (usedMemoryAfter-usedMemoryDuring) * Math.pow(10, -6));
 	
 		
 	}
@@ -182,5 +181,26 @@ public abstract class AbstractEvaluation {
 		this.accessControlModelMemory = accessControlModelMemory;
 	}
 	
+	public String[] getArguments(int modelSize, int limitSize, int userSize, int repeat, String[] args) {
+		String[] arguments = new String[10];
+		arguments[0] = "-model-size";
+		arguments[1] = String.valueOf(modelSize);
+		arguments[2] = "-limit-user";
+		arguments[3] = String.valueOf(limitSize);
+		arguments[4] = "-user-size" + String.valueOf(3);
+		arguments[5] = String.valueOf(userSize);
+		arguments[6] = "-repeat";
+		arguments[7] = String.valueOf(1);
+		arguments[8] = "-ecore";
+		arguments[9] = getEcorePath(args);
+		return arguments;
+	}
 	
+	private String getEcorePath(String[] args) {
+		for(int i = 0; i < args.length; i++) {
+			if (args[i].trim().startsWith(ECORE_ARG))
+				return args[i + 1];
+		}
+		return null;
+	}
 }
