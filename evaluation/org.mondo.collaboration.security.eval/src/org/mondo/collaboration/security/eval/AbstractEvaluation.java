@@ -190,7 +190,7 @@ public abstract class AbstractEvaluation {
 		arguments[4] = "-user-size" + String.valueOf(3);
 		arguments[5] = String.valueOf(userSize);
 		arguments[6] = "-repeat";
-		arguments[7] = String.valueOf(1);
+		arguments[7] = String.valueOf(repeat);
 		arguments[8] = "-ecore";
 		arguments[9] = getEcorePath(args);
 		return arguments;
