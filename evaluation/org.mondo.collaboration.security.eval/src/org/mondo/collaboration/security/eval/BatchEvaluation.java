@@ -10,13 +10,12 @@ import org.mondo.collaboration.security.batch.RuleManager;
 public class BatchEvaluation extends AbstractEvaluation {
 	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
 	public static final int[] LIMIT_SIZES = { 30 };
-	public static final int[] USER_SIZES = { 5, 10, 30 };
+	public static final int[] USER_SIZES = { 30 };
 	public static final int REPEAT = 10;
 
 	public static void main(String[] args) throws ViatraQueryException {
 		BatchEvaluation evaluation = new BatchEvaluation();
 		
-		System.out.println("Model_size;Limit_size;User_size;Time;Memory");
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
 				for (int userSize : USER_SIZES) {

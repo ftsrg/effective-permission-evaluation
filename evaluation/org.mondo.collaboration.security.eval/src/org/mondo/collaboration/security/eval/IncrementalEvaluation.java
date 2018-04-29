@@ -37,7 +37,6 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 	public static void main(String[] args) throws ViatraQueryException {
 		IncrementalEvaluation evaluation = new IncrementalEvaluation();
 
-		System.out.println("Model_size;Limit_size;User_size;Eval_type;Time;Memory");
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
 				for (int userSize : USER_SIZES) {
@@ -55,6 +54,8 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
+		
+		
 		System.gc();
 		System.gc();
 		System.gc();

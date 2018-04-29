@@ -4,8 +4,14 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -17,6 +23,10 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import org.mondo.collaboration.policy.RulesStandaloneSetup;
 import org.mondo.collaboration.policy.rules.AccessControlModel;
 import org.mondo.collaboration.policy.rules.User;
+import org.mondo.collaboration.security.batch.Asset;
+import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
+import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
+import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 
 import com.google.inject.Injector;
 
@@ -35,12 +45,9 @@ public abstract class AbstractEvaluation {
 	private XtextResourceSet helperResourceSet;
 	private Resource instanceModel;
 	private Resource accessControlModel;
-	
-	private long instanceModelMemory;
-	private long accessControlModelMemory;
 
 	protected void processArgs(String[] args) {
-		if(args.length % 2 != 0) {
+		if (args.length % 2 != 0) {
 			throw new IllegalArgumentException("Missing argument parameter!");
 		}
 		mainArgs = new HashMap<String, String>();
@@ -62,10 +69,18 @@ public abstract class AbstractEvaluation {
 	public void evaluate(String[] args) throws ViatraQueryException {
 		processArgs(args);
 		initialize();
-		loadResources();
-		for(int i = 0; i < getRepeatNumber(); i++) {
-			doEvaluation();
+		
+		System.out.println("Model_size;Limit_size;User_size;Meta;Instance;AccessControl");
+		for (int i = 0; i < getRepeatNumber(); i++) {
+			loadResources();
 		}
+		
+//		countAssetsOfModel();
+		
+//		System.out.println("Model_size;Limit_size;User_size;Eval_type;Time;Memory");
+//		for (int i = 0; i < getRepeatNumber(); i++) {
+//			doEvaluation();
+//		}
 	}
 
 	protected void loadResources() {
@@ -73,6 +88,10 @@ public abstract class AbstractEvaluation {
 		URI ecoreUri = URI.createFileURI(getEcoreFilePath());
 		URI accessUri = URI.createURI(String.format(Generator.RULE_PATH, getLimitSize()));
 		
+		modelResourceSet.getResource(ecoreUri, true).unload();
+		modelResourceSet.getResource(instanceUri, true).unload();
+		helperResourceSet.getResource(accessUri, true).unload();
+
 		Runtime runtime = Runtime.getRuntime();
 		System.gc();
 		System.gc();
@@ -80,17 +99,58 @@ public abstract class AbstractEvaluation {
 		System.gc();
 		System.gc();
 
+		long first = runtime.totalMemory() - runtime.freeMemory();
 		modelResourceSet.getResource(ecoreUri, true);
-		long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+		long second = runtime.totalMemory() - runtime.freeMemory();
 		instanceModel = modelResourceSet.getResource(instanceUri, true);
-		long usedMemoryDuring = runtime.totalMemory() - runtime.freeMemory();
+		long third = runtime.totalMemory() - runtime.freeMemory();
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
-		long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
-		
-//		System.out.println("Instance model memory: " + (usedMemoryDuring-usedMemoryBefore) * Math.pow(10, -6));
-//		System.out.println("Access control model memory: " + (usedMemoryAfter-usedMemoryDuring) * Math.pow(10, -6));
-	
-		
+		long fourth = runtime.totalMemory() - runtime.freeMemory();
+
+		double ecoreMem = (Math.round((second - first) * Math.pow(10, -6) * 100.0) / 100.0);
+		double instanceMem = (Math.round((third - second) * Math.pow(10, -6) * 100.0) / 100.0);
+		double accessMem = (Math.round((fourth - third) * Math.pow(10, -6) * 100.0) / 100.0);
+
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + ecoreMem + ";"
+				+ instanceMem + ";" + accessMem);
+	}
+
+	protected void countAssetsOfModel() {
+		// int[numOfObj, numOfAttr, numOfRef]
+		int[] numOfAssets = { 0, 0, 0 };
+		if (instanceModel != null) {
+			EObject rootObject = instanceModel.getContents().get(0);
+			numOfAssets = countAssetsOfObject(rootObject);
+		}
+		System.out.println("Number of all assets: " + (numOfAssets[0] + numOfAssets[1] + numOfAssets[2]));
+		System.out.println("Number of object assets: " + numOfAssets[0]);
+		System.out.println("Number of attribute assets: " + numOfAssets[1]);
+		System.out.println("Number of reference assets: " + numOfAssets[2]);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected int[] countAssetsOfObject(EObject object) {
+		int[] numOfAssets = { 1, 0, 0 };
+
+		numOfAssets[1] += object.eClass().getEAllAttributes().stream().filter(a -> a != null)
+				.collect(Collectors.toList()).size();
+
+		for (EReference ref : object.eClass().getEAllReferences().stream().filter(r -> !r.isContainment())
+				.collect(Collectors.toList())) {
+			numOfAssets[2] += ((EList<EObject>) object.eGet(ref)).size();
+		}
+
+		for (EReference contRef : object.eClass().getEAllReferences().stream().filter(r -> r.isContainment())
+				.collect(Collectors.toList())) {
+			for (EObject contObj : (EList<EObject>) object.eGet(contRef)) {
+				numOfAssets[2]++;
+				int[] numOfContAssets = countAssetsOfObject(contObj);
+				numOfAssets[0] += numOfContAssets[0];
+				numOfAssets[1] += numOfContAssets[1];
+				numOfAssets[2] += numOfContAssets[2];
+			}
+		}
+		return numOfAssets;
 	}
 
 	protected abstract void doEvaluation() throws ViatraQueryException;
@@ -105,7 +165,7 @@ public abstract class AbstractEvaluation {
 
 		helperResourceSet = injector.getInstance(XtextResourceSet.class);
 		helperResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		
+
 		modelResourceSet = new ResourceSetImpl();
 	}
 
@@ -121,15 +181,15 @@ public abstract class AbstractEvaluation {
 		return getAccessControlModel().getRoles().stream().filter(x -> x instanceof User).map(x -> (User) x)
 				.limit(getUserSize()).collect(toSet());
 	}
-	
+
 	public XtextResourceSet getHelperResourceSet() {
 		return helperResourceSet;
 	}
-	
+
 	public ResourceSet getModelResourceSet() {
 		return modelResourceSet;
 	}
-	
+
 	protected int getRepeatNumber() {
 		if (mainArgs.get(REPEAT_ARG) == null)
 			throw new IllegalArgumentException();
@@ -157,7 +217,7 @@ public abstract class AbstractEvaluation {
 
 		return mainArgs.get(ECORE_ARG);
 	}
-	
+
 	protected int getLimitSize() {
 		if (mainArgs.get(LIMIT_SIZE_ARG) == null)
 			throw new IllegalArgumentException();
@@ -165,22 +225,6 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(LIMIT_SIZE_ARG));
 	}
 
-	public long getInstanceModelMemory() {
-		return instanceModelMemory;
-	}
-
-	public void setInstanceModelMemory(long instanceModelMemory) {
-		this.instanceModelMemory = instanceModelMemory;
-	}
-
-	public long getAccessControlModelMemory() {
-		return accessControlModelMemory;
-	}
-
-	public void setAccessControlModelMemory(long accessControlModelMemory) {
-		this.accessControlModelMemory = accessControlModelMemory;
-	}
-	
 	public String[] getArguments(int modelSize, int limitSize, int userSize, int repeat, String[] args) {
 		String[] arguments = new String[10];
 		arguments[0] = "-model-size";
@@ -195,9 +239,9 @@ public abstract class AbstractEvaluation {
 		arguments[9] = getEcorePath(args);
 		return arguments;
 	}
-	
+
 	private String getEcorePath(String[] args) {
-		for(int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			if (args[i].trim().startsWith(ECORE_ARG))
 				return args[i + 1];
 		}
