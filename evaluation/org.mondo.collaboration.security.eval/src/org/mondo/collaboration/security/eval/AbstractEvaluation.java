@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -23,10 +21,6 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import org.mondo.collaboration.policy.RulesStandaloneSetup;
 import org.mondo.collaboration.policy.rules.AccessControlModel;
 import org.mondo.collaboration.policy.rules.User;
-import org.mondo.collaboration.security.batch.Asset;
-import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
-import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
-import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 
 import com.google.inject.Injector;
 
@@ -34,6 +28,12 @@ import wt.WtFactory;
 import wt.WtPackage;
 
 public abstract class AbstractEvaluation {
+	
+	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
+	public static final int[] LIMIT_SIZES = { 30 };
+	public static final int[] USER_SIZES = { 30 };
+	public static final int REPEAT = 10;
+	
 	private static final String ECORE_ARG = "-ecore";
 	private static final String REPEAT_ARG = "-repeat";
 	private static final String LIMIT_SIZE_ARG = "-limit-user";
@@ -91,35 +91,29 @@ public abstract class AbstractEvaluation {
 		instanceModel = null;
 		accessControlModel = null;
 		
-		for(int i = modelResourceSet.getResources().size() - 1; i >=0; i--) {
-			modelResourceSet.getResources().remove(i);
-		}
-		
-		for(int i = helperResourceSet.getResources().size() - 1; i >=0; i--) {
-			helperResourceSet.getResources().remove(i);
-		}
+		modelResourceSet.getResources().clear();
+		helperResourceSet.getResources().clear();
 		
 		Runtime runtime = Runtime.getRuntime();
+		System.gc();
+		System.gc();
+		System.gc();
+		System.gc();
+		System.gc();		
 		
-		System.gc();
-		System.gc();
-		System.gc();
-		System.gc();
-		System.gc();
-
-		
-		
+		long initialMemory = usedMemory(runtime);
 		modelResourceSet.getResource(ecoreUri, true);
-		long first = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		long metamodelMemory = usedMemory(runtime) - initialMemory;
 		instanceModel = modelResourceSet.getResource(instanceUri, true);
-		long second = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		long instanceModelMemory = usedMemory(runtime) - metamodelMemory;
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
-		long third = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		long accessControlModelMemory = usedMemory(runtime) - instanceModelMemory;
 
-		double instanceMem = (Math.round((second - first) * Math.pow(10, -6) * 100.0) / 100.0);
-		double accessMem = (Math.round((third - second) * Math.pow(10, -6) * 100.0) / 100.0);
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize()  + ";" + instanceModelMemory + ";" + accessControlModelMemory);
+	}
 
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize()  + ";" + instanceMem + ";" + accessMem);
+	private long usedMemory(Runtime runtime) {
+		return runtime.getRuntime().totalMemory() - runtime.getRuntime().freeMemory();
 	}
 
 	protected void countAssetsOfModel() {
@@ -234,15 +228,15 @@ public abstract class AbstractEvaluation {
 
 	public String[] getArguments(int modelSize, int limitSize, int userSize, int repeat, String[] args) {
 		String[] arguments = new String[10];
-		arguments[0] = "-model-size";
+		arguments[0] = MODEL_SIZE_ARG;
 		arguments[1] = String.valueOf(modelSize);
-		arguments[2] = "-limit-user";
+		arguments[2] = LIMIT_SIZE_ARG;
 		arguments[3] = String.valueOf(limitSize);
-		arguments[4] = "-user-size" + String.valueOf(3);
+		arguments[4] = USER_SIZE_ARG;
 		arguments[5] = String.valueOf(userSize);
-		arguments[6] = "-repeat";
+		arguments[6] = REPEAT_ARG;
 		arguments[7] = String.valueOf(repeat);
-		arguments[8] = "-ecore";
+		arguments[8] = ECORE_ARG;
 		arguments[9] = getEcorePath(args);
 		return arguments;
 	}

@@ -8,10 +8,6 @@ import org.mondo.collaboration.security.batch.Judgement;
 import org.mondo.collaboration.security.batch.RuleManager;
 
 public class BatchEvaluation extends AbstractEvaluation {
-	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
-	public static final int[] LIMIT_SIZES = { 30 };
-	public static final int[] USER_SIZES = { 30 };
-	public static final int REPEAT = 10;
 
 	public static void main(String[] args) throws ViatraQueryException {
 		BatchEvaluation evaluation = new BatchEvaluation();
