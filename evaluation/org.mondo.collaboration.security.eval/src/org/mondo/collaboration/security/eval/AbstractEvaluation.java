@@ -70,7 +70,7 @@ public abstract class AbstractEvaluation {
 		processArgs(args);
 		initialize();
 		
-		System.out.println("Model_size;Limit_size;User_size;Meta;Instance;AccessControl");
+		System.out.println("Model_size;Limit_size;User_size;Instance;AccessControl");
 		for (int i = 0; i < getRepeatNumber(); i++) {
 			loadResources();
 		}
@@ -88,31 +88,38 @@ public abstract class AbstractEvaluation {
 		URI ecoreUri = URI.createFileURI(getEcoreFilePath());
 		URI accessUri = URI.createURI(String.format(Generator.RULE_PATH, getLimitSize()));
 		
-		modelResourceSet.getResource(ecoreUri, true).unload();
-		modelResourceSet.getResource(instanceUri, true).unload();
-		helperResourceSet.getResource(accessUri, true).unload();
-
+		instanceModel = null;
+		accessControlModel = null;
+		
+		for(int i = modelResourceSet.getResources().size() - 1; i >=0; i--) {
+			modelResourceSet.getResources().remove(i);
+		}
+		
+		for(int i = helperResourceSet.getResources().size() - 1; i >=0; i--) {
+			helperResourceSet.getResources().remove(i);
+		}
+		
 		Runtime runtime = Runtime.getRuntime();
+		
 		System.gc();
 		System.gc();
 		System.gc();
 		System.gc();
 		System.gc();
 
-		long first = runtime.totalMemory() - runtime.freeMemory();
+		
+		
 		modelResourceSet.getResource(ecoreUri, true);
-		long second = runtime.totalMemory() - runtime.freeMemory();
+		long first = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		instanceModel = modelResourceSet.getResource(instanceUri, true);
-		long third = runtime.totalMemory() - runtime.freeMemory();
+		long second = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
-		long fourth = runtime.totalMemory() - runtime.freeMemory();
+		long third = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
-		double ecoreMem = (Math.round((second - first) * Math.pow(10, -6) * 100.0) / 100.0);
-		double instanceMem = (Math.round((third - second) * Math.pow(10, -6) * 100.0) / 100.0);
-		double accessMem = (Math.round((fourth - third) * Math.pow(10, -6) * 100.0) / 100.0);
+		double instanceMem = (Math.round((second - first) * Math.pow(10, -6) * 100.0) / 100.0);
+		double accessMem = (Math.round((third - second) * Math.pow(10, -6) * 100.0) / 100.0);
 
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + ecoreMem + ";"
-				+ instanceMem + ";" + accessMem);
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize()  + ";" + instanceMem + ";" + accessMem);
 	}
 
 	protected void countAssetsOfModel() {
