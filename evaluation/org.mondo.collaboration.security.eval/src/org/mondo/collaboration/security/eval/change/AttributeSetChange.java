@@ -25,7 +25,7 @@ public class AttributeSetChange extends AbstractChangeApplier {
 
 	@Override
 	public void collect(Collection<User> collaborators) {
-		Set<String> ids = collaborators.stream().map(x -> x.getName().replace("user", "")).collect(toSet());
+		Set<String> ids = collaborators.stream().map(x -> x.getName().replace("user_", "")).collect(toSet());
 
 		TreeIterator<EObject> iterator = rootComposite.eAllContents();
 		while (iterator.hasNext() && composites.size() < limit) {
@@ -51,6 +51,11 @@ public class AttributeSetChange extends AbstractChangeApplier {
 		for (Composite composite : composites) {
 			composite.setProtectedIP(!composite.isProtectedIP());
 		}
+	}
+	
+	@Override
+	public String getType() {
+		return "SetAttr";
 	}
 
 }

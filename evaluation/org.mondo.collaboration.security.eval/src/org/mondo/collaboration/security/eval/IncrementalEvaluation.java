@@ -2,7 +2,6 @@ package org.mondo.collaboration.security.eval;
 
 import java.util.Collection;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -17,21 +16,21 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.mondo.collaboration.security.eval.change.AbstractChangeApplier;
-import org.mondo.collaboration.security.eval.change.AttributeSetChange;
-import org.mondo.collaboration.security.eval.change.CreationDeletionChange;
-import org.mondo.collaboration.security.eval.change.ReferenceSetChange;
 import org.mondo.collaboration.security.increment.RulesGenerator;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class IncrementalEvaluation extends AbstractEvaluation {
-	private static final int MODIFICATIONS = 20;
-	private static final Realm realm = new DefaultRealm();
-	
+
+	private long changeMemoryUsage;
+	private long changeTime;
+
+	private long initMemoryUsage;
+	private long initTime;
+
 	public static void main(String[] args) throws ViatraQueryException {
-		IncrementalEvaluation evaluation = new IncrementalEvaluation();
+		new DefaultRealm();
+		AbstractEvaluation evaluation = new IncrementalEvaluation();
 
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
@@ -39,25 +38,18 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 					if (userSize > limitSize) {
 						break;
 					}
-					String[] arguments = evaluation.getArguments(modelSize, limitSize, userSize, REPEAT, args);
+					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, true, true,
+							args);
 					evaluation.evaluate(arguments);
 				}
 			}
 		}
-
-		// evaluation.evaluate(args);
 	}
 
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
-		
-		
-		System.gc();
-		System.gc();
-		System.gc();
-		Runtime runtime = Runtime.getRuntime();
-		long startMemoryInit = runtime.totalMemory() - runtime.freeMemory();
-		long startTimeInit = System.nanoTime();
+		initMemoryUsage = currentMemoryUsage();
+		initTime = currentTime();
 
 		ViatraQueryEngine queryEngine = ViatraQueryEngine.on(new EMFScope(getModelResourceSet()));
 		AdvancedViatraQueryEngine advancedQueryEngine = AdvancedViatraQueryEngine.from(queryEngine);
@@ -65,55 +57,18 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 		Collection<IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> querySpecifications = loadQuerySpecifications();
 		Collection<IObservableList<?>> observables = Lists.newArrayList();
 		for (IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> querySpecification : querySpecifications) {
-			observables.add(ViatraObservables.observeMatchesAsList(querySpecification, advancedQueryEngine));
+			for (int i = 1; i <= getUserSize(); i++) {
+				IPatternMatch filter = querySpecification.newEmptyMatch();
+				filter.set("user", "user_" + i);
+				observables.add(ViatraObservables.observeMatchesAsList(querySpecification, advancedQueryEngine,
+						filter.toImmutable()));
+			}
 		}
 
-		long endTimeInit = System.nanoTime();
-		long endMemoryInit = runtime.totalMemory() - runtime.freeMemory();
-		double initTime = Math.round((endTimeInit - startTimeInit) * Math.pow(10, -6) * 100.0) / 100.0;
-		double initMemory = Math.round((endMemoryInit - startMemoryInit) * Math.pow(10, -6) * 100.0) / 100.0;
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Init" + ";" + initTime
-				+ ";" + initMemory);
+		initMemoryUsage = changeMemoryUsage - initMemoryUsage;
+		initTime = currentTime() - initTime;
 
-		Collection<AbstractChangeApplier> appliers = Sets.newHashSet(
-				new AttributeSetChange(getInstanceModelResource(), MODIFICATIONS),
-				new CreationDeletionChange(getInstanceModelResource(), MODIFICATIONS),
-				new ReferenceSetChange(getInstanceModelResource(), MODIFICATIONS));
-
-		// for (IObservableList<?> observable : observables) {
-		// for (Object object : observable) {
-		// System.out.println(object);
-		// }
-		// }
-
-		for (AbstractChangeApplier applier : appliers) {
-			applier.collect(getCollaborators());
-
-			System.gc();
-			System.gc();
-			System.gc();
-			long startMemory = runtime.totalMemory() - runtime.freeMemory();
-			long startTime = System.nanoTime();
-
-			applier.apply();
-
-			long midTime = System.nanoTime();
-			long midMemory = runtime.totalMemory() - runtime.freeMemory();
-			double applyTime = Math.round((midTime - startTime) * Math.pow(10, -6) * 100.0) / 100.0;
-			double applyMemory = Math.round((midMemory - startMemory) * Math.pow(10, -6) * 100.0) / 100.0;
-			System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Apply"
-					+ getEvalType(applier) + ";" + applyTime + ";" + applyMemory);
-
-			applier.revert();
-
-			long endTime = System.nanoTime();
-			long endMemory = runtime.totalMemory() - runtime.freeMemory();
-			double revertTime = Math.round((endTime - midTime) * Math.pow(10, -6) * 100.0) / 100.0;
-			double revertMemory = Math.round((endMemory - midMemory) * Math.pow(10, -6) * 100.0) / 100.0;
-			System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Revert"
-					+ getEvalType(applier) + ";" + revertTime + ";" + revertMemory);
-		}
-
+		advancedQueryEngine.dispose();
 	}
 
 	private Collection<IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> loadQuerySpecifications()
@@ -140,14 +95,23 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 		return querySpecifications;
 	}
 
-	private String getEvalType(AbstractChangeApplier applier) {
-		if (applier instanceof AttributeSetChange) {
-			return "SetAttr";
-		} else if (applier instanceof CreationDeletionChange) {
-			return "CreateDel";
-		} else if (applier instanceof ReferenceSetChange) {
-			return "SetRef";
-		}
-		return null;
+	@Override
+	protected void beforeChangeExecution() {
+		changeMemoryUsage = currentMemoryUsage();
+		changeTime = currentTime();
+	}
+
+	@Override
+	protected void afterChangeExecution() {
+		changeTime = currentTime() - changeTime;
+		changeMemoryUsage = currentMemoryUsage() - changeMemoryUsage;
+	}
+
+	@Override
+	protected void printResults() {
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Init" + ";" + initTime
+				+ ";" + initMemoryUsage);
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Change" + ";" + changeTime
+				+ ";" + changeMemoryUsage);
 	}
 }

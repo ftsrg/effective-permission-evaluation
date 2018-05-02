@@ -63,6 +63,10 @@ public class RuleManager {
 		this.accessControlModel = rules;
 	}
 
+	public void dispose() {
+		advancedQueryEngine.dispose();
+	}
+	
 	public void setWeakConsequences(Collection<IConsequence> weakConsequences) {
 		this.weakConsequences = weakConsequences;
 	}
@@ -73,7 +77,7 @@ public class RuleManager {
 
 	@SuppressWarnings("unchecked")
 	public void initialize() throws ViatraQueryException {
-//		LOGGER.info("Inizialize ViatraQueryEngine with Rules on the Model");
+		LOGGER.info("Inizialize ViatraQueryEngine with Rules on the Model");
 		long start = System.nanoTime();
 		ViatraQueryEngine queryEngine = ViatraQueryEngine.on(new EMFScope(instanceModel));
 		advancedQueryEngine = AdvancedViatraQueryEngine.from(queryEngine);
@@ -86,7 +90,7 @@ public class RuleManager {
 			matchers.put(rule.getPattern(), queryMatcher);
 		}
 		long end = System.nanoTime();
-//		LOGGER.info(String.format("ViatraQueryEngine is initialized in %d nanosec", end - start));
+		LOGGER.info(String.format("ViatraQueryEngine is initialized in %d nanosec", end - start));
 	}
 
 	public List<Judgement> calculateEffectivePermissions(User user) throws ViatraQueryException {
@@ -94,8 +98,8 @@ public class RuleManager {
 		processed = Lists.newArrayList();
 
 		addInitialPermissions(user);
-//		LOGGER.info("Number of initial permissions: " + permissionList.size());
-//		LOGGER.info("Calculating effective permissions");
+		LOGGER.info("Number of initial permissions: " + permissionList.size());
+		LOGGER.info("Calculating effective permissions");
 		long start = System.nanoTime();
 
 		int numOfConsequences = 0;
@@ -112,8 +116,8 @@ public class RuleManager {
 			}
 		}
 		long end = System.nanoTime();
-//		LOGGER.info(String.format("Effective Permissions are calculated in %d nanosec", end - start));
-//		LOGGER.info(String.format("Number of propagated consequences: %d", numOfConsequences));
+		LOGGER.info(String.format("Effective Permissions are calculated in %d nanosec", end - start));
+		LOGGER.info(String.format("Number of propagated consequences: %d", numOfConsequences));
 		return processed;
 	}
 
@@ -136,7 +140,7 @@ public class RuleManager {
 							numOfExplicits++;
 						}
 					}
-//					LOGGER.info(String.format("Number of explicit judgements: %s", numOfExplicits));
+					LOGGER.info(String.format("Number of explicit judgements: %s", numOfExplicits));
 
 					break;
 				}
@@ -184,7 +188,7 @@ public class RuleManager {
 				}
 			}
 		}
-//		LOGGER.info(String.format("Number of assets: %d", numOfAssets));
+		LOGGER.info(String.format("Number of assets: %d", numOfAssets));
 	}
 
 	private void addDefaultPermission(Asset asset) {

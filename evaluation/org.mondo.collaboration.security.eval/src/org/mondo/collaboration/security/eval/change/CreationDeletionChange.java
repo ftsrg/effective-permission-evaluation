@@ -38,5 +38,10 @@ public class CreationDeletionChange extends AbstractChangeApplier {
 			signals.add(wtFactory.createSignal());
 		}
 	}
+	
+	@Override
+	public String getType() {
+		return "CreateDel";
+	}
 
 }

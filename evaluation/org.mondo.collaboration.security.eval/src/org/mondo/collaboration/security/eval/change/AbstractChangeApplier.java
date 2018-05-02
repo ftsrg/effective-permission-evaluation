@@ -29,4 +29,6 @@ public abstract class AbstractChangeApplier implements IChangeApplier {
 	 */
 	public abstract void collect(Collection<User> collaborators);
 	
+	public abstract String getType();
+	
 }

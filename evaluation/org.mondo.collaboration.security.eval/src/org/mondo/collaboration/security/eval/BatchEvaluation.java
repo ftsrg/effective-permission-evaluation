@@ -1,16 +1,21 @@
 package org.mondo.collaboration.security.eval;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.mondo.collaboration.policy.rules.User;
-import org.mondo.collaboration.security.batch.Judgement;
 import org.mondo.collaboration.security.batch.RuleManager;
+
+import com.google.common.collect.Lists;
 
 public class BatchEvaluation extends AbstractEvaluation {
 
+	List<Entry<Long,Long>> results =  Lists.newArrayList();
+	
 	public static void main(String[] args) throws ViatraQueryException {
-		BatchEvaluation evaluation = new BatchEvaluation();
+		AbstractEvaluation evaluation = new BatchEvaluation();
 		
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
@@ -18,39 +23,37 @@ public class BatchEvaluation extends AbstractEvaluation {
 					if (userSize > limitSize) {
 						break;
 					}
-					String[] arguments = evaluation.getArguments(modelSize, limitSize, userSize, REPEAT, args);
+					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, true, true, args);
 					evaluation.evaluate(arguments);
 				}
 			}
 		}
-		
-		// evaluation.evaluate(args);
 	}
-
+	
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
 		RuleManager ruleManager = new RuleManager(getInstanceModelResource(), getAccessControlModel());
 		ruleManager.initialize();
 
-		System.gc();
-		System.gc();
-		System.gc();
-		Runtime runtime = Runtime.getRuntime();
-		long startMemory = runtime.totalMemory() - runtime.freeMemory();
-		long startTime = System.nanoTime();
+		long memory = currentMemoryUsage();
+		long time = currentTime();
 
 		for (User user : getCollaborators()) {
-			List<Judgement> permissions = ruleManager.calculateEffectivePermissions(user);
+			ruleManager.calculateEffectivePermissions(user);
 			break;
 		}
 		
-		long endMemory = runtime.totalMemory() - runtime.freeMemory();
-		long endTime = System.nanoTime();
+		time = currentTime() - time;
+		memory = currentMemoryUsage() - memory;
 		
-		double time = Math.round((endTime - startTime) * Math.pow(10, -6) * 100.0) / 100.0;
-		double memory = Math.round((endMemory - startMemory) * Math.pow(10, -6) * 100.0) / 100.0;
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + time + ";" + memory);
-		
+		ruleManager.dispose();
+		results.add(new AbstractMap.SimpleEntry<Long, Long>(time, memory));
+	}
+	
+	@Override
+	protected void printResults() {
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Original" + ";" + results.get(0).getKey() + ";" + results.get(0).getValue());
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Changed" + ";" + results.get(1).getKey() + ";" + results.get(1).getValue());
 	}
 
 }

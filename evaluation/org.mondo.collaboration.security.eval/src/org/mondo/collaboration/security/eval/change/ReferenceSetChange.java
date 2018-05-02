@@ -47,4 +47,9 @@ public class ReferenceSetChange extends AbstractChangeApplier {
 		}
 	}
 
+	@Override
+	public String getType() {
+		return "SetRef";
+	}
+
 }
