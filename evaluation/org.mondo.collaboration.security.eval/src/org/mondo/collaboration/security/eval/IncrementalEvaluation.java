@@ -29,15 +29,10 @@ import com.google.common.collect.Sets;
 public class IncrementalEvaluation extends AbstractEvaluation {
 	private static final int MODIFICATIONS = 20;
 	private static final Realm realm = new DefaultRealm();
-	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
-	public static final int[] LIMIT_SIZES = { 10, 50, 100 };
-	public static final int[] USER_SIZES = { 10, 50, 100 };
-	public static final int REPEAT = 1;
-
+	
 	public static void main(String[] args) throws ViatraQueryException {
 		IncrementalEvaluation evaluation = new IncrementalEvaluation();
 
-		System.out.println("Model_size;Limit_size;User_size;Eval_type;Time;Memory");
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
 				for (int userSize : USER_SIZES) {
@@ -55,6 +50,8 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
+		
+		
 		System.gc();
 		System.gc();
 		System.gc();
