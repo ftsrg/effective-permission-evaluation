@@ -10,31 +10,36 @@ import org.mondo.collaboration.security.batch.RuleManager;
 
 import com.google.common.collect.Lists;
 
-public class BatchEvaluation extends AbstractEvaluation {
+public class CombinatedEvaluation extends AbstractEvaluation {
 
-	List<Entry<Long,Long>> results =  Lists.newArrayList();
-	
+	List<Entry<Long, Long>> results = Lists.newArrayList();
+	private RuleManager ruleManager;
+
 	public static void main(String[] args) throws ViatraQueryException {
 		AbstractEvaluation evaluation = new BatchEvaluation();
-		
+
 		for (int modelSize : MODEL_SIZES) {
 			for (int limitSize : LIMIT_SIZES) {
 				for (int userSize : USER_SIZES) {
 					if (userSize > limitSize) {
 						break;
 					}
-					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, true, true, args);
+					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, true, true,
+							args);
 					evaluation.evaluate(arguments);
 				}
 			}
 		}
 	}
+
+	@Override
+	protected void prepareEvaluation() throws ViatraQueryException {
+		ruleManager = new RuleManager(getInstanceModelResource(), getAccessControlModel());
+		ruleManager.initialize();
+	}
 	
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
-		RuleManager ruleManager = new RuleManager(getInstanceModelResource(), getAccessControlModel());
-		ruleManager.initialize();
-
 		long memory = currentMemoryUsage();
 		long time = currentTime();
 
@@ -42,14 +47,13 @@ public class BatchEvaluation extends AbstractEvaluation {
 			ruleManager.calculateEffectivePermissions(user);
 			break;
 		}
-		
+
 		time = currentTime() - time;
 		memory = currentMemoryUsage() - memory;
-		
-		ruleManager.dispose();
+
 		results.add(new AbstractMap.SimpleEntry<Long, Long>(time, memory));
 	}
-	
+
 	@Override
 	protected void doEvaluationAgain() throws ViatraQueryException {
 		doEvaluation();
@@ -57,8 +61,15 @@ public class BatchEvaluation extends AbstractEvaluation {
 	
 	@Override
 	protected void printResults() {
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Original" + ";" + results.get(0).getKey() + ";" + results.get(0).getValue());
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Changed" + ";" + results.get(1).getKey() + ";" + results.get(1).getValue());
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Original" + ";"
+				+ results.get(0).getKey() + ";" + results.get(0).getValue());
+		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Changed" + ";"
+				+ results.get(1).getKey() + ";" + results.get(1).getValue());
+	}
+	
+	@Override
+	protected void dispose() {
+		ruleManager.dispose();
 	}
 
 }

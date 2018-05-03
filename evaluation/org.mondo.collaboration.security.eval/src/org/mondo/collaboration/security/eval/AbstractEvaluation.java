@@ -86,13 +86,18 @@ public abstract class AbstractEvaluation {
 		loadResources();
 		
 		if(!isTestEvaluation()) {
+			System.out.println("Model;Limit;User;Type;Time;Memory");
 			for (int i = 0; i < getRepeatNumber(); i++) {
 				prepareEvaluation();
 				doEvaluation();
+				applyChanges();
+				doEvaluationAgain();
 				printResults();
 			}
 		}
 	}
+
+	protected void doEvaluationAgain() throws ViatraQueryException { }
 
 	protected void printResults() { }
 
@@ -288,7 +293,7 @@ public abstract class AbstractEvaluation {
 		return System.nanoTime();
 	}
 
-	protected void applyChanges() {
+	protected void applyChanges() throws ViatraQueryException {
 		Collection<AbstractChangeApplier> appliers = Sets.newHashSet(
 				new AttributeSetChange(getInstanceModelResource(), MODIFICATIONS),
 				new CreationDeletionChange(getInstanceModelResource(), MODIFICATIONS),
