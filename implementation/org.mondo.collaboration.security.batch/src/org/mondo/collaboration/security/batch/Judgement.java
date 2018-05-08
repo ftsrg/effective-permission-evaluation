@@ -15,7 +15,7 @@ public class Judgement implements Comparable<Judgement> {
 	private int hash;
 	
 	public Judgement(AccessibilityLevel access, OperationType operation, Asset asset, ResolutionType resolution) {
-		new Judgement(access, operation, asset, -1, resolution);
+		this(access, operation, asset, -1, resolution);
 	}
 
 	public Judgement(AccessibilityLevel access, OperationType operation, Asset asset, Integer priority, ResolutionType resolution) {
