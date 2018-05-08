@@ -76,8 +76,8 @@ class RulesGenerator extends AbstractGenerator {
 		model.eResource.className+"_all_in_one.vql"	    
 	}
 	
-	static def mainQuerySpecification(PatternModel model) {
-		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObject") || x.name.equals("effectiveJudgementOnAttribute") || x.name.equals("effectiveJudgementOnReference")]	    
+	static def mainQuerySpecification(PatternModel model, String user) {
+		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObjectFor"+user) || x.name.equals("effectiveJudgementOnAttributeFor"+user) || x.name.equals("effectiveJudgementOnReferenceFor"+user)]	    
 	}
 	
 	static def collectVQLFiles(AccessControlModel model, Resource instanceModel) {
@@ -102,6 +102,7 @@ class RulesGenerator extends AbstractGenerator {
 	def generateAllInOne(AccessControlModel model, EPackage metamodel, TreeSet<Integer> priorities) '''
 	«generateImport(metamodel.nsURI)»
 	
+	«generateUserSpecificPatterns(model, false)»
 	«generateHelperPattern(model, false)»
 	«generateExplicitJudgementPattern(model, false)»
 	«generateEffectiveJudgementPattern(priorities, false)»
@@ -123,6 +124,28 @@ class RulesGenerator extends AbstractGenerator {
     import "http://www.mondo.org/collaboration/policy/Rules"
     import "«nsUri»"
     '''	
+
+	def generateUserSpecificPatterns(AccessControlModel model) {
+		generateUserSpecificPatterns(model, true)
+	}
+	
+	def generateUserSpecificPatterns(AccessControlModel model, boolean requiredImport)'''
+	«if(requiredImport) generateImport»
+	
+	«FOR user: model.roles.usersOfRoleList SEPARATOR "\n"»
+	pattern effectiveOJudgementOnObjectForUser«user.name»(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnObject(«user.name», object, operation, access)
+	}
+	
+	pattern effectiveOJudgementOnReferenceForUser«user.name»(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnReference(«user.name», source, target, reference, operation, access)
+	}	
+	
+	pattern effectiveOJudgementOnAttributeForUser«user.name»(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnAttribute(«user.name», source, value, attribute, operation, access)
+	}
+	«ENDFOR»
+	'''
 
 	def generateHelperPattern(AccessControlModel model) {
 		generateHelperPattern(model, true)
