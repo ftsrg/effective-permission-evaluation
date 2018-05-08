@@ -28,6 +28,8 @@ import org.mondo.collaboration.policy.rules.ResolutionType
 import org.mondo.collaboration.policy.rules.Role
 import org.mondo.collaboration.policy.rules.Rule
 import org.mondo.collaboration.policy.rules.User
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import java.util.HashSet
 
 /**
  * Generates code from your AccessControlModel files on save.
@@ -76,8 +78,10 @@ class RulesGenerator extends AbstractGenerator {
 		model.eResource.className+"_all_in_one.vql"	    
 	}
 	
-	static def mainQuerySpecification(PatternModel model, String user) {
-		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObjectFor"+user) || x.name.equals("effectiveJudgementOnAttributeFor"+user) || x.name.equals("effectiveJudgementOnReferenceFor"+user)]	    
+	static def mainQuerySpecification(PatternModel model) {
+//	static def mainQuerySpecification(PatternModel model, String user) {
+//		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObjectForUser"+user) || x.name.equals("effectiveJudgementOnReferenceForUser"+user) || x.name.equals("effectiveJudgementOnAttributeForUser"+user)]	    
+		model.patterns.filter[x | x.name.equals("effectiveJudgementOnObject") || x.name.equals("effectiveJudgementOnReference") || x.name.equals("effectiveJudgementOnAttribute")]	    
 	}
 	
 	static def collectVQLFiles(AccessControlModel model, Resource instanceModel) {
@@ -118,7 +122,7 @@ class RulesGenerator extends AbstractGenerator {
 	}
     
 	def generateImport(String nsUri) '''
-    package org.mondo.collaboration.security.query
+    package org.mondo.collaboration.security.query.generated
 
     import "http://www.eclipse.org/emf/2002/Ecore"
     import "http://www.mondo.org/collaboration/policy/Rules"
@@ -132,17 +136,17 @@ class RulesGenerator extends AbstractGenerator {
 	def generateUserSpecificPatterns(AccessControlModel model, boolean requiredImport)'''
 	«if(requiredImport) generateImport»
 	
-	«FOR user: model.roles.usersOfRoleList SEPARATOR "\n"»
-	pattern effectiveOJudgementOnObjectForUser«user.name»(object: EObject, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnObject(«user.name», object, operation, access)
+	«FOR user: model.roles.usersOfRoleList2 SEPARATOR "\n"»
+	pattern effectiveJudgementOnObjectForUser«user.name»(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnObject("«user.name»", object, operation, access);
 	}
 	
-	pattern effectiveOJudgementOnReferenceForUser«user.name»(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnReference(«user.name», source, target, reference, operation, access)
+	pattern effectiveJudgementOnReferenceForUser«user.name»(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnReference("«user.name»", source, target, reference, operation, access);
 	}	
 	
-	pattern effectiveOJudgementOnAttributeForUser«user.name»(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnAttribute(«user.name», source, value, attribute, operation, access)
+	pattern effectiveJudgementOnAttributeForUser«user.name»(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnAttribute("«user.name»", source, value, attribute, operation, access);
 	}
 	«ENDFOR»
 	'''
@@ -226,13 +230,13 @@ class RulesGenerator extends AbstractGenerator {
     «IF rule.asset instanceof ObjectFact»
         «val object = rule.asset as ObjectFact»
         pattern «rule.name»Asset(«object.variable.name» : EObject) {
-    	    find «rule.pattern.name»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
+    	    find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
         }
     «ENDIF»
     «IF rule.asset instanceof AttributeFact»
         «val attribute = rule.asset as AttributeFact»
         pattern «rule.name»Asset(«attribute.variable.name» : EObject, value: java Object, attribute : EAttribute) {
-        	find «rule.pattern.name»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
+        	find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
         	find attributeAsset(«attribute.variable.name», value, attribute);
         	EAttribute.name(attribute, "«attribute.attribute.name»");
         }
@@ -240,7 +244,7 @@ class RulesGenerator extends AbstractGenerator {
     «IF rule.asset instanceof ReferenceFact»
         «val reference = rule.asset as ReferenceFact»
         pattern «rule.name»Asset(«reference.sourceVar» : EObject, «reference.targetVar» : EObject, reference : EReference) {
-            find «rule.pattern.name»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
+            find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
             find attributeAsset(«reference.sourceVar», «reference.targetVar», reference);
             EReference.name(reference, "«reference.reference.name»");
         }
@@ -874,6 +878,16 @@ class RulesGenerator extends AbstractGenerator {
 		return "_";
 	}
 	
+	def getUsersOfRoleList2(List<Role> roles) {
+		val userList = new HashSet<User>();
+		for (Role role : roles) {
+			if(role instanceof User) {
+				userList.add(role as User);
+			}
+		}
+		return userList;
+	}
+	
 	def getUsersOfRoleList(List<Role> roles) {
 		val userList = new ArrayList<User>();
 		for (Role role : roles) {
@@ -1030,4 +1044,10 @@ pattern referenceAsset«eClass.name»«reference.name»(source : EObject, target : E
 }
 	    «ENDFOR»
 	'''
+	
+	def static qualifiedName(Pattern pattern) {
+		val model = pattern.eContainer as PatternModel
+		model.packageName+"."+pattern.name
+	}
+	
 }

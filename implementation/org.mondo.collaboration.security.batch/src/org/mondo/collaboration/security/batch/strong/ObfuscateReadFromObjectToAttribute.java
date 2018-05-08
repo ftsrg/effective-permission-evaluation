@@ -33,9 +33,9 @@ public class ObfuscateReadFromObjectToAttribute implements IConsequence{
 			    for (EAttribute eAttribute : eAllAttributes) {
 			    	AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
 			    	if(eAttribute.isID()){
-			    		consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), attrAsset, judgement.getPriority(), judgement.getResolution()));
+			    		consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), attrAsset, judgement.getPriority()));
 			    	} else {
-			    		consequences.add(new Judgement(AccessibilityLevel.DENY, judgement.getOperation(), attrAsset, judgement.getPriority(), judgement.getResolution()));
+			    		consequences.add(new Judgement(AccessibilityLevel.DENY, judgement.getOperation(), attrAsset, judgement.getPriority()));
 			    	}
 			    }
 		    }

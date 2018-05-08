@@ -25,7 +25,7 @@ public class FromDenyReadToDenyWrite implements IConsequence{
 		if(judgement.getOperation() == OperationType.READ) {
 			if(judgement.getAccess() == AccessibilityLevel.DENY) {
 				consequences.add(new Judgement(judgement.getAccess(), OperationType.WRITE, judgement.getAsset(),
-				         judgement.getPriority(), judgement.getResolution()));
+				         judgement.getPriority()));
 		    }
 		}
 		

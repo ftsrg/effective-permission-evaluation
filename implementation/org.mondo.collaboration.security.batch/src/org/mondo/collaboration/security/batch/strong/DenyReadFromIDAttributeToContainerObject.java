@@ -32,7 +32,7 @@ public class DenyReadFromIDAttributeToContainerObject implements IConsequence{
 		        	EObject object = ((AttributeAsset) judgement.getAsset()).getSource();
 		    		if(attribute.isID()){
 		    			ObjectAsset objAsset = new Asset.ObjectAsset(object);
-		    			consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority(), judgement.getResolution()));
+		    			consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority()));
 		    		}
 			    }
 		    }

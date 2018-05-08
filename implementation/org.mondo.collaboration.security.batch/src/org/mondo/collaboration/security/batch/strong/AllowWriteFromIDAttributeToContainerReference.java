@@ -32,7 +32,7 @@ public class AllowWriteFromIDAttributeToContainerReference implements IConsequen
 		        	EObject object = ((AttributeAsset) judgement.getAsset()).getSource();
 		    		if(attribute.isID() && object.eContainmentFeature() != null){
 		    			ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
-		    			consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+		    			consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 		    		}
 			    }
 		    }

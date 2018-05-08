@@ -32,7 +32,7 @@ public class FromObjectToAttributeWeakConsequence implements IConsequence {
 			    EList<EAttribute> eAllAttributes = source.eClass().getEAllAttributes();
 		        for (EAttribute eAttribute : eAllAttributes) {
 		    	    AttributeAsset attrAsset = new Asset.AttributeAsset(source, eAttribute);
-		    	    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset, 0, judgement.getResolution()));
+		    	    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset, 0));
 		        }
 		    }
 		}

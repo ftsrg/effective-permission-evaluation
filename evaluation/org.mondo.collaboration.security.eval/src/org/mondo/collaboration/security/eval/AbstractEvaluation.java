@@ -34,9 +34,9 @@ import wt.WtPackage;
 
 public abstract class AbstractEvaluation {
 	
-	public static final int[] MODEL_SIZES = { 25, 50, 100, 200, 300 };
+	public static final int[] MODEL_SIZES = { 25, 50, 100, 200 };
 	public static final int[] LIMIT_SIZES = { 30 };
-	public static final int[] USER_SIZES = { 20 };
+	public static final int[] USER_SIZES = { 10 };
 	public static final int REPEAT = 10;
 	public static final int MODIFICATIONS = 20;
 	
@@ -93,6 +93,7 @@ public abstract class AbstractEvaluation {
 				applyChanges();
 				doEvaluationAgain();
 				printResults();
+				dispose();
 			}
 		}
 	}
@@ -324,4 +325,12 @@ public abstract class AbstractEvaluation {
 	protected void afterChangeExecution() {}
 
 	protected void dispose() {}
+	
+	protected void printTime(long time, long memory, String type) {
+		System.out.print(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + type + ";");
+		System.out.format("%,d", time);
+		System.out.print(";");
+		System.out.format("%,d", memory);
+		System.out.println();
+	}
 }

@@ -43,13 +43,13 @@ public class DenyReadFromObjectToReference implements IConsequence{
 					        EObject source = setting.getEObject();
 					        EReference reference = (EReference) setting.getEStructuralFeature();
 					        ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, object);
-					        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+					        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 				        }
 				    }
 				    //containment reference
 				    if(object.eContainer() != null){
 					    ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
-				        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+				        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 				    }
 				    
 				    // outgoing references
@@ -61,14 +61,14 @@ public class DenyReadFromObjectToReference implements IConsequence{
 						    EList<EObject> targets = (EList<EObject>) object.eGet(reference);
 						    for (EObject target : targets) {
 							    ReferenceAsset refAsset = new Asset.ReferenceAsset(object, reference, target);
-						        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+						        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 						    }
 				        //association
 					    } else {
 						    EObject target = (EObject) object.eGet(reference);
 						    if(target != null){
 						        ReferenceAsset refAsset = new Asset.ReferenceAsset(object, reference, target);
-						        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+						        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 						    }
 					    }
 				    }

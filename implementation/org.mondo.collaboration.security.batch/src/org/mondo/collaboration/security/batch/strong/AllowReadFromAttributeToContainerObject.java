@@ -27,7 +27,7 @@ public class AllowReadFromAttributeToContainerObject implements IConsequence{
 			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
 				if(judgement.getOperation() == OperationType.READ) {
 					ObjectAsset objAsset = new Asset.ObjectAsset(((AttributeAsset) judgement.getAsset()).getSource());
-					consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority(), judgement.getResolution()));
+					consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority()));
 			    }
 		    }
 		}

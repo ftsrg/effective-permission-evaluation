@@ -36,7 +36,7 @@ public class AllowWriteFromContainmentReferenceToChildrenObject implements ICons
 						EList<EObject> targets = (EList<EObject>) source.eGet(reference);
 						for (EObject target : targets) {
 							ObjectAsset objAsset = new Asset.ObjectAsset(target);
-							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority(), judgement.getResolution()));
+							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority()));
 						}
 					}
 			    }

@@ -29,21 +29,21 @@ public interface IConsequence {
 	public final class DefaultConsequenceTypes {
 		
 		public static Set<IConsequence> DefaultStrongConsequences = Sets.newHashSet(
-			    FromAllowWriteToAllowRead.instance,
-			    FromDenyReadToDenyWrite.instance,
-			    FromObfuscateReadToDenyWrite.instance,
-			    ObfuscateReadFromObjectToAttribute.instance,
-				AllowReadFromObjectToContainer.instance,
-				AllowReadFromObjectToIDAttribute.instance,
-				AllowWriteFromObjectToContainerReference.instance,
-				DenyReadFromObjectToReference.instance,
-				AllowReadFromReferenceToSourceTargetObject.instance,
-				DenyReadFromContainmentReferenceToChildrenObject.instance,
-				DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
-				AllowWriteFromContainmentReferenceToChildrenObject.instance,
-				AllowReadFromAttributeToContainerObject.instance,
-			    AllowWriteFromIDAttributeToContainerReference.instance,
-			    DenyReadFromIDAttributeToContainerObject.instance
+			    //FromAllowWriteToAllowRead.instance,
+			    //FromDenyReadToDenyWrite.instance,
+			    //FromObfuscateReadToDenyWrite.instance,
+			    //ObfuscateReadFromObjectToAttribute.instance,
+				//AllowReadFromObjectToContainer.instance,
+				//AllowReadFromObjectToIDAttribute.instance,
+				//AllowWriteFromObjectToContainerReference.instance,
+				//DenyReadFromObjectToReference.instance,
+				//AllowReadFromReferenceToSourceTargetObject.instance
+				//DenyReadFromContainmentReferenceToChildrenObject.instance,
+				//DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
+				//AllowWriteFromContainmentReferenceToChildrenObject.instance,
+				//AllowReadFromAttributeToContainerObject.instance,
+			    //AllowWriteFromIDAttributeToContainerReference.instance,
+			    //DenyReadFromIDAttributeToContainerObject.instance
 			);
 		
 		public static Set<IConsequence> DefaultWeakConsequences = Sets.newHashSet(

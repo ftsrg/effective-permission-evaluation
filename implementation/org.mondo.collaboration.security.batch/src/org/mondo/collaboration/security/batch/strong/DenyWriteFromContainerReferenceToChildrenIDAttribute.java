@@ -34,7 +34,7 @@ public class DenyWriteFromContainerReferenceToChildrenIDAttribute implements ICo
 			        for (EAttribute eAttribute : eAllAttributes) {
 			    	    if(eAttribute.isID()){
 			    		    AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
-						    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset, judgement.getPriority(), judgement.getResolution()));
+						    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset, judgement.getPriority()));
 			    	    }
 			        }
 			    }

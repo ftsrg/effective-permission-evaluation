@@ -30,7 +30,7 @@ public class AllowWriteFromObjectToContainerReference implements IConsequence{
 					EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
 					if(object.eContainer() != null){
 						ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
-			    	    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+			    	    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 					}
 			    }
 		    }  

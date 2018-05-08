@@ -28,8 +28,8 @@ public class AllowReadFromReferenceToSourceTargetObject implements IConsequence{
 				if(judgement.getOperation() == OperationType.READ){
 					EObject source = ((ReferenceAsset) judgement.getAsset()).getSource();
 		        	EObject target= ((ReferenceAsset) judgement.getAsset()).getTarget();
-		        	consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), new Asset.ObjectAsset(source), judgement.getPriority(), judgement.getResolution()));
-		        	consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), new Asset.ObjectAsset(target), judgement.getPriority(), judgement.getResolution()));
+		        	consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), new Asset.ObjectAsset(source), judgement.getPriority()));
+		        	consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), new Asset.ObjectAsset(target), judgement.getPriority()));
 			    }
 		    }
 		}

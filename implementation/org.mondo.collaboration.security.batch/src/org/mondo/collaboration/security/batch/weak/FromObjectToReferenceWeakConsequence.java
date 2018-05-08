@@ -35,13 +35,13 @@ public class FromObjectToReferenceWeakConsequence implements IConsequence {
 					    EList<EObject> targets = (EList<EObject>) source.eGet(reference);
 					    for (EObject target : targets) {
 						    ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-						    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0, judgement.getResolution()));
+						    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0));
 					    }
 				    } else {
 					    EObject target = (EObject) source.eGet(reference);
 					    if(target != null){
 					        ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-					        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0, judgement.getResolution()));
+					        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0));
 					    }
 				    }
 			    }

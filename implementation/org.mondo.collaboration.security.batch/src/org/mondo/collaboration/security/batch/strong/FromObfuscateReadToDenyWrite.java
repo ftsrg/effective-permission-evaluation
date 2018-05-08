@@ -24,7 +24,7 @@ public class FromObfuscateReadToDenyWrite implements IConsequence{
 
 		if(judgement.getAccess() == AccessibilityLevel.OBFUSCATE){
 			consequences.add(new Judgement(AccessibilityLevel.DENY, OperationType.WRITE, judgement.getAsset(),
-					         judgement.getPriority(), judgement.getResolution()));
+					         judgement.getPriority()));
 		}
 		
 		return consequences;

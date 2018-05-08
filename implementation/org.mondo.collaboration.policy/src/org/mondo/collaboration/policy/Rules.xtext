@@ -58,7 +58,7 @@ Bind:
 	valueString=STRING | valueInteger=INT;
 	
 enum AccessibilityLevel:
-	ALLOW='allow' | DENY='deny' | OBFUSCATE='obfuscate';
+	ALLOW='allow' | OBFUSCATE='obfuscate' | DENY='deny';
 	
 enum OperationType:
 	UNSET='unset' | READ='R' | WRITE='W' | READWRITE='RW';

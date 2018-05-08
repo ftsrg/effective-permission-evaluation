@@ -25,7 +25,7 @@ public class FromAllowWriteToAllowRead implements IConsequence{
 		if(judgement.getOperation() == OperationType.WRITE) {
 			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
 				consequences.add(new Judgement(judgement.getAccess(), OperationType.READ, judgement.getAsset(),
-				         judgement.getPriority(), judgement.getResolution()));
+				         judgement.getPriority()));
 		    }
 		}
 		

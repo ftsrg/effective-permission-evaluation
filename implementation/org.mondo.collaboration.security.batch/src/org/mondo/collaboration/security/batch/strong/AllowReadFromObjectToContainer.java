@@ -31,9 +31,9 @@ public class AllowReadFromObjectToContainer implements IConsequence{
 					EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
 					if(object.eContainer() != null) {
 						ObjectAsset objAsset = new Asset.ObjectAsset(object.eContainer());
-					    consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority(), judgement.getResolution()));
+					    consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority()));
 					    ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
-					    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority(), judgement.getResolution()));
+					    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
 					}
 			    }
 		    }
