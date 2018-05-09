@@ -10,16 +10,16 @@ import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class FromObjectToReferenceWeakConsequence implements IConsequence {
+public class FromObjectToReferenceWeakConsequence extends Consequence {
 	private FromObjectToReferenceWeakConsequence() {
 	}
 	
-	public static IConsequence instance = new FromObjectToReferenceWeakConsequence();
+	public static Consequence instance = new FromObjectToReferenceWeakConsequence();
 	
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

@@ -11,16 +11,16 @@ import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class DenyWriteFromContainerReferenceToChildrenIDAttribute implements IConsequence{
+public class DenyWriteFromContainerReferenceToChildrenIDAttribute extends Consequence{
 	private DenyWriteFromContainerReferenceToChildrenIDAttribute() {
 	}
 	
-	public static IConsequence instance = new DenyWriteFromContainerReferenceToChildrenIDAttribute();
+	public static Consequence instance = new DenyWriteFromContainerReferenceToChildrenIDAttribute();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

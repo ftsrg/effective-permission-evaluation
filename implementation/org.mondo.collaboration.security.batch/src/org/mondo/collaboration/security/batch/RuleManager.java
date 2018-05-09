@@ -38,7 +38,9 @@ import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 import org.mondo.collaboration.security.batch.util.AssetFactory;
 import org.mondo.collaboration.security.batch.util.JudgementStorage;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public class RuleManager {
@@ -47,8 +49,8 @@ public class RuleManager {
 	private JudgementStorage permissionStorage;
 	private Set<Judgement> processedSet;
 
-	private Collection<IConsequence> weakConsequences = IConsequence.DefaultConsequenceTypes.DefaultWeakConsequences;
-	private Collection<IConsequence> strongConsequences = IConsequence.DefaultConsequenceTypes.DefaultStrongConsequences;
+	private Collection<Consequence> weakConsequences = Consequence.DefaultConsequenceTypes.DefaultWeakConsequences;
+	private Collection<Consequence> strongConsequences = Consequence.DefaultConsequenceTypes.DefaultStrongConsequences;
 
 	private Resource instanceModel;
 	private AccessControlModel accessControlModel;
@@ -57,6 +59,8 @@ public class RuleManager {
 	private Map<Pattern, ViatraQueryMatcher<IPatternMatch>> matchers = Maps.newHashMap();
 	private Map<String, IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> querySpecifications;
 
+	private Multimap<EObject, ReferenceAsset> incomingReferenceMap = ArrayListMultimap.create();
+	
 	private int numOfConsequences;
 	private int numOfAssets;
 	
@@ -79,11 +83,11 @@ public class RuleManager {
 		advancedQueryEngine.dispose();
 	}
 	
-	public void setWeakConsequences(Collection<IConsequence> weakConsequences) {
+	public void setWeakConsequences(Collection<Consequence> weakConsequences) {
 		this.weakConsequences = weakConsequences;
 	}
 
-	public void setStrongConsequences(Collection<IConsequence> strongConsequences) {
+	public void setStrongConsequences(Collection<Consequence> strongConsequences) {
 		this.strongConsequences = strongConsequences;
 	}
 
@@ -97,6 +101,14 @@ public class RuleManager {
 			ViatraQueryMatcher<IPatternMatch> queryMatcher = advancedQueryEngine.getMatcher(querySpecification);
 			matchers.put(rule.getPattern(), queryMatcher);
 		}
+		
+		for (Consequence consequence : weakConsequences) {
+			consequence.setRuleManager(this);
+		}
+		for (Consequence consequence : strongConsequences) {
+			consequence.setRuleManager(this);
+		}
+		
 		long end = System.nanoTime();
 		LOGGER.info(String.format("ViatraQueryEngine is initialized in %d nanosec", end - start));
 	}
@@ -155,6 +167,22 @@ public class RuleManager {
 		}
 	}
 
+	private void addExplicitPermission(Rule rule, Asset asset) {
+		AccessibilityLevel access = rule.getAccess();
+		int priority = rule.getPriority();
+		if (access == AccessibilityLevel.OBFUSCATE) {
+			permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
+		} else {
+			OperationType operation = rule.getOperation();
+			if (operation == OperationType.READWRITE) {
+				permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
+				permissionStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
+			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
+				permissionStorage.add(new Judgement(access, operation, asset, priority));
+			}
+		}
+	}
+	
 	private void addDefaultPermissions() {
 		numOfAssets = 0;
 		TreeIterator<EObject> allContents = instanceModel.getAllContents();
@@ -207,26 +235,16 @@ public class RuleManager {
 		} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
 			permissionStorage.add(new Judgement(access, operation, asset, -1));
 		}
-	}
-
-	private void addExplicitPermission(Rule rule, Asset asset) {
-		AccessibilityLevel access = rule.getAccess();
-		int priority = rule.getPriority();
-		if (access == AccessibilityLevel.OBFUSCATE) {
-			permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-		} else {
-			OperationType operation = rule.getOperation();
-			if (operation == OperationType.READWRITE) {
-				permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-				permissionStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
-			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-				permissionStorage.add(new Judgement(access, operation, asset, priority));
-			}
+		
+		if(asset instanceof ReferenceAsset) {
+			ReferenceAsset referenceAsset = (ReferenceAsset) asset;
+			if(!referenceAsset.getReference().isContainment())
+				incomingReferenceMap.put(referenceAsset.getTarget(), referenceAsset);
 		}
 	}
 
 	private void propagateWeakConsequences(Judgement judgement) {
-		for (IConsequence weakConsequence : weakConsequences) {
+		for (Consequence weakConsequence : weakConsequences) {
 			Set<Judgement> consequences = weakConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
 				permissionStorage.add(j);
@@ -236,7 +254,7 @@ public class RuleManager {
 	}
 
 	private void propagateStrongConsequences(Judgement judgement) {
-		for (IConsequence strongConsequence : strongConsequences) {
+		for (Consequence strongConsequence : strongConsequences) {
 			Set<Judgement> consequences = strongConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
 				permissionStorage.add(j);
@@ -310,5 +328,9 @@ public class RuleManager {
 	public static String patternQualifiedName(Pattern pattern) {
 		PatternModel patternModel = (PatternModel) pattern.eContainer();
 		return patternModel.getPackageName() + "." + pattern.getName();
+	}
+
+	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {
+		return incomingReferenceMap.get(obj);
 	}
 }

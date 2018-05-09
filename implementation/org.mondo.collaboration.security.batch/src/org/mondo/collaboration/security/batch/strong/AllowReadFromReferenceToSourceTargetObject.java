@@ -8,16 +8,16 @@ import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromReferenceToSourceTargetObject implements IConsequence{
+public class AllowReadFromReferenceToSourceTargetObject extends Consequence{
 	private AllowReadFromReferenceToSourceTargetObject() {
 	}
 	
-	public static IConsequence instance = new AllowReadFromReferenceToSourceTargetObject();
+	public static Consequence instance = new AllowReadFromReferenceToSourceTargetObject();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

@@ -5,18 +5,18 @@ import java.util.Set;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 import org.mondo.collaboration.security.batch.weak.FromObjectToAttributeWeakConsequence;
 
 import com.google.common.collect.Sets;
 
-public class FromDenyReadToDenyWrite implements IConsequence{
+public class FromDenyReadToDenyWrite extends Consequence{
 	
 	private FromDenyReadToDenyWrite() {
 	}
 	
-	public static IConsequence instance = new FromDenyReadToDenyWrite();
+	public static Consequence instance = new FromDenyReadToDenyWrite();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

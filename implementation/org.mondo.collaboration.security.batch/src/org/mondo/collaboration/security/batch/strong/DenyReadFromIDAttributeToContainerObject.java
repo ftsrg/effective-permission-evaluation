@@ -10,16 +10,16 @@ import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class DenyReadFromIDAttributeToContainerObject implements IConsequence{
+public class DenyReadFromIDAttributeToContainerObject extends Consequence{
 	private DenyReadFromIDAttributeToContainerObject() {
 	}
 	
-	public static IConsequence instance = new DenyReadFromIDAttributeToContainerObject();
+	public static Consequence instance = new DenyReadFromIDAttributeToContainerObject();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

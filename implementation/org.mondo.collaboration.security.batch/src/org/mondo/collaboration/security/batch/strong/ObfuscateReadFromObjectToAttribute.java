@@ -10,17 +10,17 @@ import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class ObfuscateReadFromObjectToAttribute implements IConsequence{
+public class ObfuscateReadFromObjectToAttribute extends Consequence{
 	
 	private ObfuscateReadFromObjectToAttribute() {
 	}
 	
-	public static IConsequence instance = new ObfuscateReadFromObjectToAttribute();
+	public static Consequence instance = new ObfuscateReadFromObjectToAttribute();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

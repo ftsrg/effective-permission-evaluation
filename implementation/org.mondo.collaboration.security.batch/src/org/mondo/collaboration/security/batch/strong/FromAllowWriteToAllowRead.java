@@ -5,17 +5,17 @@ import java.util.Set;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class FromAllowWriteToAllowRead implements IConsequence{
+public class FromAllowWriteToAllowRead extends Consequence{
 	
 	private FromAllowWriteToAllowRead() {
 	}
 	
-	public static IConsequence instance = new FromAllowWriteToAllowRead();
+	public static Consequence instance = new FromAllowWriteToAllowRead();
 
 
 	@Override

@@ -22,31 +22,32 @@ import org.mondo.collaboration.security.batch.weak.FromObjectToReferenceWeakCons
 
 import com.google.common.collect.Sets;
 
-public interface IConsequence {
+public abstract class Consequence {
 
-	public Set<Judgement> propagate(Judgement judgement); 
+	public abstract Set<Judgement> propagate(Judgement judgement);
+	public void setRuleManager(RuleManager manager) {}
 	
-	public final class DefaultConsequenceTypes {
+	public static final class DefaultConsequenceTypes {
 		
-		public static Set<IConsequence> DefaultStrongConsequences = Sets.newHashSet(
-			    //FromAllowWriteToAllowRead.instance,
-			    //FromDenyReadToDenyWrite.instance,
-			    //FromObfuscateReadToDenyWrite.instance,
-			    //ObfuscateReadFromObjectToAttribute.instance,
-				//AllowReadFromObjectToContainer.instance,
-				//AllowReadFromObjectToIDAttribute.instance,
-				//AllowWriteFromObjectToContainerReference.instance,
+		public static final Set<Consequence> DefaultStrongConsequences = Sets.newHashSet(
+			    FromAllowWriteToAllowRead.instance,
+			    FromDenyReadToDenyWrite.instance,
+			    FromObfuscateReadToDenyWrite.instance,
+			    ObfuscateReadFromObjectToAttribute.instance,
+				AllowReadFromObjectToContainer.instance,
+				AllowReadFromObjectToIDAttribute.instance,
+				AllowWriteFromObjectToContainerReference.instance,
 				//DenyReadFromObjectToReference.instance,
-				//AllowReadFromReferenceToSourceTargetObject.instance
-				//DenyReadFromContainmentReferenceToChildrenObject.instance,
-				//DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
-				//AllowWriteFromContainmentReferenceToChildrenObject.instance,
-				//AllowReadFromAttributeToContainerObject.instance,
-			    //AllowWriteFromIDAttributeToContainerReference.instance,
-			    //DenyReadFromIDAttributeToContainerObject.instance
+				AllowReadFromReferenceToSourceTargetObject.instance,
+				DenyReadFromContainmentReferenceToChildrenObject.instance,
+				DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
+				AllowWriteFromContainmentReferenceToChildrenObject.instance,
+				AllowReadFromAttributeToContainerObject.instance,
+			    AllowWriteFromIDAttributeToContainerReference.instance,
+			    DenyReadFromIDAttributeToContainerObject.instance
 			);
 		
-		public static Set<IConsequence> DefaultWeakConsequences = Sets.newHashSet(
+		public static final Set<Consequence> DefaultWeakConsequences = Sets.newHashSet(
 			    FromObjectToAttributeWeakConsequence.instance,
 			    FromObjectToReferenceWeakConsequence.instance
 			);

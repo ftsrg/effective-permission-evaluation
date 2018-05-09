@@ -9,17 +9,17 @@ import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromObjectToContainer implements IConsequence{
+public class AllowReadFromObjectToContainer extends Consequence{
 	
 	private AllowReadFromObjectToContainer() {
 	}
 	
-	public static IConsequence instance = new AllowReadFromObjectToContainer();
+	public static Consequence instance = new AllowReadFromObjectToContainer();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {

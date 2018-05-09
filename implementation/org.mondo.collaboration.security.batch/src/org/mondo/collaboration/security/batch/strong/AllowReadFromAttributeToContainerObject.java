@@ -8,16 +8,16 @@ import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
-import org.mondo.collaboration.security.batch.IConsequence;
+import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromAttributeToContainerObject implements IConsequence{
+public class AllowReadFromAttributeToContainerObject extends Consequence{
 	private AllowReadFromAttributeToContainerObject() {
 	}
 	
-	public static IConsequence instance = new AllowReadFromAttributeToContainerObject();
+	public static Consequence instance = new AllowReadFromAttributeToContainerObject();
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
