@@ -35,8 +35,6 @@ import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.Factory;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
-import org.mondo.collaboration.security.batch.util.AssetFactory;
-import org.mondo.collaboration.security.batch.util.JudgementStorage;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
@@ -46,8 +44,9 @@ import com.google.common.collect.Sets;
 public class RuleManager {
 	private Logger LOGGER = Logger.getLogger(RuleManager.class);
 
-	private JudgementStorage permissionStorage;
-	private Set<Judgement> processedSet;
+	private JudgementStorage judgementStorage;
+	private Map<Asset, Map<OperationType, Judgement>> effectivePermissionsMap;
+	private Collection<Judgement> effectiveJudgements;
 
 	private Collection<Consequence> weakConsequences = Consequence.DefaultConsequenceTypes.DefaultWeakConsequences;
 	private Collection<Consequence> strongConsequences = Consequence.DefaultConsequenceTypes.DefaultStrongConsequences;
@@ -59,10 +58,12 @@ public class RuleManager {
 	private Map<Pattern, ViatraQueryMatcher<IPatternMatch>> matchers = Maps.newHashMap();
 	private Map<String, IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> querySpecifications;
 
+	private Map<Rule, Map<Variable, Object>> bindingMap = Maps.newHashMap();
 	private Multimap<EObject, ReferenceAsset> incomingReferenceMap = ArrayListMultimap.create();
 	
 	private int numOfConsequences;
 	private int numOfAssets;
+	private int numOfExplicits;
 	
 	public RuleManager(Resource model, AccessControlModel rules) {
 		this.instanceModel = model;
@@ -75,8 +76,7 @@ public class RuleManager {
 		querySpecifications = Maps.newHashMap();
 		for (IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> specification : specifications) {
 			querySpecifications.put(specification.getFullyQualifiedName(), specification);
-		}
-		
+		}		
 	}
 	
 	public void dispose() {
@@ -100,6 +100,7 @@ public class RuleManager {
 			IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> querySpecification = querySpecifications.get(patternQualifiedName(rule.getPattern()));
 			ViatraQueryMatcher<IPatternMatch> queryMatcher = advancedQueryEngine.getMatcher(querySpecification);
 			matchers.put(rule.getPattern(), queryMatcher);
+			initializeBindings(rule);
 		}
 		
 		for (Consequence consequence : weakConsequences) {
@@ -113,54 +114,74 @@ public class RuleManager {
 		LOGGER.info(String.format("ViatraQueryEngine is initialized in %d nanosec", end - start));
 	}
 
-	public Set<Judgement> calculateEffectivePermissions(User user) throws ViatraQueryException {
+	public Collection<Judgement> calculateEffectivePermissions(User user) throws ViatraQueryException {
 		ResolutionType resolution = accessControlModel.getPolicy().getResolution();
-		permissionStorage = new JudgementStorage(resolution);
-		processedSet = Sets.newHashSet();
+		judgementStorage = new JudgementStorage(resolution);
+		effectivePermissionsMap = Maps.newHashMap();
+		effectiveJudgements = Sets.newHashSet();
 
 		addInitialPermissions(user);
-		LOGGER.info("Number of initial permissions: " + permissionStorage.size());
+		LOGGER.info("Number of initial permissions: " + judgementStorage.size());
 		LOGGER.info("Calculating effective permissions");
 		long start = System.nanoTime();
 
 		numOfConsequences = 0;
-		for (Judgement dominant = null; !permissionStorage.isEmpty();) {
-			dominant = permissionStorage.last(); 
-			processedSet.add(dominant);
-			permissionStorage.remove(dominant);
+		for (Judgement dominant = null; !judgementStorage.isEmpty();) {
+			dominant = judgementStorage.last(); 
+			dominant = judgementStorage.resolveConflict(dominant);
 			if (dominant.getPriority() > -1) {
-				permissionStorage.resolveConflict(dominant);
 				propagateStrongConsequences(dominant);
 				propagateWeakConsequences(dominant);
 			}
+			addEffectivePermission(dominant);
 		}
 		long end = System.nanoTime();
 		LOGGER.info(String.format("Effective Permissions are calculated in %d nanosec", end - start));
 		LOGGER.info(String.format("Number of propagated consequences: %d", numOfConsequences));
-		return processedSet;
+		return effectiveJudgements;
 	}
 
+	private boolean isEffectivePermissionsContains(Judgement j) {
+		Map<OperationType, Judgement> operationMap = effectivePermissionsMap.get(j.getAsset());
+		if(operationMap == null) {
+			return false;
+		}
+		if(!operationMap.containsKey(j.getOperation())) {
+			return false;
+		}
+		return true; 
+	}
+	
+	private void addEffectivePermission(Judgement j) {
+		Map<OperationType, Judgement> operationMap = effectivePermissionsMap.get(j.getAsset());
+		if(operationMap == null) {
+			operationMap = Maps.newHashMap();
+			effectivePermissionsMap.put(j.getAsset(), operationMap);
+		}
+		if(!operationMap.containsKey(j.getOperation())) {
+			operationMap.put(j.getOperation(), j);
+			effectiveJudgements.add(j);
+		}
+	}
+	
 	private void addInitialPermissions(User user) throws ViatraQueryException {
 		addExplicitPermissions(user);
 		addDefaultPermissions();
 	}
 
 	private void addExplicitPermissions(User user) throws ViatraQueryException {
+		numOfExplicits = 0;
 		for (Rule rule : accessControlModel.getPolicy().getRules()) {
-			int numOfExplicits = 0;
 			for (Role role : rule.getRoles()) {
 				if (getRolesOfUser(accessControlModel, user).contains(role)) {
-					Collection<? extends IPatternMatch> matches = getPatternMatches(advancedQueryEngine, rule);
-					for (IPatternMatch match : matches) {
+					for (IPatternMatch match : matchesOf(rule)) {
 						Factory factory = AssetFactory.factoryFrom(rule);
-						Set<? extends Asset> assetSet = factory.apply(match);
-						for (Asset asset : assetSet) {
+						for (Asset asset : factory.apply(match)) {
 							addExplicitPermission(rule, asset);
 							numOfExplicits++;
 						}
 					}
 					LOGGER.info(String.format("Number of explicit judgements: %s", numOfExplicits));
-
 					break;
 				}
 			}
@@ -171,14 +192,14 @@ public class RuleManager {
 		AccessibilityLevel access = rule.getAccess();
 		int priority = rule.getPriority();
 		if (access == AccessibilityLevel.OBFUSCATE) {
-			permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
 		} else {
 			OperationType operation = rule.getOperation();
 			if (operation == OperationType.READWRITE) {
-				permissionStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-				permissionStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
 			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-				permissionStorage.add(new Judgement(access, operation, asset, priority));
+				judgementStorage.add(new Judgement(access, operation, asset, priority));
 			}
 		}
 	}
@@ -203,7 +224,6 @@ public class RuleManager {
 
 			// references
 			for (EReference reference : object.eClass().getEAllReferences()) {
-				// containment reference
 				if (reference.isMany()) {
 					@SuppressWarnings("unchecked")
 					EList<EObject> targets = (EList<EObject>) object.eGet(reference);
@@ -212,7 +232,6 @@ public class RuleManager {
 						numOfAssets++;
 						addDefaultPermission(refAsset);
 					}
-					// association
 				} else {
 					EObject target = (EObject) object.eGet(reference);
 					if (target != null) {
@@ -230,10 +249,10 @@ public class RuleManager {
 		AccessibilityLevel access = accessControlModel.getPolicy().getAccess();
 		OperationType operation = accessControlModel.getPolicy().getOperation();
 		if (operation == OperationType.READWRITE) {
-			permissionStorage.add(new Judgement(access, OperationType.READ, asset, -1));
-			permissionStorage.add(new Judgement(access, OperationType.WRITE, asset, -1));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, -1));
+			judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, -1));
 		} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-			permissionStorage.add(new Judgement(access, operation, asset, -1));
+			judgementStorage.add(new Judgement(access, operation, asset, -1));
 		}
 		
 		if(asset instanceof ReferenceAsset) {
@@ -247,8 +266,10 @@ public class RuleManager {
 		for (Consequence weakConsequence : weakConsequences) {
 			Set<Judgement> consequences = weakConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
-				permissionStorage.add(j);
-				numOfConsequences++;
+				if(!isEffectivePermissionsContains(j)) {
+					judgementStorage.add(j);
+					numOfConsequences++;
+				}
 			}
 		}
 	}
@@ -257,8 +278,10 @@ public class RuleManager {
 		for (Consequence strongConsequence : strongConsequences) {
 			Set<Judgement> consequences = strongConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
-				permissionStorage.add(j);
-				numOfConsequences++;
+				if(!isEffectivePermissionsContains(j)) {
+					judgementStorage.add(j);
+					numOfConsequences++;
+				}
 			}
 		}
 	}
@@ -290,47 +313,57 @@ public class RuleManager {
 		return userList;
 	}
 
-	public Collection<? extends IPatternMatch> getPatternMatches(AdvancedViatraQueryEngine advancedQueryEngine,
-			Rule rule) throws ViatraQueryException {
-		Collection<? extends IPatternMatch> matches = null;
+	private Collection<IPatternMatch> matchesOf(Rule rule) throws ViatraQueryException {
 		ViatraQueryMatcher<IPatternMatch> queryMatcher = matchers.get(rule.getPattern());
-		if (queryMatcher != null) {
-			if (!rule.getBindings().isEmpty()) {
-				List<Object> bindList = getBindList(rule.getPattern(), rule);
-				IPatternMatch filterMatch = queryMatcher.newMatch(bindList.toArray(new Object[bindList.size()]));
-				matches = queryMatcher.getAllMatches(filterMatch);
-			} else {
-				matches = queryMatcher.getAllMatches();
-			}
-		}
-		return matches;
-	}
-
-	public List<Object> getBindList(Pattern pattern, Rule rule) {
-		List<Object> bindList = new ArrayList<Object>();
-		EList<Variable> parameterList = pattern.getParameters();
-		for (Variable parameter : parameterList) {
-			bindList.add(getBoundValue(parameter, rule));
-		}
-		return bindList;
-	}
-
-	public Object getBoundValue(Variable parameter, Rule rule) {
-		for (Binding binding : rule.getBindings()) {
-			if (binding.getVariable().equals(parameter)) {
-				String bind = binding.getBind().getValueString();
-				return bind;
-			}
-		}
-		return null;
+		IPatternMatch filterMatch = buildFilterMatch(rule);
+		return queryMatcher.getAllMatches(filterMatch);
 	}
 	
-	public static String patternQualifiedName(Pattern pattern) {
+	private static String patternQualifiedName(Pattern pattern) {
 		PatternModel patternModel = (PatternModel) pattern.eContainer();
 		return patternModel.getPackageName() + "." + pattern.getName();
 	}
-
+	
+	private IPatternMatch buildFilterMatch(Rule rule) {
+		ViatraQueryMatcher<IPatternMatch> queryMatcher = matchers.get(rule.getPattern());
+		IPatternMatch filterMatch = queryMatcher.newEmptyMatch();
+		Map<Variable, Object> bindings = bindingMap.get(rule);
+		for (Variable variable : bindings.keySet()) {
+			filterMatch.set(variable.getName(), bindings.get(variable));
+		}
+		return filterMatch.toImmutable();
+	}
+	
+	private void initializeBindings(Rule rule) {
+		Map<Variable, Object> bindings = Maps.newHashMap();
+		bindingMap.put(rule, bindings);
+		
+		for (Binding binding : rule.getBindings()) {
+			bindings.put(binding.getVariable(), getBoundValue(binding));
+		}
+	}
+	
+	private Object getBoundValue(Binding binding) {
+		String valueString = binding.getBind().getValueString();
+		if(valueString == null) {
+			return binding.getBind().getValueInteger();
+		} 
+		return valueString;
+	}
+	
 	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {
 		return incomingReferenceMap.get(obj);
+	}
+	
+	public int getNumOfAssets() {
+		return numOfAssets;
+	}
+	
+	public int getNumOfConsequences() {
+		return numOfConsequences;
+	}
+	
+	public int getNumOfExplicits() {
+		return numOfExplicits;
 	}
 }

@@ -1,4 +1,4 @@
-package org.mondo.collaboration.security.batch.util;
+package org.mondo.collaboration.security.batch;
 
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;

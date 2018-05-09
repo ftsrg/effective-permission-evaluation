@@ -1,11 +1,9 @@
 package org.mondo.collaboration.security.batch;
 
-import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 
-public class Judgement {
+public class Judgement implements Comparable<Judgement> {
 	
 	private Asset asset;
 	private AccessibilityLevel access;
@@ -40,11 +38,6 @@ public class Judgement {
 	}
 
 	@Override
-	public String toString() {
-		return "Judgement [" + access + ", " + operation + ", " + asset + ", " + priority + "]";
-	}
-	
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -68,5 +61,10 @@ public class Judgement {
 		}
 		
 		return super.equals(obj);
+	}
+
+	@Override
+	public int compareTo(Judgement other) {
+		return hashCode() - other.hashCode();
 	}
 }

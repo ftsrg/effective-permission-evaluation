@@ -37,7 +37,7 @@ public abstract class Consequence {
 				AllowReadFromObjectToContainer.instance,
 				AllowReadFromObjectToIDAttribute.instance,
 				AllowWriteFromObjectToContainerReference.instance,
-				//DenyReadFromObjectToReference.instance,
+				DenyReadFromObjectToReference.instance,
 				AllowReadFromReferenceToSourceTargetObject.instance,
 				DenyReadFromContainmentReferenceToChildrenObject.instance,
 				DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
@@ -51,6 +51,5 @@ public abstract class Consequence {
 			    FromObjectToAttributeWeakConsequence.instance,
 			    FromObjectToReferenceWeakConsequence.instance
 			);
-		
 	}
 }

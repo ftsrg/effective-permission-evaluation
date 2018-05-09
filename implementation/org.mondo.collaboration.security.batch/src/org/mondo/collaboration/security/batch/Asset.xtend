@@ -31,27 +31,20 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
  *
  */
 abstract class Asset {	
-	def abstract Tuple toTuple();
-	def abstract void WriteOut();
 	
-    @Data public static class ObjectAsset extends Asset {
+	@Data public static class ObjectAsset extends Asset {
 		EObject object
 		
-		override toTuple() {
-			new FlatTuple(object)
-		}
 		def static Factory factory(int objectPos) {
 			[#{new ObjectAsset(get(objectPos) as EObject)}] 
 		}
-		override WriteOut(){
-			println(object.toString);
-		}
+	
 		override equals(Object o){
 			if(!(o instanceof ObjectAsset)){
 				return false;
 			} else {
 				val objAsset = o as ObjectAsset;
-				hashCode == objAsset.hashCode;
+				return hashCode == objAsset.hashCode;
 			}
 			
 		}
@@ -59,6 +52,7 @@ abstract class Asset {
 			val prime = 31;
 			var result = 1;
 			result = prime * result + object.hashCode();
+			return result
 		}
 	}
     
@@ -67,9 +61,6 @@ abstract class Asset {
 		EReference reference
 		EObject target
 		
-		override toTuple() {
-			new FlatTuple(source, reference, target)
-		}
 		def static Factory factory(int sourcePos, EReference reference, int targetPos) {
 			val opposite = reference.EOpposite
 			if (opposite == null)
@@ -96,18 +87,14 @@ abstract class Asset {
 					#{new ReferenceAsset(src, reference, trg), new ReferenceAsset(trg, opposite, src)}
 			]
 		}
-		override WriteOut(){
-			println(source.toString + " -> " + target.toString + ": " + reference.name);
-		}
 		
 		override equals(Object o){
 			if(!(o instanceof ReferenceAsset)){
 				return false;
 			} else {
 				val refAsset = o as ReferenceAsset;
-				hashCode == refAsset.hashCode;
+				return hashCode == refAsset.hashCode;
 			}
-			hashCode == o.hashCode;
 		}
 		
 		override hashCode(){
@@ -116,15 +103,13 @@ abstract class Asset {
 			result = prime * result + source.hashCode();
 			result = prime * result + reference.hashCode();
 			result = prime * result + target.hashCode();
+			return result
 		}
     }
     @Data public static class AttributeAsset extends Asset {
 		EObject source
 		EAttribute attribute
 		
-		override toTuple() {
-			new FlatTuple(source, attribute)
-		}	
 		def static Factory factory(int sourcePos, EAttribute attribute) {
 			[#{new AttributeAsset(get(sourcePos) as EObject, attribute)}] 
 		}	
@@ -132,22 +117,19 @@ abstract class Asset {
 			[
 				val src = get(sourcePos) as EObject
 				val feature = src.eClass.getEStructuralFeature(attributeName)
-				if (feature == null || !(feature instanceof EAttribute))
+				if (feature === null || !(feature instanceof EAttribute))
 					throw new IllegalArgumentException('''Security Policy parsing error: No EAttribute of name «attributeName» found in EClass «src.eClass» of object «src»''')
 				val attribute = feature as EAttribute
 				#{new AttributeAsset(src, attribute)}
 			] 
 		}
-		override WriteOut(){
-			println(source.toString + ": " + attribute.name);
-		}
-		
+	
 		override equals(Object o){
 			if(!(o instanceof AttributeAsset)){
 				return false;
 			} else {
 				val attrAsset = o as AttributeAsset;
-				hashCode == attrAsset.hashCode;
+				return hashCode == attrAsset.hashCode;
 			}
 		}
 		
@@ -156,70 +138,10 @@ abstract class Asset {
 			var result = 1;
 			result = prime * result + source.hashCode();
 			result = prime * result + attribute.hashCode();
+			return result
 		}
     }
     
-   public def static getKinds() {
-		Asset.classes.filter[Asset.isAssignableFrom(it)].map[it as Class<? extends Asset>]
-   }
-    
    public static interface Factory extends Function<IPatternMatch, Set<? extends Asset>> {}
-   
-   def static Factory factoryFrom(IQuerySpecification<?> query) {
-   		val objAnnotation = query.allAnnotations.findFirst[name == "SecurityObject"]
-   		if (objAnnotation != null) {
-			val objectPos = getParameterIndexFromAnnotationValue(objAnnotation, "object", query) 
-			return ObjectAsset.factory(objectPos) 					
-   		}
-   		
-   		val refAnnotation = query.allAnnotations.findFirst[name == "SecurityReference"]
-   		if (refAnnotation != null) {
-			val srcPos = getParameterIndexFromAnnotationValue(refAnnotation, "src", query) 
-			val trgPos = getParameterIndexFromAnnotationValue(refAnnotation, "trg", query) 
-			val featureName = refAnnotation.getFirstValue("feature") as String
-			// TODO attempt to statically resolve EStructuralFeature instead for better performance?
-			return ReferenceAsset.factory(srcPos, featureName, trgPos)  					
-   		}
-   		
-   		val attrAnnotation = query.allAnnotations.findFirst[name == "SecurityAttribute"]
-   		if (attrAnnotation != null) {
-			val srcPos = getParameterIndexFromAnnotationValue(attrAnnotation, "src", query) 
-			val featureName = attrAnnotation.getFirstValue("feature") as String
-			// TODO attempt to statically resolve EStructuralFeature instead for better performance?
-			return AttributeAsset.factory(srcPos, featureName)  					
-   		}
-   		
-   		val simpleName = Splitter.on('.').split(query.fullyQualifiedName).last
-   		if (simpleName.startsWith("object")) {
-			return ObjectAsset.factory(0 /* first parameter is position */) 					
-   		} else if (simpleName.startsWith("reference")) {
-			// TODO attempt to statically resolve EStructuralFeature instead for better performance?
-			return ReferenceAsset.factory(0, simpleName.substring("reference".length), 1)  					
-   		} else if (simpleName.startsWith("attribute")) {
-			// TODO attempt to statically resolve EStructuralFeature instead for better performance?
-			return AttributeAsset.factory(0, simpleName.substring("attribute".length))  					
-   		}
 
-		throw new IllegalArgumentException(
-		'''Pattern «query.fullyQualifiedName» unrecognizable as security asset specification without annotations or naming convention.''');
-   	}
-				
-	private def static getParameterIndexFromAnnotationValue(PAnnotation annotation, String annotationValueName, IQuerySpecification<?> query) {
-		val annotationValue = annotation.getFirstValue(annotationValueName)
-		val paramName = switch annotationValue {
-			ParameterReference : annotationValue.name
-			String: annotationValue
-			default : 
-				throw new IllegalArgumentException(
-					'''Annotation parameter '«annotationValueName»' not found for annotation @«annotation.name» on query «query.fullyQualifiedName».''')   					
-		}
-		if (paramName == null) 
-			throw new IllegalArgumentException(
-				'''Parameter name not given for annotation parameter '«annotationValueName»' of @«annotation.name» on query «query.fullyQualifiedName».''')   					
-		val pos = query.getPositionOfParameter(paramName)
-		if (pos == null)
-			throw new IllegalArgumentException(
-			'''Parameter name «paramName» (as indicated by annotation @«annotation.name») not found for query «query.fullyQualifiedName».''')
-		pos
-	}
 }
