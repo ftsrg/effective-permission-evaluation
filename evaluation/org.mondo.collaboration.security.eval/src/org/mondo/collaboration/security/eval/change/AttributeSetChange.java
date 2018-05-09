@@ -20,7 +20,7 @@ public class AttributeSetChange extends AbstractChangeApplier {
 	private Collection<Composite> composites = Sets.newHashSet();
 
 	public AttributeSetChange(Resource model, int limit) {
-		super(model, limit/2);
+		super(model, limit);
 	}
 
 	@Override
@@ -48,9 +48,9 @@ public class AttributeSetChange extends AbstractChangeApplier {
 
 	@Override
 	public void revert() {
-		for (Composite composite : composites) {
-			composite.setProtectedIP(!composite.isProtectedIP());
-		}
+//		for (Composite composite : composites) {
+//			composite.setProtectedIP(!composite.isProtectedIP());
+//		}
 	}
 	
 	@Override

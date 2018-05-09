@@ -80,6 +80,9 @@ public class RuleManager {
 	}
 	
 	public void dispose() {
+		judgementStorage.dispose();
+		effectiveJudgements.clear();
+		effectivePermissionsMap.clear();
 		advancedQueryEngine.dispose();
 	}
 	
@@ -95,7 +98,7 @@ public class RuleManager {
 		LOGGER.info("Inizialize ViatraQueryEngine with Rules on the Model");
 		long start = System.nanoTime();
 		advancedQueryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(instanceModel));
-
+		
 		for (Rule rule : accessControlModel.getPolicy().getRules()) {
 			IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> querySpecification = querySpecifications.get(patternQualifiedName(rule.getPattern()));
 			ViatraQueryMatcher<IPatternMatch> queryMatcher = advancedQueryEngine.getMatcher(querySpecification);
@@ -350,6 +353,8 @@ public class RuleManager {
 		} 
 		return valueString;
 	}
+	
+	
 	
 	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {
 		return incomingReferenceMap.get(obj);

@@ -17,19 +17,7 @@ public class CombinatedEvaluation extends AbstractEvaluation {
 
 	public static void main(String[] args) throws ViatraQueryException {
 		AbstractEvaluation evaluation = new BatchEvaluation();
-
-		for (int modelSize : MODEL_SIZES) {
-			for (int limitSize : LIMIT_SIZES) {
-				for (int userSize : USER_SIZES) {
-					if (userSize > limitSize) {
-						break;
-					}
-					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, true, true,
-							args);
-					evaluation.evaluate(arguments);
-				}
-			}
-		}
+		evaluate(args, evaluation);
 	}
 
 	@Override
@@ -40,7 +28,7 @@ public class CombinatedEvaluation extends AbstractEvaluation {
 	
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
-		long memory = currentMemoryUsage();
+		long memory = beforeMemoryUsage();
 		long time = currentTime();
 
 		for (User user : getCollaborators()) {
@@ -49,7 +37,7 @@ public class CombinatedEvaluation extends AbstractEvaluation {
 		}
 
 		time = currentTime() - time;
-		memory = currentMemoryUsage() - memory;
+		memory = beforeMemoryUsage() - memory;
 
 		results.add(new AbstractMap.SimpleEntry<Long, Long>(time, memory));
 	}

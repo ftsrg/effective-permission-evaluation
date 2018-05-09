@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
@@ -26,6 +27,7 @@ import org.mondo.collaboration.security.eval.change.AttributeSetChange;
 import org.mondo.collaboration.security.eval.change.CreationDeletionChange;
 import org.mondo.collaboration.security.eval.change.ReferenceSetChange;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -34,33 +36,69 @@ import wt.WtPackage;
 
 public abstract class AbstractEvaluation {
 	
-	public static final int[] MODEL_SIZES = { 25, 50, 100, 200 };
+	public static final int[] MODEL_SIZES = { 50, 100, 150, 200, 250, 300, 350};
 	public static final int[] LIMIT_SIZES = { 30 };
-	public static final int[] USER_SIZES = { 10 };
+	public static final int[] USER_SIZES = { 1, 10, 20 };
+	public static final int[] MODIFICATION_SIZES = { 5, 10, 20 };
 	public static final int REPEAT = 10;
-	public static final int MODIFICATIONS = 20;
 	
 	
 	private static final String ECORE_ARG = "-ecore";
 	private static final String REPEAT_ARG = "-repeat";
 	private static final String LIMIT_SIZE_ARG = "-limit-user";
+	private static final String MODIFICATION_SIZE_ARG = "-modifications";
 	private static final String USER_SIZE_ARG = "-user-size";
 	private static final String MODEL_SIZE_ARG = "-model-size";
 	private static final String TEST_EVALUATION_ARG = "-test-evaluate";
 	private static final String ADDITIONAL_INFO_ARG = "-more-info";
-	protected HashMap<String, String> mainArgs;
+	
+	protected static void internalEvaluation(String[] args, AbstractEvaluation evaluation) throws ViatraQueryException {
+		for (int modelSize : MODEL_SIZES) {
+			for (int limitSize : LIMIT_SIZES) {
+				for (int userSize : USER_SIZES) {
+					if (userSize > limitSize) {
+						break;
+					}
+					for (int modifications : MODIFICATION_SIZES) {
+						evaluation.setModelSize(modelSize)
+								  .setLimitSize(limitSize)
+								  .setUserSize(userSize)
+								  .setEcoreFilePath(args[1])
+								  .setModificationSize(modifications)
+								  .setRepeatNumber(REPEAT)
+								  .setTestEvaluation(false)
+								  .setPrintAdditionalInfo(false);
+						
+						evaluation.evaluate();
+					}
+				}
+			}
+		}
+	}
 
+	protected static void evaluate(String[] args, AbstractEvaluation evaluation) throws ViatraQueryException {
+		if(args.length > 2) {
+			evaluation.evaluate(args);
+		} else {
+			internalEvaluation(args, evaluation);
+		}
+	}
+
+	protected HashMap<String, String> mainArgs = Maps.newHashMap();
+
+	private boolean firstTime = true;
+	
 	private ResourceSet modelResourceSet;
 	private XtextResourceSet helperResourceSet;
 	private Resource instanceModel;
 	private Resource accessControlModel;
+	private Set<User> users;
 
 	protected void processArgs(String[] args) {
 		if (args.length % 2 != 0) {
 			throw new IllegalArgumentException("Missing argument parameter!");
 		}
-		mainArgs = new HashMap<String, String>();
-
+		
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].trim().startsWith(MODEL_SIZE_ARG))
 				mainArgs.put(MODEL_SIZE_ARG, args[i + 1]);
@@ -81,13 +119,19 @@ public abstract class AbstractEvaluation {
 
 	public void evaluate(String[] args) throws ViatraQueryException {
 		processArgs(args);
-		
-		initialize();
-		loadResources();
+		evaluate();
+	}
+
+	public void evaluate() throws ViatraQueryException {
 		
 		if(!isTestEvaluation()) {
-			System.out.println("Model;Limit;User;Type;Time;Memory");
+			if(firstTime) {
+				System.out.println("Model;Limit;User;Type;Time;Memory");
+				firstTime = false;
+			}
 			for (int i = 0; i < getRepeatNumber(); i++) {
+				initialize();
+				loadResources();
 				prepareEvaluation();
 				doEvaluation();
 				applyChanges();
@@ -113,13 +157,13 @@ public abstract class AbstractEvaluation {
 		modelResourceSet.getResources().clear();
 		helperResourceSet.getResources().clear();
 		
-		long initialMemory = currentMemoryUsage();
+		long initialMemory = beforeMemoryUsage();
 		modelResourceSet.getResource(ecoreUri, true);
-		long metamodelMemory = currentMemoryUsage() - initialMemory;
+		long metamodelMemory = beforeMemoryUsage() - initialMemory;
 		instanceModel = modelResourceSet.getResource(instanceUri, true);
-		long instanceModelMemory = currentMemoryUsage() - metamodelMemory;
+		long instanceModelMemory = beforeMemoryUsage() - metamodelMemory;
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
-		long accessControlModelMemory = currentMemoryUsage() - instanceModelMemory;
+		long accessControlModelMemory = beforeMemoryUsage() - instanceModelMemory;
 
 		if(printAdditionalInfo()) {
 			countAssetsOfModel();
@@ -127,13 +171,17 @@ public abstract class AbstractEvaluation {
 		}
 	}
 	
-	protected long currentMemoryUsage() {
+	protected long beforeMemoryUsage() {
+		System.gc();		
 		System.gc();
-		System.gc();
-		System.gc();
+		System.gc();		
 		System.gc();
 		System.gc();		
 		
+		return afterMemoryUsage();
+	}
+
+	protected long afterMemoryUsage() {
 		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 	}
 
@@ -196,16 +244,12 @@ public abstract class AbstractEvaluation {
 	}
 
 	protected AccessControlModel getAccessControlModel() {
+		
 		return (AccessControlModel) accessControlModel.getContents().get(0);
 	}
 
 	protected Collection<User> getCollaborators() {
-		return getAccessControlModel().getRoles().stream()
-				.filter(x -> x instanceof User)
-				.filter(x -> x.getName().startsWith("user_"))
-				.map(x -> (User) x)
-				.sorted((x,y) -> x.getName().compareTo(y.getName()))
-				.limit(getUserSize()).collect(toSet());
+		return users;
 	}
 
 	public XtextResourceSet getHelperResourceSet() {
@@ -223,6 +267,11 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(REPEAT_ARG));
 	}
 
+	protected AbstractEvaluation setRepeatNumber(int repeat) {
+		mainArgs.put(REPEAT_ARG, String.valueOf(repeat));
+		return this;
+	}
+	
 	protected int getModelSize() {
 		if (mainArgs.get(MODEL_SIZE_ARG) == null)
 			throw new IllegalArgumentException();
@@ -230,6 +279,11 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(MODEL_SIZE_ARG));
 	}
 
+	protected AbstractEvaluation setModelSize(int modelSize) {
+		mainArgs.put(MODEL_SIZE_ARG, String.valueOf(modelSize));
+		return this;
+	}
+	
 	protected int getUserSize() {
 		if (mainArgs.get(USER_SIZE_ARG) == null)
 			throw new IllegalArgumentException();
@@ -237,17 +291,34 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(USER_SIZE_ARG));
 	}
 
+	protected AbstractEvaluation setUserSize(int userSize) {
+		mainArgs.put(USER_SIZE_ARG, String.valueOf(userSize));
+		
+		return this;
+	}
+	
 	protected boolean printAdditionalInfo() {
 		if (mainArgs.containsKey(ADDITIONAL_INFO_ARG))
 			return true;
 		return false;
 	}
 
+	protected AbstractEvaluation setPrintAdditionalInfo(boolean isTestEvaluation) {
+		if(isTestEvaluation)
+			mainArgs.put(TEST_EVALUATION_ARG, "");
+		return this;
+	}
 	
 	protected boolean isTestEvaluation() {
-		if (mainArgs.containsKey(TEST_EVALUATION_ARG))
+		if (mainArgs.containsKey(ADDITIONAL_INFO_ARG))
 			return true;
 		return false;
+	}
+	
+	protected AbstractEvaluation setTestEvaluation(boolean isTestEvaluation) {
+		if(isTestEvaluation)
+			mainArgs.put(TEST_EVALUATION_ARG, "");
+		return this;
 	}
 	
 	protected String getEcoreFilePath() {
@@ -257,6 +328,11 @@ public abstract class AbstractEvaluation {
 		return mainArgs.get(ECORE_ARG);
 	}
 
+	protected AbstractEvaluation setEcoreFilePath(String path) {
+		mainArgs.put(ECORE_ARG, path);
+		return this;
+	}
+	
 	protected int getLimitSize() {
 		if (mainArgs.get(LIMIT_SIZE_ARG) == null)
 			throw new IllegalArgumentException();
@@ -264,30 +340,21 @@ public abstract class AbstractEvaluation {
 		return Integer.valueOf(mainArgs.get(LIMIT_SIZE_ARG));
 	}
 
-	public String[] emulateArguments(int modelSize, int limitSize, int userSize, int repeat, boolean additionalInfo, boolean testEvaluation, String[] args) {
-		String[] arguments = new String[12];
-		arguments[0] = MODEL_SIZE_ARG;
-		arguments[1] = String.valueOf(modelSize);
-		arguments[2] = LIMIT_SIZE_ARG;
-		arguments[3] = String.valueOf(limitSize);
-		arguments[4] = USER_SIZE_ARG;
-		arguments[5] = String.valueOf(userSize);
-		arguments[6] = REPEAT_ARG;
-		arguments[7] = String.valueOf(repeat);
-		arguments[8] = ECORE_ARG;
-		arguments[9] = getEcorePath(args);
-		arguments[10] = additionalInfo ? ADDITIONAL_INFO_ARG : "";
-		arguments[11] = testEvaluation ? TEST_EVALUATION_ARG : "";
-		
-		return arguments;
+	protected AbstractEvaluation setLimitSize(int limitSize) {
+		mainArgs.put(LIMIT_SIZE_ARG, String.valueOf(limitSize));
+		return this;
 	}
 
-	private String getEcorePath(String[] args) {
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].trim().startsWith(ECORE_ARG))
-				return args[i + 1];
-		}
-		return null;
+	protected int getModificationSize() {
+		if (mainArgs.get(MODIFICATION_SIZE_ARG) == null)
+			throw new IllegalArgumentException();
+
+		return Integer.valueOf(mainArgs.get(MODIFICATION_SIZE_ARG));
+	}
+
+	protected AbstractEvaluation setModificationSize(int modificationSize) {
+		mainArgs.put(MODIFICATION_SIZE_ARG, String.valueOf(modificationSize));
+		return this;
 	}
 
 	protected long currentTime() {
@@ -296,9 +363,9 @@ public abstract class AbstractEvaluation {
 
 	protected void applyChanges() throws ViatraQueryException {
 		Collection<AbstractChangeApplier> appliers = Sets.newHashSet(
-				new AttributeSetChange(getInstanceModelResource(), MODIFICATIONS),
-				new CreationDeletionChange(getInstanceModelResource(), MODIFICATIONS),
-				new ReferenceSetChange(getInstanceModelResource(), MODIFICATIONS));
+				new AttributeSetChange(getInstanceModelResource(), getModificationSize()),
+				new CreationDeletionChange(getInstanceModelResource(), getModificationSize()),
+				new ReferenceSetChange(getInstanceModelResource(), getModificationSize()));
 	
 		for (AbstractChangeApplier applier : appliers) {
 			applier.collect(getCollaborators());
@@ -314,7 +381,14 @@ public abstract class AbstractEvaluation {
 		afterChangeExecution();
 	}
 	
-	protected void prepareEvaluation() throws ViatraQueryException {}
+	protected void prepareEvaluation() throws ViatraQueryException {
+		users = getAccessControlModel().getRoles().stream()
+				.filter(x -> x instanceof User)
+				.filter(x -> x.getName().startsWith("user_"))
+				.map(x -> (User) x)
+				.sorted((x,y) -> x.getName().compareTo(y.getName()))
+				.limit(getUserSize()).collect(toSet());
+	}
 
 	protected void beforeChangeExecution(AbstractChangeApplier applier) {}
 
@@ -326,11 +400,15 @@ public abstract class AbstractEvaluation {
 
 	protected void dispose() {}
 	
-	protected void printTime(long time, long memory, String type) {
-		System.out.print(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + type + ";");
+	protected void printTime(long time, long memory, String type, Object... additionals) {
+		System.out.print(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + (getModificationSize() * 3) + ";" + type + ";");
 		System.out.format("%,d", time);
 		System.out.print(";");
 		System.out.format("%,d", memory);
+		for (int i = 0; i < additionals.length; i++) {
+			System.out.print(";");
+			System.out.print(additionals[i]);
+		}
 		System.out.println();
 	}
 }

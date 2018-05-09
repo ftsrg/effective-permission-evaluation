@@ -1,0 +1,2517 @@
+package org.mondo.collaboration.security.query
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.mondo.org/collaboration/policy/Rules"
+import "http://wt/access-control"
+
+
+pattern effectiveJudgementOnObjectForUsersuperuser(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("superuser", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUsersuperuser(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("superuser", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUsersuperuser(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("superuser", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_1(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_1", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_1(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_1", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_1(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_1", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_2(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_2", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_2(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_2", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_2(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_2", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_3(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_3", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_3(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_3", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_3(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_3", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_4(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_4", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_4(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_4", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_4(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_4", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_5(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_5", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_5(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_5", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_5(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_5", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_6(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_6", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_6(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_6", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_6(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_6", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_7(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_7", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_7(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_7", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_7(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_7", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_8(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_8", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_8(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_8", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_8(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_8", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_9(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_9", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_9(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_9", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_9(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_9", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_10(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_10", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_10(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_10", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_10(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_10", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_11(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_11", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_11(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_11", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_11(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_11", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_12(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_12", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_12(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_12", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_12(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_12", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_13(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_13", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_13(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_13", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_13(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_13", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_14(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_14", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_14(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_14", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_14(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_14", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_15(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_15", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_15(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_15", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_15(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_15", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_16(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_16", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_16(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_16", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_16(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_16", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_17(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_17", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_17(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_17", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_17(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_17", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_18(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_18", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_18(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_18", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_18(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_18", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_19(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_19", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_19(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_19", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_19(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_19", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_20(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_20", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_20(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_20", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_20(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_20", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_21(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_21", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_21(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_21", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_21(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_21", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_22(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_22", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_22(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_22", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_22(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_22", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_23(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_23", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_23(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_23", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_23(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_23", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_24(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_24", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_24(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_24", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_24(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_24", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_25(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_25", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_25(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_25", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_25(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_25", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_26(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_26", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_26(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_26", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_26(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_26", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_27(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_27", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_27(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_27", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_27(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_27", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_28(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_28", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_28(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_28", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_28(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_28", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_29(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_29", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_29(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_29", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_29(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_29", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_30(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_30", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_30(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_30", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_30(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_30", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_1(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_1", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_1(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_1", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_1(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_1", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_2(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_2", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_2(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_2", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_2(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_2", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_3(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_3", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_3(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_3", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_3(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_3", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_4(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_4", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_4(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_4", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_4(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_4", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_5(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_5", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_5(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_5", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_5(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_5", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_6(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_6", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_6(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_6", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_6(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_6", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_7(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_7", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_7(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_7", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_7(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_7", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_8(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_8", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_8(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_8", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_8(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_8", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_9(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_9", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_9(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_9", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_9(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_9", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_10(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_10", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_10(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_10", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_10(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_10", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_11(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_11", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_11(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_11", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_11(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_11", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_12(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_12", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_12(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_12", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_12(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_12", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_13(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_13", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_13(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_13", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_13(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_13", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_14(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_14", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_14(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_14", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_14(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_14", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_15(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_15", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_15(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_15", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_15(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_15", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_16(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_16", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_16(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_16", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_16(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_16", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_17(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_17", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_17(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_17", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_17(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_17", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_18(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_18", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_18(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_18", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_18(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_18", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_19(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_19", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_19(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_19", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_19(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_19", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_20(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_20", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_20(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_20", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_20(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_20", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_21(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_21", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_21(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_21", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_21(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_21", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_22(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_22", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_22(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_22", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_22(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_22", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_23(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_23", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_23(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_23", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_23(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_23", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_24(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_24", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_24(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_24", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_24(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_24", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_25(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_25", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_25(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_25", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_25(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_25", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_26(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_26", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_26(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_26", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_26(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_26", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_27(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_27", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_27(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_27", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_27(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_27", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_28(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_28", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_28(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_28", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_28(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_28", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_29(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_29", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_29(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_29", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_29(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_29", source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnObjectForUseruser_30(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnObject("user_30", object, operation, access);
+}
+
+pattern effectiveJudgementOnReferenceForUseruser_30(source: EObject, target: EObject, reference:EReference, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnReference("user_30", source, target, reference, operation, access);
+}	
+
+pattern effectiveJudgementOnAttributeForUseruser_30(source: EObject, value: java Object, attribute: EAttribute, operation: OperationType, access: AccessibilityLevel) {
+	find effectiveJudgementOnAttribute("user_30", source, value, attribute, operation, access);
+}
+
+pattern readWriteOperation(operation) = {
+	operation == OperationType::READ;
+} or {
+	operation == OperationType::WRITE;
+}
+
+pattern permitUserSpecificControlUnit_1Asset(control : EObject) {
+    	    find objectControlWithType(control, "1");
+}
+pattern permitUserSpecificControlUnit_1User(user: java String) {
+	user == "user_1";
+}
+
+
+pattern permitUserRelatedCompositeModules_1Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "1");
+}
+pattern permitUserRelatedCompositeModules_1User(user: java String) {
+	user == "user_1";
+}
+
+
+pattern permitUserSpecificControlUnit_2Asset(control : EObject) {
+    	    find objectControlWithType(control, "2");
+}
+pattern permitUserSpecificControlUnit_2User(user: java String) {
+	user == "user_2";
+}
+
+
+pattern permitUserRelatedCompositeModules_2Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "2");
+}
+pattern permitUserRelatedCompositeModules_2User(user: java String) {
+	user == "user_2";
+}
+
+
+pattern permitUserSpecificControlUnit_3Asset(control : EObject) {
+    	    find objectControlWithType(control, "3");
+}
+pattern permitUserSpecificControlUnit_3User(user: java String) {
+	user == "user_3";
+}
+
+
+pattern permitUserRelatedCompositeModules_3Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "3");
+}
+pattern permitUserRelatedCompositeModules_3User(user: java String) {
+	user == "user_3";
+}
+
+
+pattern permitUserSpecificControlUnit_4Asset(control : EObject) {
+    	    find objectControlWithType(control, "4");
+}
+pattern permitUserSpecificControlUnit_4User(user: java String) {
+	user == "user_4";
+}
+
+
+pattern permitUserRelatedCompositeModules_4Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "4");
+}
+pattern permitUserRelatedCompositeModules_4User(user: java String) {
+	user == "user_4";
+}
+
+
+pattern permitUserSpecificControlUnit_5Asset(control : EObject) {
+    	    find objectControlWithType(control, "5");
+}
+pattern permitUserSpecificControlUnit_5User(user: java String) {
+	user == "user_5";
+}
+
+
+pattern permitUserRelatedCompositeModules_5Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "5");
+}
+pattern permitUserRelatedCompositeModules_5User(user: java String) {
+	user == "user_5";
+}
+
+
+pattern permitUserSpecificControlUnit_6Asset(control : EObject) {
+    	    find objectControlWithType(control, "6");
+}
+pattern permitUserSpecificControlUnit_6User(user: java String) {
+	user == "user_6";
+}
+
+
+pattern permitUserRelatedCompositeModules_6Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "6");
+}
+pattern permitUserRelatedCompositeModules_6User(user: java String) {
+	user == "user_6";
+}
+
+
+pattern permitUserSpecificControlUnit_7Asset(control : EObject) {
+    	    find objectControlWithType(control, "7");
+}
+pattern permitUserSpecificControlUnit_7User(user: java String) {
+	user == "user_7";
+}
+
+
+pattern permitUserRelatedCompositeModules_7Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "7");
+}
+pattern permitUserRelatedCompositeModules_7User(user: java String) {
+	user == "user_7";
+}
+
+
+pattern permitUserSpecificControlUnit_8Asset(control : EObject) {
+    	    find objectControlWithType(control, "8");
+}
+pattern permitUserSpecificControlUnit_8User(user: java String) {
+	user == "user_8";
+}
+
+
+pattern permitUserRelatedCompositeModules_8Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "8");
+}
+pattern permitUserRelatedCompositeModules_8User(user: java String) {
+	user == "user_8";
+}
+
+
+pattern permitUserSpecificControlUnit_9Asset(control : EObject) {
+    	    find objectControlWithType(control, "9");
+}
+pattern permitUserSpecificControlUnit_9User(user: java String) {
+	user == "user_9";
+}
+
+
+pattern permitUserRelatedCompositeModules_9Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "9");
+}
+pattern permitUserRelatedCompositeModules_9User(user: java String) {
+	user == "user_9";
+}
+
+
+pattern permitUserSpecificControlUnit_10Asset(control : EObject) {
+    	    find objectControlWithType(control, "10");
+}
+pattern permitUserSpecificControlUnit_10User(user: java String) {
+	user == "user_10";
+}
+
+
+pattern permitUserRelatedCompositeModules_10Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "10");
+}
+pattern permitUserRelatedCompositeModules_10User(user: java String) {
+	user == "user_10";
+}
+
+
+pattern permitUserSpecificControlUnit_11Asset(control : EObject) {
+    	    find objectControlWithType(control, "11");
+}
+pattern permitUserSpecificControlUnit_11User(user: java String) {
+	user == "user_11";
+}
+
+
+pattern permitUserRelatedCompositeModules_11Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "11");
+}
+pattern permitUserRelatedCompositeModules_11User(user: java String) {
+	user == "user_11";
+}
+
+
+pattern permitUserSpecificControlUnit_12Asset(control : EObject) {
+    	    find objectControlWithType(control, "12");
+}
+pattern permitUserSpecificControlUnit_12User(user: java String) {
+	user == "user_12";
+}
+
+
+pattern permitUserRelatedCompositeModules_12Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "12");
+}
+pattern permitUserRelatedCompositeModules_12User(user: java String) {
+	user == "user_12";
+}
+
+
+pattern permitUserSpecificControlUnit_13Asset(control : EObject) {
+    	    find objectControlWithType(control, "13");
+}
+pattern permitUserSpecificControlUnit_13User(user: java String) {
+	user == "user_13";
+}
+
+
+pattern permitUserRelatedCompositeModules_13Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "13");
+}
+pattern permitUserRelatedCompositeModules_13User(user: java String) {
+	user == "user_13";
+}
+
+
+pattern permitUserSpecificControlUnit_14Asset(control : EObject) {
+    	    find objectControlWithType(control, "14");
+}
+pattern permitUserSpecificControlUnit_14User(user: java String) {
+	user == "user_14";
+}
+
+
+pattern permitUserRelatedCompositeModules_14Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "14");
+}
+pattern permitUserRelatedCompositeModules_14User(user: java String) {
+	user == "user_14";
+}
+
+
+pattern permitUserSpecificControlUnit_15Asset(control : EObject) {
+    	    find objectControlWithType(control, "15");
+}
+pattern permitUserSpecificControlUnit_15User(user: java String) {
+	user == "user_15";
+}
+
+
+pattern permitUserRelatedCompositeModules_15Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "15");
+}
+pattern permitUserRelatedCompositeModules_15User(user: java String) {
+	user == "user_15";
+}
+
+
+pattern permitUserSpecificControlUnit_16Asset(control : EObject) {
+    	    find objectControlWithType(control, "16");
+}
+pattern permitUserSpecificControlUnit_16User(user: java String) {
+	user == "user_16";
+}
+
+
+pattern permitUserRelatedCompositeModules_16Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "16");
+}
+pattern permitUserRelatedCompositeModules_16User(user: java String) {
+	user == "user_16";
+}
+
+
+pattern permitUserSpecificControlUnit_17Asset(control : EObject) {
+    	    find objectControlWithType(control, "17");
+}
+pattern permitUserSpecificControlUnit_17User(user: java String) {
+	user == "user_17";
+}
+
+
+pattern permitUserRelatedCompositeModules_17Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "17");
+}
+pattern permitUserRelatedCompositeModules_17User(user: java String) {
+	user == "user_17";
+}
+
+
+pattern permitUserSpecificControlUnit_18Asset(control : EObject) {
+    	    find objectControlWithType(control, "18");
+}
+pattern permitUserSpecificControlUnit_18User(user: java String) {
+	user == "user_18";
+}
+
+
+pattern permitUserRelatedCompositeModules_18Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "18");
+}
+pattern permitUserRelatedCompositeModules_18User(user: java String) {
+	user == "user_18";
+}
+
+
+pattern permitUserSpecificControlUnit_19Asset(control : EObject) {
+    	    find objectControlWithType(control, "19");
+}
+pattern permitUserSpecificControlUnit_19User(user: java String) {
+	user == "user_19";
+}
+
+
+pattern permitUserRelatedCompositeModules_19Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "19");
+}
+pattern permitUserRelatedCompositeModules_19User(user: java String) {
+	user == "user_19";
+}
+
+
+pattern permitUserSpecificControlUnit_20Asset(control : EObject) {
+    	    find objectControlWithType(control, "20");
+}
+pattern permitUserSpecificControlUnit_20User(user: java String) {
+	user == "user_20";
+}
+
+
+pattern permitUserRelatedCompositeModules_20Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "20");
+}
+pattern permitUserRelatedCompositeModules_20User(user: java String) {
+	user == "user_20";
+}
+
+
+pattern permitUserSpecificControlUnit_21Asset(control : EObject) {
+    	    find objectControlWithType(control, "21");
+}
+pattern permitUserSpecificControlUnit_21User(user: java String) {
+	user == "user_21";
+}
+
+
+pattern permitUserRelatedCompositeModules_21Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "21");
+}
+pattern permitUserRelatedCompositeModules_21User(user: java String) {
+	user == "user_21";
+}
+
+
+pattern permitUserSpecificControlUnit_22Asset(control : EObject) {
+    	    find objectControlWithType(control, "22");
+}
+pattern permitUserSpecificControlUnit_22User(user: java String) {
+	user == "user_22";
+}
+
+
+pattern permitUserRelatedCompositeModules_22Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "22");
+}
+pattern permitUserRelatedCompositeModules_22User(user: java String) {
+	user == "user_22";
+}
+
+
+pattern permitUserSpecificControlUnit_23Asset(control : EObject) {
+    	    find objectControlWithType(control, "23");
+}
+pattern permitUserSpecificControlUnit_23User(user: java String) {
+	user == "user_23";
+}
+
+
+pattern permitUserRelatedCompositeModules_23Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "23");
+}
+pattern permitUserRelatedCompositeModules_23User(user: java String) {
+	user == "user_23";
+}
+
+
+pattern permitUserSpecificControlUnit_24Asset(control : EObject) {
+    	    find objectControlWithType(control, "24");
+}
+pattern permitUserSpecificControlUnit_24User(user: java String) {
+	user == "user_24";
+}
+
+
+pattern permitUserRelatedCompositeModules_24Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "24");
+}
+pattern permitUserRelatedCompositeModules_24User(user: java String) {
+	user == "user_24";
+}
+
+
+pattern permitUserSpecificControlUnit_25Asset(control : EObject) {
+    	    find objectControlWithType(control, "25");
+}
+pattern permitUserSpecificControlUnit_25User(user: java String) {
+	user == "user_25";
+}
+
+
+pattern permitUserRelatedCompositeModules_25Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "25");
+}
+pattern permitUserRelatedCompositeModules_25User(user: java String) {
+	user == "user_25";
+}
+
+
+pattern permitUserSpecificControlUnit_26Asset(control : EObject) {
+    	    find objectControlWithType(control, "26");
+}
+pattern permitUserSpecificControlUnit_26User(user: java String) {
+	user == "user_26";
+}
+
+
+pattern permitUserRelatedCompositeModules_26Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "26");
+}
+pattern permitUserRelatedCompositeModules_26User(user: java String) {
+	user == "user_26";
+}
+
+
+pattern permitUserSpecificControlUnit_27Asset(control : EObject) {
+    	    find objectControlWithType(control, "27");
+}
+pattern permitUserSpecificControlUnit_27User(user: java String) {
+	user == "user_27";
+}
+
+
+pattern permitUserRelatedCompositeModules_27Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "27");
+}
+pattern permitUserRelatedCompositeModules_27User(user: java String) {
+	user == "user_27";
+}
+
+
+pattern permitUserSpecificControlUnit_28Asset(control : EObject) {
+    	    find objectControlWithType(control, "28");
+}
+pattern permitUserSpecificControlUnit_28User(user: java String) {
+	user == "user_28";
+}
+
+
+pattern permitUserRelatedCompositeModules_28Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "28");
+}
+pattern permitUserRelatedCompositeModules_28User(user: java String) {
+	user == "user_28";
+}
+
+
+pattern permitUserSpecificControlUnit_29Asset(control : EObject) {
+    	    find objectControlWithType(control, "29");
+}
+pattern permitUserSpecificControlUnit_29User(user: java String) {
+	user == "user_29";
+}
+
+
+pattern permitUserRelatedCompositeModules_29Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "29");
+}
+pattern permitUserRelatedCompositeModules_29User(user: java String) {
+	user == "user_29";
+}
+
+
+pattern permitUserSpecificControlUnit_30Asset(control : EObject) {
+    	    find objectControlWithType(control, "30");
+}
+pattern permitUserSpecificControlUnit_30User(user: java String) {
+	user == "user_30";
+}
+
+
+pattern permitUserRelatedCompositeModules_30Asset(composite : EObject) {
+    	    find objectCompositeWithType(composite, "30");
+}
+pattern permitUserRelatedCompositeModules_30User(user: java String) {
+	user == "user_30";
+}
+
+
+pattern denyProtectedSignalReadAsset(signal : EObject) {
+    	    find protectedModuleReadsSignal(_, signal);
+}
+pattern denyProtectedSignalReadUser(user: java String) {
+	user == "user_1";
+	} or {
+	user == "user_2";
+	} or {
+	user == "user_3";
+	} or {
+	user == "user_4";
+	} or {
+	user == "user_5";
+	} or {
+	user == "user_6";
+	} or {
+	user == "user_7";
+	} or {
+	user == "user_8";
+	} or {
+	user == "user_9";
+	} or {
+	user == "user_10";
+	} or {
+	user == "user_11";
+	} or {
+	user == "user_12";
+	} or {
+	user == "user_13";
+	} or {
+	user == "user_14";
+	} or {
+	user == "user_15";
+	} or {
+	user == "user_16";
+	} or {
+	user == "user_17";
+	} or {
+	user == "user_18";
+	} or {
+	user == "user_19";
+	} or {
+	user == "user_20";
+	} or {
+	user == "user_21";
+	} or {
+	user == "user_22";
+	} or {
+	user == "user_23";
+	} or {
+	user == "user_24";
+	} or {
+	user == "user_25";
+	} or {
+	user == "user_26";
+	} or {
+	user == "user_27";
+	} or {
+	user == "user_28";
+	} or {
+	user == "user_29";
+	} or {
+	user == "user_30";
+}
+
+
+pattern denyProtectedVendorAsset(module : EObject, value: java Object, attribute : EAttribute) {
+	find protectedModuleVendor(module, _);
+	find attributeAsset(module, value, attribute);
+	EAttribute.name(attribute, "vendor");
+}
+pattern denyProtectedVendorUser(user: java String) {
+	user == "user_1";
+	} or {
+	user == "user_2";
+	} or {
+	user == "user_3";
+	} or {
+	user == "user_4";
+	} or {
+	user == "user_5";
+	} or {
+	user == "user_6";
+	} or {
+	user == "user_7";
+	} or {
+	user == "user_8";
+	} or {
+	user == "user_9";
+	} or {
+	user == "user_10";
+	} or {
+	user == "user_11";
+	} or {
+	user == "user_12";
+	} or {
+	user == "user_13";
+	} or {
+	user == "user_14";
+	} or {
+	user == "user_15";
+	} or {
+	user == "user_16";
+	} or {
+	user == "user_17";
+	} or {
+	user == "user_18";
+	} or {
+	user == "user_19";
+	} or {
+	user == "user_20";
+	} or {
+	user == "user_21";
+	} or {
+	user == "user_22";
+	} or {
+	user == "user_23";
+	} or {
+	user == "user_24";
+	} or {
+	user == "user_25";
+	} or {
+	user == "user_26";
+	} or {
+	user == "user_27";
+	} or {
+	user == "user_28";
+	} or {
+	user == "user_29";
+	} or {
+	user == "user_30";
+}
+
+
+pattern allUsers(user: java String) {
+	user == "superuser";
+	} or {
+	user == "user_1";
+	} or {
+	user == "user_2";
+	} or {
+	user == "user_3";
+	} or {
+	user == "user_4";
+	} or {
+	user == "user_5";
+	} or {
+	user == "user_6";
+	} or {
+	user == "user_7";
+	} or {
+	user == "user_8";
+	} or {
+	user == "user_9";
+	} or {
+	user == "user_10";
+	} or {
+	user == "user_11";
+	} or {
+	user == "user_12";
+	} or {
+	user == "user_13";
+	} or {
+	user == "user_14";
+	} or {
+	user == "user_15";
+	} or {
+	user == "user_16";
+	} or {
+	user == "user_17";
+	} or {
+	user == "user_18";
+	} or {
+	user == "user_19";
+	} or {
+	user == "user_20";
+	} or {
+	user == "user_21";
+	} or {
+	user == "user_22";
+	} or {
+	user == "user_23";
+	} or {
+	user == "user_24";
+	} or {
+	user == "user_25";
+	} or {
+	user == "user_26";
+	} or {
+	user == "user_27";
+	} or {
+	user == "user_28";
+	} or {
+	user == "user_29";
+	} or {
+	user == "user_30";
+	} or {
+	user == "user_1";
+	} or {
+	user == "user_2";
+	} or {
+	user == "user_3";
+	} or {
+	user == "user_4";
+	} or {
+	user == "user_5";
+	} or {
+	user == "user_6";
+	} or {
+	user == "user_7";
+	} or {
+	user == "user_8";
+	} or {
+	user == "user_9";
+	} or {
+	user == "user_10";
+	} or {
+	user == "user_11";
+	} or {
+	user == "user_12";
+	} or {
+	user == "user_13";
+	} or {
+	user == "user_14";
+	} or {
+	user == "user_15";
+	} or {
+	user == "user_16";
+	} or {
+	user == "user_17";
+	} or {
+	user == "user_18";
+	} or {
+	user == "user_19";
+	} or {
+	user == "user_20";
+	} or {
+	user == "user_21";
+	} or {
+	user == "user_22";
+	} or {
+	user == "user_23";
+	} or {
+	user == "user_24";
+	} or {
+	user == "user_25";
+	} or {
+	user == "user_26";
+	} or {
+	user == "user_27";
+	} or {
+	user == "user_28";
+	} or {
+	user == "user_29";
+	} or {
+	user == "user_30";
+}
+
+pattern explicitJudgementOnObject(user : java String, object : EObject, operation, access, priority : java Integer)
+{
+	
+//  rule permitUserSpecificControlUnit_1
+    find permitUserSpecificControlUnit_1Asset(object);
+    find permitUserSpecificControlUnit_1User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_1
+    find permitUserRelatedCompositeModules_1Asset(object);
+    find permitUserRelatedCompositeModules_1User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_2
+    find permitUserSpecificControlUnit_2Asset(object);
+    find permitUserSpecificControlUnit_2User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_2
+    find permitUserRelatedCompositeModules_2Asset(object);
+    find permitUserRelatedCompositeModules_2User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_3
+    find permitUserSpecificControlUnit_3Asset(object);
+    find permitUserSpecificControlUnit_3User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_3
+    find permitUserRelatedCompositeModules_3Asset(object);
+    find permitUserRelatedCompositeModules_3User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_4
+    find permitUserSpecificControlUnit_4Asset(object);
+    find permitUserSpecificControlUnit_4User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_4
+    find permitUserRelatedCompositeModules_4Asset(object);
+    find permitUserRelatedCompositeModules_4User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_5
+    find permitUserSpecificControlUnit_5Asset(object);
+    find permitUserSpecificControlUnit_5User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_5
+    find permitUserRelatedCompositeModules_5Asset(object);
+    find permitUserRelatedCompositeModules_5User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_6
+    find permitUserSpecificControlUnit_6Asset(object);
+    find permitUserSpecificControlUnit_6User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_6
+    find permitUserRelatedCompositeModules_6Asset(object);
+    find permitUserRelatedCompositeModules_6User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_7
+    find permitUserSpecificControlUnit_7Asset(object);
+    find permitUserSpecificControlUnit_7User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_7
+    find permitUserRelatedCompositeModules_7Asset(object);
+    find permitUserRelatedCompositeModules_7User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_8
+    find permitUserSpecificControlUnit_8Asset(object);
+    find permitUserSpecificControlUnit_8User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_8
+    find permitUserRelatedCompositeModules_8Asset(object);
+    find permitUserRelatedCompositeModules_8User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_9
+    find permitUserSpecificControlUnit_9Asset(object);
+    find permitUserSpecificControlUnit_9User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_9
+    find permitUserRelatedCompositeModules_9Asset(object);
+    find permitUserRelatedCompositeModules_9User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_10
+    find permitUserSpecificControlUnit_10Asset(object);
+    find permitUserSpecificControlUnit_10User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_10
+    find permitUserRelatedCompositeModules_10Asset(object);
+    find permitUserRelatedCompositeModules_10User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_11
+    find permitUserSpecificControlUnit_11Asset(object);
+    find permitUserSpecificControlUnit_11User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_11
+    find permitUserRelatedCompositeModules_11Asset(object);
+    find permitUserRelatedCompositeModules_11User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_12
+    find permitUserSpecificControlUnit_12Asset(object);
+    find permitUserSpecificControlUnit_12User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_12
+    find permitUserRelatedCompositeModules_12Asset(object);
+    find permitUserRelatedCompositeModules_12User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_13
+    find permitUserSpecificControlUnit_13Asset(object);
+    find permitUserSpecificControlUnit_13User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_13
+    find permitUserRelatedCompositeModules_13Asset(object);
+    find permitUserRelatedCompositeModules_13User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_14
+    find permitUserSpecificControlUnit_14Asset(object);
+    find permitUserSpecificControlUnit_14User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_14
+    find permitUserRelatedCompositeModules_14Asset(object);
+    find permitUserRelatedCompositeModules_14User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_15
+    find permitUserSpecificControlUnit_15Asset(object);
+    find permitUserSpecificControlUnit_15User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_15
+    find permitUserRelatedCompositeModules_15Asset(object);
+    find permitUserRelatedCompositeModules_15User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_16
+    find permitUserSpecificControlUnit_16Asset(object);
+    find permitUserSpecificControlUnit_16User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_16
+    find permitUserRelatedCompositeModules_16Asset(object);
+    find permitUserRelatedCompositeModules_16User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_17
+    find permitUserSpecificControlUnit_17Asset(object);
+    find permitUserSpecificControlUnit_17User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_17
+    find permitUserRelatedCompositeModules_17Asset(object);
+    find permitUserRelatedCompositeModules_17User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_18
+    find permitUserSpecificControlUnit_18Asset(object);
+    find permitUserSpecificControlUnit_18User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_18
+    find permitUserRelatedCompositeModules_18Asset(object);
+    find permitUserRelatedCompositeModules_18User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_19
+    find permitUserSpecificControlUnit_19Asset(object);
+    find permitUserSpecificControlUnit_19User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_19
+    find permitUserRelatedCompositeModules_19Asset(object);
+    find permitUserRelatedCompositeModules_19User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_20
+    find permitUserSpecificControlUnit_20Asset(object);
+    find permitUserSpecificControlUnit_20User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_20
+    find permitUserRelatedCompositeModules_20Asset(object);
+    find permitUserRelatedCompositeModules_20User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_21
+    find permitUserSpecificControlUnit_21Asset(object);
+    find permitUserSpecificControlUnit_21User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_21
+    find permitUserRelatedCompositeModules_21Asset(object);
+    find permitUserRelatedCompositeModules_21User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_22
+    find permitUserSpecificControlUnit_22Asset(object);
+    find permitUserSpecificControlUnit_22User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_22
+    find permitUserRelatedCompositeModules_22Asset(object);
+    find permitUserRelatedCompositeModules_22User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_23
+    find permitUserSpecificControlUnit_23Asset(object);
+    find permitUserSpecificControlUnit_23User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_23
+    find permitUserRelatedCompositeModules_23Asset(object);
+    find permitUserRelatedCompositeModules_23User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_24
+    find permitUserSpecificControlUnit_24Asset(object);
+    find permitUserSpecificControlUnit_24User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_24
+    find permitUserRelatedCompositeModules_24Asset(object);
+    find permitUserRelatedCompositeModules_24User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_25
+    find permitUserSpecificControlUnit_25Asset(object);
+    find permitUserSpecificControlUnit_25User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_25
+    find permitUserRelatedCompositeModules_25Asset(object);
+    find permitUserRelatedCompositeModules_25User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_26
+    find permitUserSpecificControlUnit_26Asset(object);
+    find permitUserSpecificControlUnit_26User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_26
+    find permitUserRelatedCompositeModules_26Asset(object);
+    find permitUserRelatedCompositeModules_26User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_27
+    find permitUserSpecificControlUnit_27Asset(object);
+    find permitUserSpecificControlUnit_27User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_27
+    find permitUserRelatedCompositeModules_27Asset(object);
+    find permitUserRelatedCompositeModules_27User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_28
+    find permitUserSpecificControlUnit_28Asset(object);
+    find permitUserSpecificControlUnit_28User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_28
+    find permitUserRelatedCompositeModules_28Asset(object);
+    find permitUserRelatedCompositeModules_28User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_29
+    find permitUserSpecificControlUnit_29Asset(object);
+    find permitUserSpecificControlUnit_29User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_29
+    find permitUserRelatedCompositeModules_29Asset(object);
+    find permitUserRelatedCompositeModules_29User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserSpecificControlUnit_30
+    find permitUserSpecificControlUnit_30Asset(object);
+    find permitUserSpecificControlUnit_30User(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule permitUserRelatedCompositeModules_30
+    find permitUserRelatedCompositeModules_30Asset(object);
+    find permitUserRelatedCompositeModules_30User(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+
+} or {
+
+//  rule denyProtectedSignalRead
+    find denyProtectedSignalReadAsset(object);
+    find denyProtectedSignalReadUser(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+    priority == 0;
+
+} or {
+
+//  rule default
+    find objectAsset(object);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::DENY;
+    priority == eval(-1);
+}
+
+pattern explicitJudgementOnAttribute(user : java String, source : EObject, value: java Object, attribute : EAttribute, operation, access, priority: java Integer)
+{
+	
+//  rule denyProtectedVendor
+    find denyProtectedVendorAsset(source, value, attribute);
+    find denyProtectedVendorUser(user);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+    priority == 0;
+
+} or {
+
+//  rule default
+    find attributeAsset(source, value, attribute);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::DENY;
+    priority == eval(-1);
+}
+
+pattern explicitJudgementOnReference(user : java String, source : EObject, target : EObject, reference : EReference, operation, access, priority: java Integer)
+{
+	
+//  rule default
+    find referenceAsset(source, target, reference);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    access == AccessibilityLevel::DENY;
+    priority == eval(-1);
+}
+
+pattern effectiveJudgementOnObject(user: java String, object: EObject, operation, access)
+{
+	find effectiveJudgementOnObject_at_default(user, object, operation, access);
+} or {
+	find effectiveJudgementOnObject_at_0(user, object, operation, access);
+}
+
+pattern effectiveJudgementOnObject_at_default(user: java String, object: EObject, operation, access)
+{
+	find judgementOnObject_at_default(user, object, operation, access);
+	neg find dominationOnObject_of_default(user, object, operation);
+}
+
+pattern effectiveJudgementOnObject_at_0(user: java String, object: EObject, operation, access)
+{
+    find judgementOnObject_at_0(user, object, operation, access);
+}
+
+pattern effectiveJudgementOnAttribute(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+	find effectiveJudgementOnAttribute_at_default(user, source, value, attribute, operation, access);
+} or {
+	find effectiveJudgementOnAttribute_at_weak(user, source, value, attribute, operation, access);
+} or {
+    find effectiveJudgementOnAttribute_at_0(user, source, value, attribute, operation, access);
+}
+
+pattern effectiveJudgementOnAttribute_at_default(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+	find judgementOnAttribute_at_default(user, source, value, attribute, operation, access);
+	neg find dominationOnAttribute_of_default(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgementOnAttribute_at_weak(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+    find judgementOnAttribute_at_weak(user, source, value, attribute, operation, access);
+    neg find dominationOnAttribute_of_weak(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgementOnAttribute_at_0(user: java String, source: EObject, value: java Object, attribute:EAttribute, operation, access)
+{
+    find judgementOnAttribute_at_0(user, source, value, attribute, operation, access);
+}
+    
+pattern effectiveJudgementOnReference(user: java String, source: EObject, target: EObject, reference:EReference, operation, access) 
+{
+	find effectiveJudgementOnReference_at_default(user, source, target, reference, operation, access);
+} or {
+	find effectiveJudgementOnReference_at_weak(user, source, target, reference, operation, access);
+} or {
+    find effectiveJudgementOnReference_at_0(user, source, target, reference, operation, access);
+}
+
+pattern effectiveJudgementOnReference_at_default(user: java String, source: EObject, target: EObject, reference:EReference, operation, access)
+{
+    find judgementOnReference_at_default(user, source, target, reference, operation, access);
+    neg find dominationOnReference_of_default(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgementOnReference_at_weak(user: java String, source: EObject, target: EObject, reference:EReference, operation, access)
+{
+    find judgementOnReference_at_weak(user, source, target, reference, operation, access);
+    neg find dominationOnReference_of_weak(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgementOnReference_at_0(user: java String, source: EObject, target: EObject, reference:EReference, operation, access)
+{
+    find judgementOnReference_at_0(user, source, target, reference, operation, access);
+}
+
+pattern judgementOnObject_at_default(user: java String, object: EObject, operation, access)
+{
+    find explicitJudgementOnObject(user, object, operation, access, eval(-1));
+}
+
+pattern judgementOnAttribute_at_default(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+    find explicitJudgementOnAttribute(user, source, value, attribute, operation, access, eval(-1));
+}
+
+pattern judgementOnReference_at_default(user: java String, source: EObject, target: EObject, reference: EReference, operation, access)
+{
+    find explicitJudgementOnReference(user, source, target, reference, operation, access, eval(-1));
+}
+
+pattern judgementOnAttribute_at_weak(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+   find weakConsequenceOnAttribute(user, source, value, attribute, operation, access);
+}
+    
+pattern judgementOnReference_at_weak(user: java String, source: EObject, target: EObject, reference: EReference, operation, access)
+{
+    find weakConsequenceOnReference(user, source, target, reference, operation, access);
+}
+
+pattern judgementOnObject_at_0(user: java String, object: EObject, operation, access)
+{
+    find explicitJudgementOnObject(user, object, operation, access, 0);
+    neg find dominatedExplicitJudgementOnObject_at_0(user, object, operation, access);
+} or {
+    find strongConsequenceOnObject_at_0(user, object, operation, access);
+}
+    
+pattern judgementOnAttribute_at_0(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+    find explicitJudgementOnAttribute(user, source, value, attribute, operation, access, 0);
+    neg find dominatedExplicitJudgementOnAttribute_at_0(user, source, value, attribute, operation, access);
+} or {
+    find strongConsequenceOnAttribute_at_0(user, source, value, attribute, operation, access);
+}
+        
+pattern judgementOnReference_at_0(user: java String, source: EObject, target: EObject, reference: EReference, operation, access)
+{
+    find explicitJudgementOnReference(user, source, target, reference, operation, access, 0);
+    neg find dominatedExplicitJudgementOnReference_at_0(user, source, target, reference, operation, access);
+} or {
+    find strongConsequenceOnReference_at_0(user, source, target, reference, operation, access);
+}
+
+pattern dominationOnObject_of_default(user: java String, object: EObject, operation)
+{
+find effectiveJudgementOnObject_at_0(user, object, operation, _access);
+}
+    
+    
+pattern dominationOnAttribute_of_default(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation)
+{
+	find effectiveJudgementOnAttribute_at_weak(user, source, value, attribute, operation, _access);
+} or {
+    find effectiveJudgementOnAttribute_at_0(user, source, value, attribute, operation, _access);
+}
+
+pattern dominationOnAttribute_of_weak(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation)
+{
+    find effectiveJudgementOnAttribute_at_0(user, source, value, attribute, operation, _access);
+}
+    
+      
+pattern dominationOnReference_of_default(user: java String, source: EObject, target: EObject, reference: EReference, operation)
+{
+   find effectiveJudgementOnReference_at_weak(user, source, target, reference, operation, _access);
+} or {
+    find effectiveJudgementOnReference_at_0(user, source, target, reference, operation, _access);
+}
+     
+pattern dominationOnReference_of_weak(user: java String, source: EObject, target: EObject, reference: EReference, operation)
+{
+    find effectiveJudgementOnReference_at_0(user, source, target, reference, operation, _access);
+}     
+   
+
+pattern resolution(dominatedAccess, prevailingAccess)
+{
+    dominatedAccess == AccessibilityLevel::ALLOW;
+    prevailingAccess == AccessibilityLevel::DENY;
+} or {
+	dominatedAccess == AccessibilityLevel::ALLOW;
+	prevailingAccess == AccessibilityLevel::OBFUSCATE;
+} or {
+	dominatedAccess == AccessibilityLevel::OBFUSCATE;
+	prevailingAccess == AccessibilityLevel::DENY;
+}
+
+pattern dominatedExplicitJudgementOnObject_at_0(user: java String, object: EObject, operation, dominatedAccess) 
+{
+    find explicitJudgementOnObject(user, object, operation, dominatedAccess, 0);
+    find explicitJudgementOnObject(user, object, operation, prevailingAccess, 0);
+    find resolution(dominatedAccess, prevailingAccess);
+}
+
+pattern dominatedExplicitJudgementOnAttribute_at_0(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, prevailingAccess) 
+{
+    find explicitJudgementOnAttribute(user, source, value, attribute, operation, dominatedAccess, 0);
+    find explicitJudgementOnAttribute(user, source, value, attribute, operation, prevailingAccess, 0);
+    find resolution(dominatedAccess, prevailingAccess);
+}
+    
+pattern dominatedExplicitJudgementOnReference_at_0(user: java String, source: EObject, target: EObject, reference: EReference, operation, prevailingAccess) 
+{
+    find explicitJudgementOnReference(user, source, target, reference, operation, dominatedAccess, 0);
+        find explicitJudgementOnReference(user, source, target, reference, operation, prevailingAccess, 0);
+    find resolution(dominatedAccess, prevailingAccess);
+}
+
+pattern strongConsequenceOnObject_at_0(user: java String, object: EObject, operation, access)
+{
+	// allow W -> allow R, object -> object
+	find effectiveJudgementOnObject_at_0(user, object, OperationType::WRITE, AccessibilityLevel::ALLOW);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::ALLOW;
+} or {
+	// deny R -> deny W, object -> object
+	find effectiveJudgementOnObject_at_0(user, object, OperationType::READ, AccessibilityLevel::DENY);
+	operation == OperationType::WRITE;
+	access == AccessibilityLevel::DENY;
+} or {
+	// allow R -> obfuscate R, child -> parent
+	find effectiveJudgementOnObject_at_0(user, child, OperationType::READ, AccessibilityLevel::ALLOW);
+	find contains(object, child);
+	neg find effectiveJudgementOnObject_at_0(user, object, OperationType::READ, AccessibilityLevel::ALLOW);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::OBFUSCATE;
+} or {
+	// allow R -> obfuscate R, attribute -> source
+	find effectiveJudgementOnAttribute_at_0(user, object, _value, _attribute, OperationType::READ, AccessibilityLevel::ALLOW);
+	neg find effectiveJudgementOnObject_at_0(user, object, OperationType::READ, AccessibilityLevel::ALLOW);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::OBFUSCATE;
+} or {
+    // deny R, ID attribute -> source
+    find effectiveJudgementOnAttribute_at_0(user, object, anyValue, anyAttribute, OperationType::READ, AccessibilityLevel::DENY);
+    find idAttribute(object, anyValue, anyAttribute);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+} or {
+    // allow R -> obfuscate R, reference -> source
+    find effectiveJudgementOnReference_at_0(user, object, _target, _reference, OperationType::READ, AccessibilityLevel::ALLOW);
+    neg find effectiveJudgementOnObject_at_0(user, object, OperationType::READ, AccessibilityLevel::ALLOW);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::OBFUSCATE;
+} or {
+    // allow R -> obfuscate R, reference -> target
+    find effectiveJudgementOnReference_at_0(user, _source, object, _reference, OperationType::READ, AccessibilityLevel::ALLOW);
+    neg find effectiveJudgementOnObject_at_0(user, object, OperationType::READ, AccessibilityLevel::ALLOW);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::OBFUSCATE;
+} or {
+    // deny R, containment reference -> target
+    find effectiveJudgementOnReference_at_0(user, anySource, object, anyReference, OperationType::READ, AccessibilityLevel::DENY);
+    find containmentReference(anySource, object, anyReference);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+} or {
+    // allow W, containment reference -> target
+    find effectiveJudgementOnReference_at_0(user, anySource, object, anyReference, OperationType::WRITE, AccessibilityLevel::ALLOW);
+    find containmentReference(anySource, object, anyReference);
+    operation == OperationType::WRITE;
+    access == AccessibilityLevel::ALLOW;
+}
+
+pattern strongConsequenceOnAttribute_at_0(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+	// allow W -> allow R, attribute -> attribute
+	find effectiveJudgementOnAttribute_at_0(user, source, value, attribute, OperationType::WRITE, AccessibilityLevel::ALLOW);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::ALLOW;
+} or {
+	// deny R -> deny W, attribute -> attribute
+	find effectiveJudgementOnAttribute_at_0(user, source, value, attribute, OperationType::READ, AccessibilityLevel::DENY);
+	operation == OperationType::WRITE;
+	access == AccessibilityLevel::DENY;
+} or {
+    // allow R, object -> ID attribute
+    find effectiveJudgementOnObject_at_0(user, source, OperationType::READ, AccessibilityLevel::ALLOW);
+    find idAttribute(source, value, attribute);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+} or {
+    // deny W, containment reference -> attribute
+    find effectiveJudgementOnReference_at_0(user, anySource, source, anyReference, OperationType::WRITE, AccessibilityLevel::ALLOW);
+    find containmentReference(anySource, source, anyReference);
+    find attributeAsset(source, value, attribute);
+    operation == OperationType::WRITE;
+    access == AccessibilityLevel::ALLOW;
+} or {
+	// obfuscate R, object -> ID attribute
+	find effectiveJudgementOnObject_at_0(user, source, OperationType::READ, AccessibilityLevel::OBFUSCATE);
+	find idAttribute(source, value, attribute);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::OBFUSCATE;
+} or {
+    // obfuscate R -> deny R, object -> nonID attribute
+    find effectiveJudgementOnObject_at_0(user, source, OperationType::READ, AccessibilityLevel::OBFUSCATE);
+    find attributeAsset(source, value, attribute);
+    neg find idAttribute(source, value, attribute);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+}
+
+pattern strongConsequenceOnReference_at_0(user: java String, source: EObject, target: EObject, reference: EReference, operation, access)
+{
+	// allow W -> allow R, reference -> reference
+	find effectiveJudgementOnReference_at_0(user, source, target, reference, OperationType::WRITE, AccessibilityLevel::ALLOW);
+	operation == OperationType::READ;
+	access == AccessibilityLevel::ALLOW;
+} or {
+	// deny R -> deny W, reference -> reference
+	find effectiveJudgementOnReference_at_0(user, source, target, reference, OperationType::READ, AccessibilityLevel::DENY);
+	operation == OperationType::WRITE;
+	access == AccessibilityLevel::DENY;
+} or {
+    // allow R, object -> container reference
+    find effectiveJudgementOnObject_at_0(user, target, OperationType::READ, AccessibilityLevel::ALLOW);
+    find containmentReference(source, target, reference);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::ALLOW;
+} or {
+    // deny R, object -> incoming reference
+    find effectiveJudgementOnObject_at_0(user, target, OperationType::READ, AccessibilityLevel::DENY);
+    find referenceAsset(source, target, reference);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+} or {
+    // deny R, object -> outgoing reference
+    find effectiveJudgementOnObject_at_0(user, source, OperationType::READ, AccessibilityLevel::DENY);
+    find referenceAsset(source, target, reference);
+    operation == OperationType::READ;
+    access == AccessibilityLevel::DENY;
+} or {
+    // allow W, object -> container reference
+    find effectiveJudgementOnObject_at_0(user, target, OperationType::WRITE, AccessibilityLevel::ALLOW);
+    find containmentReference(source, target, reference);
+    operation == OperationType::WRITE;
+    access == AccessibilityLevel::ALLOW;
+} or {
+    // deny R, ID attribute -> source
+    find effectiveJudgementOnAttribute_at_0(user, target, anyValue, anyAttribute, OperationType::WRITE, AccessibilityLevel::ALLOW);
+    find idAttribute(target, anyValue, anyAttribute);
+    find referenceAsset(source, target, reference);
+    operation == OperationType::WRITE;
+    access == AccessibilityLevel::ALLOW;
+}
+
+pattern weakConsequenceOnAttribute(user: java String, source: EObject, value: java Object, attribute: EAttribute, operation, access)
+{
+	find effectiveJudgementOnObject_at_0(user, source, operation, access);
+	find attributeAsset(source, value, attribute);
+}
+        
+pattern weakConsequenceOnReference(user: java String, source: EObject, target: EObject, reference: EReference, operation, access)
+{
+	find effectiveJudgementOnObject_at_0(user, source, operation, access);
+	find referenceAsset(source, target, reference);
+}
+
+pattern attributeAsset(source : EObject, value: java Object, attribute : EAttribute) {
+	find attributeAssetCompositevendor(source, value, attribute);
+	} or {
+	find attributeAssetCompositeprotectedIP(source, value, attribute);
+	} or {
+	find attributeAssetControltype(source, value, attribute);
+	} or {
+	find attributeAssetControlcycle(source, value, attribute);
+}
+
+pattern attributeAssetCompositevendor(source : EObject, value: java Object, attribute : EAttribute)
+{
+     Composite.vendor(source, value);
+	 EClass.name(class, "Composite");
+	 EClass.eStructuralFeatures(class, attribute);
+	 EAttribute.name(attribute, "vendor");
+}
+
+pattern attributeAssetCompositeprotectedIP(source : EObject, value: java Object, attribute : EAttribute)
+{
+     Composite.protectedIP(source, value);
+	 EClass.name(class, "Composite");
+	 EClass.eStructuralFeatures(class, attribute);
+	 EAttribute.name(attribute, "protectedIP");
+}
+
+pattern attributeAssetControltype(source : EObject, value: java Object, attribute : EAttribute)
+{
+     Control.type(source, value);
+	 EClass.name(class, "Control");
+	 EClass.eStructuralFeatures(class, attribute);
+	 EAttribute.name(attribute, "type");
+}
+
+pattern attributeAssetControlcycle(source : EObject, value: java Object, attribute : EAttribute)
+{
+     Control.cycle(source, value);
+	 EClass.name(class, "Control");
+	 EClass.eStructuralFeatures(class, attribute);
+	 EAttribute.name(attribute, "cycle");
+}
+
+pattern referenceAsset(source : EObject, target : EObject, reference : EReference) {
+	find referenceAssetModuleprovides(source, target, reference);     
+	} or {
+	find referenceAssetModuleconsumes(source, target, reference);     
+	} or {
+	find referenceAssetCompositesubmodules(source, target, reference);     
+}
+
+pattern referenceAssetModuleprovides(source : EObject, target : EObject, reference : EReference)
+{
+	Module.provides(source, target);
+	EClass.name(class, "Module");
+	EClass.eStructuralFeatures(class, reference);
+	EReference.name(reference, "provides");
+}
+
+pattern referenceAssetModuleconsumes(source : EObject, target : EObject, reference : EReference)
+{
+	Module.consumes(source, target);
+	EClass.name(class, "Module");
+	EClass.eStructuralFeatures(class, reference);
+	EReference.name(reference, "consumes");
+}
+
+pattern referenceAssetCompositesubmodules(source : EObject, target : EObject, reference : EReference)
+{
+	Composite.submodules(source, target);
+	EClass.name(class, "Composite");
+	EClass.eStructuralFeatures(class, reference);
+	EReference.name(reference, "submodules");
+}
+
+pattern containmentReference(source : EObject, target : EObject, reference : EReference) {
+	find referenceAsset(source, target, reference);
+	EReference.containment(reference, true);
+}
+
+pattern idAttribute(source:EObject, value: java Object, attribute:EAttribute) {
+	find attributeAsset(source, value, attribute);
+	EAttribute.iD(attribute, true);
+}
+
+pattern contains(container: EObject, contained: EObject) {
+	Module.provides(container, contained);
+	} or {
+	Composite.submodules(container, contained);
+}
+
+pattern objectAsset(object: EObject) {
+	Module(object);
+	} or {
+	Composite(object);
+	} or {
+	Control(object);
+	} or {
+	Signal(object);
+}
+
+pattern root(object: EObject) {
+    Module(object);
+}
+
+pattern objectAssetWithoutRoot(object: EObject) {
+	find objectAsset(object);
+	neg find root(object);
+}

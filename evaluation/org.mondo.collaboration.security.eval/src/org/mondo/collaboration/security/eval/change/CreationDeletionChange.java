@@ -27,9 +27,9 @@ public class CreationDeletionChange extends AbstractChangeApplier {
 
 	@Override
 	public void revert() {
-		for (Signal signal : signals) {
-			rootComposite.getProvides().remove(signal);			
-		}
+//		for (Signal signal : signals) {
+//			rootComposite.getProvides().remove(signal);			
+//		}
 	}
 
 	@Override

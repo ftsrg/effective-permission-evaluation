@@ -31,24 +31,12 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 	public static void main(String[] args) throws ViatraQueryException {
 		new DefaultRealm();
 		AbstractEvaluation evaluation = new IncrementalEvaluation();
-
-		for (int modelSize : MODEL_SIZES) {
-			for (int limitSize : LIMIT_SIZES) {
-				for (int userSize : USER_SIZES) {
-					if (userSize > limitSize) {
-						break;
-					}
-					String[] arguments = evaluation.emulateArguments(modelSize, limitSize, userSize, REPEAT, false, false,
-							args);
-					evaluation.evaluate(arguments);
-				}
-			}
-		}
+		evaluate(args, evaluation);
 	}
 
 	@Override
 	protected void doEvaluation() throws ViatraQueryException {
-		initMemoryUsage = currentMemoryUsage();
+		initMemoryUsage = beforeMemoryUsage();
 		initTime = currentTime();
 
 		queryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(getModelResourceSet()));

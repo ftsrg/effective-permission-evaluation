@@ -2,13 +2,11 @@ package org.mondo.collaboration.security.batch;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.policy.rules.ResolutionType;
-import org.mondo.collaboration.security.batch.Asset;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
@@ -20,7 +18,6 @@ public class JudgementStorage {
 
 	Map<Asset, Map<OperationType, Multimap<AccessibilityLevel, Judgement>>> judgementsByAttributes;
 	TreeMultimap<Integer, Judgement> judgementsByPriorities;
-	List<Judgement> cemetery = Lists.newArrayList();
 	ResolutionType resolution;
 	
 	public JudgementStorage(ResolutionType resolution) {
@@ -65,8 +62,6 @@ public class JudgementStorage {
 			System.out.println("Error removing from Map");
 		if(!judgementsByPriorities.get(j.getPriority()).remove(j)) {
 			System.out.println("Error removing from Prio");
-		} else {
-			cemetery.add(j);
 		}
 	}
 	
@@ -79,8 +74,6 @@ public class JudgementStorage {
 			System.out.println("Error internal removing from Map");
 		if(!judgementsByPriorities.get(j.getPriority()).remove(j)) {
 			System.out.println("Error internal removing from Prio");
-		} else {
-			cemetery.add(j);
 		}
 	}
 	
@@ -121,6 +114,11 @@ public class JudgementStorage {
 			return o1.getAccess().getValue() > o2.getAccess().getValue();
 			
 		throw new IllegalArgumentException();
+	}
+
+	public void dispose() {
+		judgementsByAttributes.clear();
+		judgementsByPriorities.clear();
 	}
 	
 }
