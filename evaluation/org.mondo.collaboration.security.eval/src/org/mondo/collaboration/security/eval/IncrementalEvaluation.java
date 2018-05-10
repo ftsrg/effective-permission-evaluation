@@ -24,9 +24,9 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 
 	private long initMemoryUsage;
 	private long initTime;
+	
 	private Collection<IObservableList<?>> observables;
 	private AdvancedViatraQueryEngine queryEngine;
-//	private Collection<ViatraQueryMatcher<IPatternMatch>> matchers;
 
 	public static void main(String[] args) throws ViatraQueryException {
 		new DefaultRealm();
@@ -48,8 +48,8 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 			observableReferences(queryEngine, i);
 		}
 		
-		initMemoryUsage = changeMemoryUsage - initMemoryUsage;
 		initTime = currentTime() - initTime;
+		initMemoryUsage = afterMemoryUsage() - initMemoryUsage;
 	}
 
 	private void observableAttributes(ViatraQueryEngine queryEngine, int i) throws ViatraQueryException {
@@ -79,48 +79,22 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 				referenceFilterMatch.toImmutable()));
 	}
 
-//	private Collection<IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> loadQuerySpecifications()
-//			throws ViatraQueryException {
-//		Iterable<Pattern> effectivePermissionPatterns = null;
-//		for (String queryFile : RulesGenerator.collectVQLFiles(getAccessControlModel(), getInstanceModelResource())) {
-//			String path = String.format(Generator.INCREMENTAL_RULE_BASE_PATH + queryFile, getLimitSize(),
-//					getLimitSize());
-//			Resource model = getHelperResourceSet().getResource(URI.createURI(path), true);
-//			if (queryFile.equals(RulesGenerator.mainVQLFile(getAccessControlModel()))) {
-//				effectivePermissionPatterns = RulesGenerator
-//						.mainQuerySpecification((PatternModel) model.getContents().get(0));
-//			}
-//		}
-//
-//		Collection<IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> querySpecifications = Lists.newArrayList();
-//		for (Pattern effectivePermissionPattern : effectivePermissionPatterns) {
-//			SpecificationBuilder builder = new SpecificationBuilder();
-//			@SuppressWarnings("unchecked")
-//			IQuerySpecification<ViatraQueryMatcher<IPatternMatch>> querySpecification = ((IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>) builder
-//					.getOrCreateSpecification(effectivePermissionPattern));
-//			querySpecifications.add(querySpecification);
-//		}
-//		return querySpecifications;
-//	}
-
 	@Override
 	protected void beforeChangeExecution() {
-		//changeMemoryUsage = currentMemoryUsage();
+		changeMemoryUsage = beforeMemoryUsage();
 		changeTime = currentTime();
 	}
 
 	@Override
 	protected void afterChangeExecution() {
 		changeTime = currentTime() - changeTime;
-		//changeMemoryUsage = currentMemoryUsage() - changeMemoryUsage;
+		changeMemoryUsage = afterMemoryUsage() - changeMemoryUsage;
 	}
 
 	@Override
 	protected void printResults() {
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Init" + ";" + initTime
-				+ ";" + initMemoryUsage);
-		System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize() + ";" + "Change" + ";" + changeTime
-				+ ";" + changeMemoryUsage);
+		printTime(initTime, initMemoryUsage, "Init");
+		printTime(changeTime, changeMemoryUsage, "Change");
 	}
 	
 	@Override
@@ -129,6 +103,5 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 		observables.forEach(x -> x.dispose());
 		observables.clear();
 		queryEngine.dispose();
-//		matchers.forEach(x -> x.dispose());
 	}
 }
