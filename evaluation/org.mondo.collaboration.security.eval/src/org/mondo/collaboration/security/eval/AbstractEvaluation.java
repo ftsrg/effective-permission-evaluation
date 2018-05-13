@@ -8,12 +8,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -65,9 +68,7 @@ public abstract class AbstractEvaluation {
 								  .setUserSize(userSize)
 								  .setEcoreFilePath(args[1])
 								  .setModificationSize(modifications)
-								  .setRepeatNumber(REPEAT)
-								  .setTestEvaluation(false)
-								  .setPrintAdditionalInfo(false);
+								  .setRepeatNumber(REPEAT);
 						
 						evaluation.evaluate();
 					}
@@ -139,6 +140,21 @@ public abstract class AbstractEvaluation {
 				printResults();
 				dispose();
 			}
+		} else {
+			if(firstTime) {
+				System.out.println("Model;MemoryUsage");
+				firstTime = false;
+			}
+			for (int i = 0; i < getRepeatNumber(); i++) {
+				long initialMemory = beforeMemoryUsage();
+				initialize();
+				loadResources();
+				long memoryUsage = afterMemoryUsage() - initialMemory;
+				
+				if(printAdditionalInfo()) {
+					System.out.println(getModelSize() + ";" + memoryUsage);
+				}
+			}
 		}
 	}
 
@@ -157,20 +173,15 @@ public abstract class AbstractEvaluation {
 		modelResourceSet.getResources().clear();
 		helperResourceSet.getResources().clear();
 		
-		long initialMemory = beforeMemoryUsage();
 		modelResourceSet.getResource(ecoreUri, true);
-		long metamodelMemory = beforeMemoryUsage() - initialMemory;
-		instanceModel = modelResourceSet.getResource(instanceUri, true);
-		long instanceModelMemory = beforeMemoryUsage() - metamodelMemory;
 		accessControlModel = helperResourceSet.getResource(accessUri, true);
-		long accessControlModelMemory = beforeMemoryUsage() - instanceModelMemory;
-
+		instanceModel = modelResourceSet.getResource(instanceUri, true);
 		if(printAdditionalInfo()) {
-			countAssetsOfModel();
-			System.out.println(getModelSize() + ";" + getLimitSize() + ";" + getUserSize()  + ";" + instanceModelMemory + ";" + accessControlModelMemory);
+			EcoreUtil.resolveAll(modelResourceSet);
+			EcoreUtil.resolveAll(helperResourceSet);
 		}
 	}
-	
+
 	protected long beforeMemoryUsage() {
 		System.gc();		
 		System.gc();
@@ -183,44 +194,6 @@ public abstract class AbstractEvaluation {
 
 	protected long afterMemoryUsage() {
 		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-	}
-
-	protected void countAssetsOfModel() {
-		// int[numOfObj, numOfAttr, numOfRef]
-		int[] numOfAssets = { 0, 0, 0 };
-		if (instanceModel != null) {
-			EObject rootObject = instanceModel.getContents().get(0);
-			numOfAssets = countAssetsOfObject(rootObject);
-		}
-		System.out.println("Number of all assets: " + (numOfAssets[0] + numOfAssets[1] + numOfAssets[2]));
-		System.out.println("Number of object assets: " + numOfAssets[0]);
-		System.out.println("Number of attribute assets: " + numOfAssets[1]);
-		System.out.println("Number of reference assets: " + numOfAssets[2]);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected int[] countAssetsOfObject(EObject object) {
-		int[] numOfAssets = { 1, 0, 0 };
-
-		numOfAssets[1] += object.eClass().getEAllAttributes().stream().filter(a -> a != null)
-				.collect(Collectors.toList()).size();
-
-		for (EReference ref : object.eClass().getEAllReferences().stream().filter(r -> !r.isContainment())
-				.collect(Collectors.toList())) {
-			numOfAssets[2] += ((EList<EObject>) object.eGet(ref)).size();
-		}
-
-		for (EReference contRef : object.eClass().getEAllReferences().stream().filter(r -> r.isContainment())
-				.collect(Collectors.toList())) {
-			for (EObject contObj : (EList<EObject>) object.eGet(contRef)) {
-				numOfAssets[2]++;
-				int[] numOfContAssets = countAssetsOfObject(contObj);
-				numOfAssets[0] += numOfContAssets[0];
-				numOfAssets[1] += numOfContAssets[1];
-				numOfAssets[2] += numOfContAssets[2];
-			}
-		}
-		return numOfAssets;
 	}
 
 	protected abstract void doEvaluation() throws ViatraQueryException;
@@ -293,7 +266,6 @@ public abstract class AbstractEvaluation {
 
 	protected AbstractEvaluation setUserSize(int userSize) {
 		mainArgs.put(USER_SIZE_ARG, String.valueOf(userSize));
-		
 		return this;
 	}
 	
@@ -303,21 +275,19 @@ public abstract class AbstractEvaluation {
 		return false;
 	}
 
-	protected AbstractEvaluation setPrintAdditionalInfo(boolean isTestEvaluation) {
-		if(isTestEvaluation)
-			mainArgs.put(TEST_EVALUATION_ARG, "");
+	protected AbstractEvaluation setPrintAdditionalInfo() {
+		mainArgs.put(ADDITIONAL_INFO_ARG, "true");
 		return this;
 	}
 	
 	protected boolean isTestEvaluation() {
-		if (mainArgs.containsKey(ADDITIONAL_INFO_ARG))
+		if (mainArgs.containsKey(TEST_EVALUATION_ARG))
 			return true;
 		return false;
 	}
 	
-	protected AbstractEvaluation setTestEvaluation(boolean isTestEvaluation) {
-		if(isTestEvaluation)
-			mainArgs.put(TEST_EVALUATION_ARG, "");
+	protected AbstractEvaluation setTestEvaluation() {
+		mainArgs.put(TEST_EVALUATION_ARG, "true");
 		return this;
 	}
 	
@@ -363,9 +333,10 @@ public abstract class AbstractEvaluation {
 
 	protected void applyChanges() throws ViatraQueryException {
 		Collection<AbstractChangeApplier> appliers = Sets.newHashSet(
-				new AttributeSetChange(getInstanceModelResource(), getModificationSize()),
-				new CreationDeletionChange(getInstanceModelResource(), getModificationSize()),
-				new ReferenceSetChange(getInstanceModelResource(), getModificationSize()));
+				//new AttributeSetChange(getInstanceModelResource(), getModificationSize()),
+				new CreationDeletionChange(getInstanceModelResource(), getModificationSize()*3),
+				new ReferenceSetChange(getInstanceModelResource(), getModificationSize()*3)
+				);
 	
 		for (AbstractChangeApplier applier : appliers) {
 			applier.collect(getCollaborators());
@@ -375,7 +346,7 @@ public abstract class AbstractEvaluation {
 		for (AbstractChangeApplier applier : appliers) {
 			beforeChangeExecution(applier);
 			applier.apply();
-			applier.revert();
+			//applier.revert();
 			afterChangeExecution(applier);
 		}
 		afterChangeExecution();

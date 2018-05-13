@@ -29,7 +29,7 @@ public class CreationDeletionChange extends AbstractChangeApplier {
 	public void revert() {
 //		for (Signal signal : signals) {
 //			rootComposite.getProvides().remove(signal);			
-//		}
+//
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class CreationDeletionChange extends AbstractChangeApplier {
 	
 	@Override
 	public String getType() {
-		return "CreateDel";
+		return "Create";
 	}
 
 }

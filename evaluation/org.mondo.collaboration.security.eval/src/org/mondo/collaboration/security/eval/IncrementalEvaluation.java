@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.mondo.collaboration.security.query.generated.EffectiveJudgementOnAttributeMatch;
@@ -43,16 +42,16 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 		observables = Lists.newArrayList();
 		
 		for (int i = 1; i <= getUserSize(); i++) {
-			observableObjects(queryEngine, i);
-			observableAttributes(queryEngine, i);
-			observableReferences(queryEngine, i);
+			observableObjects(i);
+			observableAttributes(i);
+			observableReferences(i);
 		}
 		
 		initTime = currentTime() - initTime;
 		initMemoryUsage = afterMemoryUsage() - initMemoryUsage;
 	}
 
-	private void observableAttributes(ViatraQueryEngine queryEngine, int i) throws ViatraQueryException {
+	private void observableAttributes(int i) throws ViatraQueryException {
 		EffectiveJudgementOnAttributeQuerySpecification attributeQuerySpecification = EffectiveJudgementOnAttributeQuerySpecification.instance();
 		EffectiveJudgementOnAttributeMatch attributeFilterMatch = attributeQuerySpecification.newEmptyMatch();
 		attributeFilterMatch.set("user", "user_" + i);
@@ -61,7 +60,7 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 				attributeFilterMatch.toImmutable()));
 	}
 	
-	private void observableObjects(ViatraQueryEngine queryEngine, int i) throws ViatraQueryException {
+	private void observableObjects(int i) throws ViatraQueryException {
 		EffectiveJudgementOnObjectQuerySpecification objectQuerySpecification = EffectiveJudgementOnObjectQuerySpecification.instance();
 		EffectiveJudgementOnObjectMatch objectFilterMatch = objectQuerySpecification.newEmptyMatch();
 		objectFilterMatch.set("user", "user_" + i);
@@ -70,7 +69,7 @@ public class IncrementalEvaluation extends AbstractEvaluation {
 				objectFilterMatch.toImmutable()));
 	}
 	
-	private void observableReferences(ViatraQueryEngine queryEngine, int i) throws ViatraQueryException {
+	private void observableReferences(int i) throws ViatraQueryException {
 		EffectiveJudgementOnReferenceQuerySpecification referenceQuerySpecification = EffectiveJudgementOnReferenceQuerySpecification.instance();
 		EffectiveJudgementOnReferenceMatch referenceFilterMatch = referenceQuerySpecification.newEmptyMatch();
 		referenceFilterMatch.set("user", "user_" + i);
