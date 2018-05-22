@@ -7,16 +7,11 @@ import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as 
 
 AccessControlModel:
 	imports+=Import*
-	//(instanceModel=InstanceModel)?
 	roles+=Role*
 	policy=Policy;
 	
-/*InstanceModel:
-	'import' importURI=STRING;*/
-
 Import:
 	'import' importURI=STRING;
-
 	
 Role:
 	User | Group;
@@ -28,7 +23,7 @@ Group:
 	'group' name=ID '{'  roles+=[Role] (',' roles+=[Role])* '}';
 	
 Policy:
-	'policy' name=ID access=AccessibilityLevel operation=OperationType 'by' 'default' '{'
+	'policy' name=ID access=AccessibilityLevel 'by' 'default' '{'
 	rules+=Rule*
 	'}' 'with' resolution=ResolutionType 'resolution';
 	
@@ -65,18 +60,3 @@ enum OperationType:
 	
 enum ResolutionType:
 	RESTRICTIVE='restrictive' | PERMISSIVE='permissive';
-	
-/*Bind:
-	ObjectBind | EnumBind | ValueBind;
-
-ObjectBind:
-	'object' object=[ecore::EObject];
-	
-EnumBind:
-	'enum' enumliteral=[ecore::EEnumLiteral];
-	
-ValueBind:
-	'value' value=ValueType;
-
-enum ValueType:
-	STRING | INT;*/

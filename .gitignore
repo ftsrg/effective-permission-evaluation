@@ -21,17 +21,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-evaluation/org\.mondo\.collaboration\.security\.eval\.generated\.artifacts/instances
-evaluation/org\.mondo\.collaboration\.security\.eval\.generated\.artifacts/rules
+evaluation/org\.mondo\.collaboration\.security\.eval\.generated\.artifacts/src/org/mondo/org/mondo/collaboration/security/query/generated/
+evaluation/org\.mondo\.collaboration\.security\.eval\.generated\.artifacts/src-gen/org/mondo/collaboration/security/query/generated/
 
 implementation/org\.mondo\.collaboration\.security\.rule/src-gen/
-
 implementation/org\.mondo\.collaboration\.security\.batch/xtend-gen/
-generated
-org
-org
-org
-org
-org
-org
-/implementation/org.mondo.collaboration.policy.ide/src-gen/META-INF
+implementation/org.mondo.collaboration.policy.ide/src-gen/META-INF

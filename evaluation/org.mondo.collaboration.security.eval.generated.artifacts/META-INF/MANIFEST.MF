@@ -4,6 +4,9 @@ Bundle-Name: test
 Bundle-SymbolicName: org.mondo.collaboration.security.eval.generated.artifacts;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Export-Package: org.mondo.collaboration.security.query.generated,
+  org.mondo.collaboration.security.query.generated.query0001,
+  org.mondo.collaboration.security.query.generated.query0010,
+  org.mondo.collaboration.security.query.generated.query0020,
   org.mondo.collaboration.security.query.generated.util
 Require-Bundle: org.eclipse.emf.ecore,
   org.eclipse.viatra.query.runtime,

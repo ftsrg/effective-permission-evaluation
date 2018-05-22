@@ -5,11 +5,9 @@ import java.io.FileOutputStream;
 
 public class AccessControlRuleGenerator {
 
-	public void generate(int[] USER_SIZES, String RULES_URI, String QUERY_URI) throws Exception {
-		for (int size : USER_SIZES) {
-			CharSequence model = AccessControlFileGenerator.generate(size, QUERY_URI);
-			save(String.format(RULES_URI, size), model);
-		}
+	public void generate(int size, String RULES_URI, String QUERY_URI) throws Exception {
+		CharSequence model = AccessControlFileGenerator.generate(size, QUERY_URI);
+		save(String.format(RULES_URI, size), model);
 	}
 
 	public static void save(String path, CharSequence sequence) throws Exception {

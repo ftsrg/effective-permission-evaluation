@@ -33,7 +33,7 @@ public class StandaloneRulesGenerator {
 		generator.doGenerate(resource, new JavaFileSystemAccess(basePath), null);
 	}
 
-	public void generateAllInOne(String path, EPackage ePackage, String basePath) {
+	public void generateAllInOne(String pack, String path, EPackage ePackage, String basePath) {
 		Injector injector = new RulesStandaloneSetup().createInjectorAndDoEMFRegistration();
    	    new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
     	
@@ -43,7 +43,7 @@ public class StandaloneRulesGenerator {
     	Resource resource = resourceSet.getResource(URI.createURI(path), true);
 		
 		RulesGenerator generator = new RulesGenerator();
-		generator.doGenerateAllInOne(resource, ePackage, new JavaFileSystemAccess(basePath), null);
+		generator.doGenerateAllInOne(pack, resource, ePackage, new JavaFileSystemAccess(basePath), null);
 	}
 	
 	public void generate(EPackage ePackage, String basePath) {
