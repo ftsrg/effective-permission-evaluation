@@ -260,7 +260,7 @@ class RulesGenerator extends AbstractGenerator {
     //  rule default
         find objectAsset(object);
         find allUsers(user);
-        «policy.operation.generateOperationType»
+        find readWriteOperation(operation);
         priority == eval(-1);
     '''
     
@@ -316,7 +316,7 @@ class RulesGenerator extends AbstractGenerator {
     //  rule default
         find attributeAsset(source, value, attribute);
         find allUsers(user);
-        «policy.operation.generateOperationType»
+        find readWriteOperation(operation);
         priority == eval(-1);
     '''
     
@@ -372,7 +372,7 @@ class RulesGenerator extends AbstractGenerator {
     //  rule default
         find referenceAsset(source, target, reference);
         find allUsers(user);
-        «policy.operation.generateOperationType»
+        find readWriteOperation(operation);
         priority == eval(-1);
     '''
     

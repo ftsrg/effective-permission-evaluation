@@ -1,0 +1,25 @@
+grammar org.mondo.collaboration.policy.delegation.Delegation with org.mondo.collaboration.policy.Rules
+
+generate delegation "http://www.mondo.org/collaboration/policy/delegation/Delegation"
+
+import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as iql
+import "http://www.mondo.org/collaboration/policy/Rules" as ac
+
+DelegationModel:
+	^import=Import
+	policy=Policy;
+
+@Override 
+Policy:
+	'policy' name=ID '{'
+	rules+=Rule*
+	'}' 'with' resolution=ResolutionType 'resolution';
+
+@Override 
+Rule:
+	'rule' name=ID access=AccessibilityLevel (operation=OperationType)? 'delegated' 'from'
+	source=[ac::Role] 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
+	'from' 'query' pattern=[iql::Pattern|STRING]
+	'select' asset=ModelFact
+	bindings+=Binding*
+	'}';

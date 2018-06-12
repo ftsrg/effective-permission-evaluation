@@ -250,13 +250,8 @@ public class RuleManager {
 
 	private void addDefaultPermission(Asset asset) {
 		AccessibilityLevel access = accessControlModel.getPolicy().getAccess();
-		OperationType operation = accessControlModel.getPolicy().getOperation();
-		if (operation == OperationType.READWRITE) {
-			judgementStorage.add(new Judgement(access, OperationType.READ, asset, -1));
-			judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, -1));
-		} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-			judgementStorage.add(new Judgement(access, operation, asset, -1));
-		}
+		judgementStorage.add(new Judgement(access, OperationType.READ, asset, -1));
+		judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, -1));
 		
 		if(asset instanceof ReferenceAsset) {
 			ReferenceAsset referenceAsset = (ReferenceAsset) asset;

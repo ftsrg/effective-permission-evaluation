@@ -18,14 +18,6 @@ import org.mondo.collaboration.policy.rules.Policy
 class RulesValidator extends AbstractRulesValidator {
 	
 	public static val INVALID_NAME = 'invalidName'
-
-    @Check
-	def checkPolicyOperation(Policy policy) {
-		val operation = policy.eClass.EAllStructuralFeatures.findFirst[x | x.name.equals("operation")]
-		if(policy.operation != OperationType::READWRITE){
-			error("Both operation types have to be defined", policy, operation)
-		}
-	}
 	
 	@Check
 	def checkOperationTypeAfterObfuscate(Rule rule) {
