@@ -15,7 +15,6 @@ import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
 import org.mondo.collaboration.policy.delegation.delegation.DelegationPackage
-import org.mondo.collaboration.policy.delegation.delegation.Rule
 import org.mondo.collaboration.policy.rules.AccessControlModel
 import org.mondo.collaboration.policy.rules.AttributeFact
 import org.mondo.collaboration.policy.rules.Binding
@@ -25,6 +24,9 @@ import org.mondo.collaboration.policy.rules.OperationType
 import org.mondo.collaboration.policy.rules.ReferenceFact
 import org.mondo.collaboration.policy.rules.Role
 import org.mondo.collaboration.policy.rules.RulesPackage
+import org.mondo.collaboration.policy.delegation.delegation.Delegation
+import java.util.List
+import org.mondo.collaboration.policy.rules.User
 
 /**
  * This class contains custom scoping description.
@@ -34,20 +36,17 @@ import org.mondo.collaboration.policy.rules.RulesPackage
  */
 class DelegationScopeProvider extends AbstractDelegationScopeProvider {
     override IScope getScope(EObject context, EReference reference) {
-		if (reference == RulesPackage.eINSTANCE.getRule_Operation()) {
-			if (context instanceof Rule) {
+		if (reference == DelegationPackage.eINSTANCE.getDelegation_Operation()) {
+//			if (context instanceof Delegation) {
 				val literals = Lists.newArrayList()
 				for (EEnumLiteral literal : RulesPackage.eINSTANCE.getOperationType().getELiterals()) {
 					if(!literal.getLiteral().equals(OperationType.UNSET)) literals.add(literal)
 				}
 				return Scopes.scopeFor(literals)
-			}
-		}
-		if (reference == RulesPackage.eINSTANCE.getRule_Pattern() && context instanceof Rule) {
-			return context.scopeRule_Pattern(reference)
+//			}
 		}
 		if ((reference == RulesPackage.eINSTANCE.getBinding_Variable() && context instanceof Binding) ||
-			(reference == RulesPackage.eINSTANCE.getObjectFact_Variable() && context instanceof ObjectFact) ||
+			(reference == RulesPackage.eINSTANCE.getObjectFact_Variable() && context instanceof Binding) ||
 			(reference == RulesPackage.eINSTANCE.getReferenceFact_SourceVar() && context instanceof ReferenceFact) ||
 			(reference == RulesPackage.eINSTANCE.getReferenceFact_TargetVar() && context instanceof ReferenceFact) ||
 			(reference == RulesPackage.eINSTANCE.getAttributeFact_Variable() && context instanceof AttributeFact)) {
@@ -56,12 +55,20 @@ class DelegationScopeProvider extends AbstractDelegationScopeProvider {
 		if (reference == RulesPackage.eINSTANCE.getReferenceFact_Reference() && context instanceof ReferenceFact) {
 			return context.scopeReferenceFact_Reference(reference)
 		}
-		if (reference == RulesPackage.eINSTANCE.getAttributeFact_Attribute() && context instanceof AttributeFact) {
+		if (reference == RulesPackage.eINSTANCE.getAttributeFact_Attribute() && context instanceof ReferenceFact) {
 			return context.scopeAttributeFact_Attribute(reference)
 		}
-		if((reference == DelegationPackage.eINSTANCE.getRule_Source() && context instanceof Rule) ||
-		   (reference == DelegationPackage.eINSTANCE.getRule_Targets() && context instanceof Rule)) {
+		if (reference == DelegationPackage.eINSTANCE.getDelegation_Source()) {
+			return context.scopeRule_User(reference)
+		}
+		if (reference == DelegationPackage.eINSTANCE.getDelegation_Targets()) {
 			return context.scopeRule_Role(reference)
+		}
+		if (reference == DelegationPackage.eINSTANCE.getDelegation_Pattern()) {
+			return context.scopeRule_Pattern(reference)
+		}
+		if (reference == DelegationPackage.eINSTANCE.delegation_Asset) {
+			return super.getScope(context, reference);
 		}
 		return super.getScope(context, reference)
 	}
@@ -81,6 +88,10 @@ class DelegationScopeProvider extends AbstractDelegationScopeProvider {
 		return resourceSet.allContents
 	}
 	
+	def IScope scopeRule_User(EObject context, EReference reference) {
+		return Scopes.scopeFor(context.roles.filter(User).toList)
+	}
+	
 	def IScope scopeRule_Role(EObject context, EReference reference) {
 		return Scopes.scopeFor(context.roles.filter(Role).toList)
 	}
@@ -90,6 +101,10 @@ class DelegationScopeProvider extends AbstractDelegationScopeProvider {
 		val resourceSet = context.eResource.resourceSet
 		resourceSet.getResource(URI.createFileURI(model.import.importURI), true)
 		return resourceSet.allContents
-		
+	}
+	
+	override IScope scopeVariable(EObject context, EReference reference){
+		val rule = context.eContainer() as Delegation
+		return Scopes.scopeFor(rule.pattern.parameters)
 	}
 }

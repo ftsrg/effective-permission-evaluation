@@ -7,19 +7,11 @@ import "http://www.mondo.org/collaboration/policy/Rules" as ac
 
 DelegationModel:
 	^import=Import
-	policy=Policy;
+	delegations+=Delegation*;
 
-@Override 
-Policy:
-	'policy' name=ID '{'
-	rules+=Rule*
-	'}' 'with' resolution=ResolutionType 'resolution';
-
-@Override 
-Rule:
-	'rule' name=ID access=AccessibilityLevel (operation=OperationType)? 'delegated' 'from'
-	source=[ac::Role] 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
-	'from' 'query' pattern=[iql::Pattern|STRING]
-	'select' asset=ModelFact
-	bindings+=Binding*
+Delegation:
+	source=[ac::User] 'delegates' access=AccessibilityLevel (operation=OperationType)? 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
+	    'from' 'query' pattern=[iql::Pattern|STRING]
+	    'select' asset=ModelFact
+	    bindings+=Binding*
 	'}';

@@ -3,25 +3,69 @@
  */
 package org.mondo.collaboration.policy.delegation.validation
 
+import java.util.ArrayList
+import java.util.List
+import java.util.stream.Collectors
 import org.eclipse.xtext.validation.Check
-import org.mondo.collaboration.policy.delegation.delegation.Rule
+import org.mondo.collaboration.policy.delegation.delegation.Delegation
+import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
 import org.mondo.collaboration.policy.rules.AccessibilityLevel
+import org.mondo.collaboration.policy.rules.Role
+import org.mondo.collaboration.policy.rules.User
 
 /**
  * This class contains custom validation rules. 
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class DelegationValidator extends AbstractDelegationValidator {
-	
+
 	public static val INVALID_NAME = 'invalidName'
 
 	@Check
-	def checkDelegationOfDeny(Rule rule) {
-		val access = rule.eClass.EAllStructuralFeatures.findFirst[x | x.name.equals("access")]
-		if(rule.access == AccessibilityLevel::DENY){
+	def checkDelegationOfDeny(Delegation rule) {
+		val access = rule.eClass.EAllStructuralFeatures.findFirst[x|x.name.equals("access")]
+		if (rule.access == AccessibilityLevel::DENY) {
 			error("Deny cannot be delegated", rule, access)
 		}
 	}
+
+	@Check
+	def checkRecursiveDelegation(Delegation rule) {
+		for(User user : usersFromTargets(rule.targets)) {
+			if(recursion(rule, user)) {
+				val s = rule.eClass.EAllStructuralFeatures.findFirst[x|x.name.equals("source")];
+				error("Cannot handle recursive delegation", rule, s);
+			}
+		}
+	}
 	
+	def boolean recursion(Delegation rule, User user) {
+        val delegationModel = rule.eContainer as DelegationModel
+        for(Delegation r : delegationModel.delegations.stream.filter(d|usersFromTargets(d.targets).contains(rule.source)).collect(Collectors.toList)) {
+			if(r.source.equals(user) || recursion(r, user)) {
+			    return true;
+			}
+		}
+		return false; 			
+	}
+	
+	def usersFromTargets(List<Role> roles) {
+		val users = new ArrayList<User>();
+		for(Role role : roles) {
+			users.addAll(usersOfRole(role));
+		}
+		return users;
+	}
+	
+	def List<User> usersOfRole(Role role) {
+		val users = new ArrayList<User>();
+		if(role instanceof User) {
+			users.add(role as User);
+		} else {
+			users.addAll(usersOfRole(role));
+		}
+		return users;
+	}
+
 }
