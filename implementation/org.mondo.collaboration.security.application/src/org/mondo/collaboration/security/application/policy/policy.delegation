@@ -1,0 +1,6 @@
+import "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.rules"
+
+SubsystemManager delegates allow R to IOManager {
+	from query "nonInputOutput"
+	select obj(object)
+} 

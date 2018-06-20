@@ -1,0 +1,1013 @@
+<?xml version="1.0" encoding="ASCII"?>
+<wtc:WT xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:wtc="http://WTSpec4M/5.0M"
+    sysId="WindPower4MONDO"
+    model="WindPower4MONDO"
+    version="test">
+  <itsSubsystems
+      sysId="Subsystem_1"
+      description="Description for Subsystem_1">
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit10"
+        sysId="CtrlUnit_1"
+        description="Description for CtrlUnit_1"
+        cycle="10"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.0"
+        Output__oOutput1="//@itsOutputs.0"
+        Parameter__pParam1="//@itsParams.0"
+        Parameter__pParam2="//@itsParams.1"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit10"
+        sysId="CtrlUnit_2"
+        description="Description for CtrlUnit_2"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.1"
+        Output__oOutput1="//@itsOutputs.1"
+        Parameter__pParam1="//@itsParams.2"
+        Parameter__pParam2="//@itsParams.1"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit10"
+        sysId="CtrlUnit_3"
+        description="Description for CtrlUnit_3"
+        cycle="100"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.2"
+        Output__oOutput1="//@itsOutputs.2"
+        Parameter__pParam1="//@itsParams.3"
+        Parameter__pParam2="//@itsParams.4"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit10"
+        sysId="CtrlUnit_4"
+        description="Description for CtrlUnit_4"
+        cycle="100"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.3"
+        Output__oOutput1="//@itsOutputs.3"
+        Parameter__pParam1="//@itsParams.5"
+        Parameter__pParam2="//@itsParams.6"
+        BhvParam__BhvParam1="test"/>
+  </itsSubsystems>
+  <itsSubsystems
+      sysId="Subsystem_2"
+      description="Description for Subsystem_2">
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit36"
+        sysId="CtrlUnit_5"
+        description="Description for CtrlUnit_5"
+        cycle="1000"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.4"
+        Output__oOutput1="//@itsOutputs.4"
+        Parameter__pParam1="//@itsParams.7"
+        Parameter__pParam2="//@itsParams.8"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit73"
+        sysId="CtrlUnit_9"
+        description="Description for CtrlUnit_9"
+        cycle="1000"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.5"
+        Output__oOutput1="//@itsOutputs.8"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit29"
+        sysId="CtrlUnit_10"
+        description="Description for CtrlUnit_10"
+        cycle="1000"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.5"
+        Fault__fFault1="//@itsFaults.1"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit37"
+        sysId="CtrlUnit_11"
+        description="Description for CtrlUnit_11"
+        cycle="1000"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.6"
+        Input__iInput2="//@itsInputs.7"
+        Input__iInput3="//@itsInputs.8"
+        Fault__fFault1="//@itsFaults.0"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit50"
+        sysId="CtrlUnit_12"
+        description="Description for CtrlUnit_12"
+        cycle="100"
+        priority="2"
+        enabled="true"
+        Output__oOutput1="//@itsOutputs.9"
+        Fault__fFault1="//@itsFaults.0"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit73"
+        sysId="CtrlUnit_13"
+        description="Description for CtrlUnit_13"
+        cycle="100"
+        priority="3"
+        enabled="true"
+        Input__iInput1="//@itsInputs.9"
+        Output__oOutput1="//@itsOutputs.10"/>
+  </itsSubsystems>
+  <itsSubsystems
+      sysId="Subsystem_3"
+      description="Description for Subsystem_3">
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit50"
+        sysId="CtrlUnit_15"
+        description="Description for CtrlUnit_15"
+        cycle="100"
+        priority="1"
+        enabled="true"
+        Output__oOutput1="//@itsOutputs.11"
+        Fault__fFault1="//@itsFaults.2"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit73"
+        sysId="CtrlUnit_16"
+        description="Description for CtrlUnit_16"
+        cycle="100"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.7"
+        Output__oOutput1="//@itsOutputs.12"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit78"
+        sysId="CtrlUnit_18"
+        description="Description for CtrlUnit_18"
+        cycle="1000"
+        priority="3"
+        enabled="true"
+        Input__iInput1="//@itsInputs.12"
+        Input__iInput2="//@itsInputs.13"
+        Output__oOutput1="//@itsOutputs.14"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit78"
+        sysId="CtrlUnit_19"
+        description="Description for CtrlUnit_19"
+        cycle="1000"
+        priority="3"
+        enabled="true"
+        Input__iInput1="//@itsInputs.14"
+        Input__iInput2="//@itsInputs.15"
+        Output__oOutput1="//@itsOutputs.15"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit50"
+        sysId="CtrlUnit_20"
+        description="Description for CtrlUnit_20"
+        cycle="1000"
+        priority="3"
+        enabled="true"
+        Output__oOutput1="//@itsOutputs.16"
+        Fault__fFault1="//@itsFaults.3"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit29"
+        sysId="CtrlUnit_24"
+        description="Description for CtrlUnit_24"
+        cycle="1000"
+        priority="5"
+        enabled="true"
+        Input__iInput1="//@itsInputs.11"
+        Fault__fFault1="//@itsFaults.3"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit29"
+        sysId="CtrlUnit_25"
+        description="Description for CtrlUnit_25"
+        cycle="1000"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.21"
+        Fault__fFault1="//@itsFaults.4"
+        BhvParam__BhvParam1="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit78"
+        sysId="CtrlUnit_28"
+        description="Description for CtrlUnit_28"
+        cycle="100"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.23"
+        Input__iInput2="//@itsInputs.24"
+        Output__oOutput1="//@itsOutputs.19"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit11"
+        sysId="CtrlUnit_29"
+        description="Description for CtrlUnit_29"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.25"
+        Input__iInput2="//@itsInputs.26"
+        Output__oOutput1="//@itsOutputs.20"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit11"
+        sysId="CtrlUnit_30"
+        description="Description for CtrlUnit_30"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.27"
+        Input__iInput2="//@itsInputs.28"
+        Output__oOutput1="//@itsOutputs.21"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit11"
+        sysId="CtrlUnit_31"
+        description="Description for CtrlUnit_31"
+        cycle="12"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.29"
+        Input__iInput2="//@itsInputs.30"
+        Output__oOutput1="//@itsOutputs.22"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit46"
+        sysId="CtrlUnit_32"
+        description="Description for CtrlUnit_32"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Output__oOutput1="//@itsOutputs.23"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit9"
+        sysId="CtrlUnit_33"
+        description="Description for CtrlUnit_33"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.31"
+        Output__oOutput1="//@itsOutputs.24"
+        Parameter__pParam1="//@itsParams.9"
+        BhvParam__BhvParam1="test"
+        BhvParam__BhvParam2="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit9"
+        sysId="CtrlUnit_34"
+        description="Description for CtrlUnit_34"
+        cycle="12"
+        priority="1"
+        enabled="true"
+        Input__iInput1="//@itsInputs.32"
+        Output__oOutput1="//@itsOutputs.25"
+        Parameter__pParam1="//@itsParams.9"
+        BhvParam__BhvParam1="test"
+        BhvParam__BhvParam2="test"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit78"
+        sysId="CtrlUnit_35"
+        description="Description for CtrlUnit_35"
+        cycle="12"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.33"
+        Input__iInput2="//@itsInputs.34"
+        Output__oOutput1="//@itsOutputs.26"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit78"
+        sysId="CtrlUnit_36"
+        description="Description for CtrlUnit_36"
+        cycle="12"
+        priority="3"
+        enabled="true"
+        Input__iInput1="//@itsInputs.35"
+        Input__iInput2="//@itsInputs.36"
+        Output__oOutput1="//@itsOutputs.27"/>
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit58"
+        sysId="CtrlUnit_38"
+        description="Description for CtrlUnit_38"
+        cycle="12"
+        priority="2"
+        enabled="true"
+        Input__iInput1="//@itsInputs.43"
+        Output__oOutput1="//@itsOutputs.29"
+        Parameter__pParam1="//@itsParams.10"
+        BhvParam__BhvParam1="test"/>
+  </itsSubsystems>
+  <itsSubsystems
+      sysId="Subsystem_4"
+      description="Description for Subsystem_4"/>
+  <itsInputs
+      sysId="I_1"
+      description="Input 1"/>
+  <itsInputs
+      sysId="I_2"
+      description="Input 2"/>
+  <itsInputs
+      sysId="I_3"
+      description="Input 3"/>
+  <itsInputs
+      sysId="I_4"
+      description="Input 4"/>
+  <itsInputs
+      sysId="I_5"
+      description="Input 5"/>
+  <itsInputs
+      sysId="I_6"
+      description="Input 6"/>
+  <itsInputs
+      sysId="I_7"
+      description="Input 7"/>
+  <itsInputs
+      sysId="I_8"
+      description="Input 8"/>
+  <itsInputs
+      sysId="I_9"
+      description="Input 9"/>
+  <itsInputs
+      sysId="I_10"
+      description="Input 10"/>
+  <itsInputs
+      sysId="I_11"
+      description="Input 11"/>
+  <itsInputs
+      sysId="I_12"
+      description="Input 12"/>
+  <itsInputs
+      sysId="I_13"
+      description="Input 13"/>
+  <itsInputs
+      sysId="I_14"
+      description="Input 14"/>
+  <itsInputs
+      sysId="I_15"
+      description="Input 15"/>
+  <itsInputs
+      sysId="I_16"
+      description="Input 16"/>
+  <itsInputs
+      sysId="I_17"
+      description="Input 17"/>
+  <itsInputs
+      sysId="I_18"
+      description="Input 18"/>
+  <itsInputs
+      sysId="I_19"
+      description="Input 19"/>
+  <itsInputs
+      sysId="I_20"
+      description="Input 20"/>
+  <itsInputs
+      sysId="I_21"
+      description="Input 21"/>
+  <itsInputs
+      sysId="I_22"
+      description="Input 22"/>
+  <itsInputs
+      sysId="I_23"
+      description="Input 23"/>
+  <itsInputs
+      sysId="I_24"
+      description="Input 24"/>
+  <itsInputs
+      sysId="I_25"
+      description="Input 25"/>
+  <itsInputs
+      sysId="I_26"
+      description="Input 26"/>
+  <itsInputs
+      sysId="I_27"
+      description="Input 27"/>
+  <itsInputs
+      sysId="I_28"
+      description="Input 28"/>
+  <itsInputs
+      sysId="I_29"
+      description="Input 29"/>
+  <itsInputs
+      sysId="I_30"
+      description="Input 30"/>
+  <itsInputs
+      sysId="I_31"
+      description="Input 31"/>
+  <itsInputs
+      sysId="I_32"
+      description="Input 32"/>
+  <itsInputs
+      sysId="I_33"
+      description="Input 33"/>
+  <itsInputs
+      sysId="I_34"
+      description="Input 34"/>
+  <itsInputs
+      sysId="I_35"
+      description="Input 35"/>
+  <itsInputs
+      sysId="I_36"
+      description="Input 36"/>
+  <itsInputs
+      sysId="I_37"
+      description="Input 37"/>
+  <itsInputs
+      sysId="I_38"
+      description="Input 38"/>
+  <itsInputs
+      sysId="I_39"
+      description="Input 39"/>
+  <itsInputs
+      sysId="I_40"
+      description="Input 40"/>
+  <itsInputs
+      sysId="I_41"
+      description="Input 41"/>
+  <itsInputs
+      sysId="I_42"
+      description="Input 42"/>
+  <itsInputs
+      sysId="I_43"
+      description="Input 43"/>
+  <itsInputs
+      sysId="I_44"
+      description="Input 44"/>
+  <itsInputs
+      sysId="I_45"
+      description="Input 45"/>
+  <itsInputs
+      sysId="I_46"
+      description="Input 46"/>
+  <itsInputs
+      sysId="I_47"
+      description="Input 47"/>
+  <itsInputs
+      sysId="I_48"
+      description="Input 48"/>
+  <itsInputs
+      sysId="I_49"
+      description="Input 49"/>
+  <itsInputs
+      sysId="I_50"
+      description="Input 50"/>
+  <itsInputs
+      sysId="I_51"
+      description="Input 51"/>
+  <itsInputs
+      sysId="I_52"
+      description="Input 52"/>
+  <itsInputs
+      sysId="I_53"
+      description="Input 53"/>
+  <itsInputs
+      sysId="I_54"
+      description="Input 54"/>
+  <itsInputs
+      sysId="I_55"
+      description="Input 55"/>
+  <itsInputs
+      sysId="I_56"
+      description="Input 56"/>
+  <itsInputs
+      sysId="I_57"
+      description="Input 57"/>
+  <itsInputs
+      sysId="I_58"
+      description="Input 58"/>
+  <itsInputs
+      sysId="I_59"
+      description="Input 59"/>
+  <itsInputs
+      sysId="I_60"
+      description="Input 60"/>
+  <itsInputs
+      sysId="I_61"
+      description="Input 61"/>
+  <itsInputs
+      sysId="I_62"
+      description="Input 62"/>
+  <itsInputs
+      sysId="I_63"
+      description="Input 63"/>
+  <itsInputs
+      sysId="I_64"
+      description="Input 64"/>
+  <itsInputs
+      sysId="I_65"
+      description="Input 65"/>
+  <itsInputs
+      sysId="I_66"
+      description="Input 66"/>
+  <itsInputs
+      sysId="I_67"
+      description="Input 67"/>
+  <itsInputs
+      sysId="I_68"
+      description="Input 68"/>
+  <itsInputs
+      sysId="I_69"
+      description="Input 69"/>
+  <itsInputs
+      sysId="I_70"
+      description="Input 70"/>
+  <itsInputs
+      sysId="I_71"
+      description="Input 71"/>
+  <itsInputs
+      sysId="I_72"
+      description="Input 72"/>
+  <itsInputs
+      sysId="I_73"
+      description="Input 73"/>
+  <itsInputs
+      sysId="I_74"
+      description="Input 74"/>
+  <itsInputs
+      sysId="I_75"
+      description="Input 75"/>
+  <itsInputs
+      sysId="I_76"
+      description="Input 76"/>
+  <itsInputs
+      sysId="I_77"
+      description="Input 77"/>
+  <itsInputs
+      sysId="I_78"
+      description="Input 78"/>
+  <itsInputs
+      sysId="I_79"
+      description="Input 79"/>
+  <itsInputs
+      sysId="I_80"
+      description="Input 80"/>
+  <itsInputs
+      sysId="I_81"
+      description="Input 81"/>
+  <itsInputs
+      sysId="I_82"
+      description="Input 82"/>
+  <itsInputs
+      sysId="I_83"
+      description="Input 83"/>
+  <itsInputs
+      sysId="I_84"
+      description="Input 84"/>
+  <itsInputs
+      sysId="I_85"
+      description="Input 85"/>
+  <itsInputs
+      sysId="I_86"
+      description="Input 86"/>
+  <itsInputs
+      sysId="I_87"
+      description="Input 87"/>
+  <itsInputs
+      sysId="I_88"
+      description="Input 88"/>
+  <itsInputs
+      sysId="I_89"
+      description="Input 89"/>
+  <itsInputs
+      sysId="I_90"
+      description="Input 90"/>
+  <itsInputs
+      sysId="I_91"
+      description="Input 91"/>
+  <itsInputs
+      sysId="I_92"
+      description="Input 92"/>
+  <itsInputs
+      sysId="I_93"
+      description="Input 93"/>
+  <itsInputs
+      sysId="I_94"
+      description="Input 94"/>
+  <itsInputs
+      sysId="I_95"
+      description="Input 95"/>
+  <itsInputs
+      sysId="I_96"
+      description="Input 96"/>
+  <itsInputs
+      sysId="I_97"
+      description="Input 97"/>
+  <itsInputs
+      sysId="I_98"
+      description="Input 98"/>
+  <itsInputs
+      sysId="I_99"
+      description="Input 99"/>
+  <itsOutputs
+      sysId="O_1"
+      description="Output 1"/>
+  <itsOutputs
+      sysId="O_2"
+      description="Output 2"/>
+  <itsOutputs
+      sysId="O_3"
+      description="Output 3"/>
+  <itsOutputs
+      sysId="O_4"
+      description="Output 4"/>
+  <itsOutputs
+      sysId="O_5"
+      description="Output 5"/>
+  <itsOutputs
+      sysId="O_6"
+      description="Output 6"/>
+  <itsOutputs
+      sysId="O_7"
+      description="Output 7"/>
+  <itsOutputs
+      sysId="O_8"
+      description="Output 8"/>
+  <itsOutputs
+      sysId="O_9"
+      description="Output 9"/>
+  <itsOutputs
+      sysId="O_10"
+      description="Output 10"/>
+  <itsOutputs
+      sysId="O_11"
+      description="Output 11"/>
+  <itsOutputs
+      sysId="O_12"
+      description="Output 12"/>
+  <itsOutputs
+      sysId="O_13"
+      description="Output 13"/>
+  <itsOutputs
+      sysId="O_14"
+      description="Output 14"/>
+  <itsOutputs
+      sysId="O_15"
+      description="Output 15"/>
+  <itsOutputs
+      sysId="O_16"
+      description="Output 16"/>
+  <itsOutputs
+      sysId="O_17"
+      description="Output 17"/>
+  <itsOutputs
+      sysId="O_18"
+      description="Output 18"/>
+  <itsOutputs
+      sysId="O_19"
+      description="Output 19"/>
+  <itsOutputs
+      sysId="O_20"
+      description="Output 20"/>
+  <itsOutputs
+      sysId="O_21"
+      description="Output 21"/>
+  <itsOutputs
+      sysId="O_22"
+      description="Output 22"/>
+  <itsOutputs
+      sysId="O_23"
+      description="Output 23"/>
+  <itsOutputs
+      sysId="O_24"
+      description="Output 24"/>
+  <itsOutputs
+      sysId="O_25"
+      description="Output 25"/>
+  <itsOutputs
+      sysId="O_26"
+      description="Output 26"/>
+  <itsOutputs
+      sysId="O_27"
+      description="Output 27"/>
+  <itsOutputs
+      sysId="O_28"
+      description="Output 28"/>
+  <itsOutputs
+      sysId="O_29"
+      description="Output 29"/>
+  <itsOutputs
+      sysId="O_30"
+      description="Output 30"/>
+  <itsOutputs
+      sysId="O_31"
+      description="Output 31"/>
+  <itsOutputs
+      sysId="O_32"
+      description="Output 32"/>
+  <itsOutputs
+      sysId="O_33"
+      description="Output 33"/>
+  <itsOutputs
+      sysId="O_34"
+      description="Output 34"/>
+  <itsOutputs
+      sysId="O_35"
+      description="Output 35"/>
+  <itsOutputs
+      sysId="O_36"
+      description="Output 36"/>
+  <itsOutputs
+      sysId="O_37"
+      description="Output 37"/>
+  <itsOutputs
+      sysId="O_38"
+      description="Output 38"/>
+  <itsOutputs
+      sysId="O_39"
+      description="Output 39"/>
+  <itsOutputs
+      sysId="O_40"
+      description="Output 40"/>
+  <itsOutputs
+      sysId="O_41"
+      description="Output 41"/>
+  <itsOutputs
+      sysId="O_42"
+      description="Output 42"/>
+  <itsOutputs
+      sysId="O_43"
+      description="Output 43"/>
+  <itsOutputs
+      sysId="O_44"
+      description="Output 44"/>
+  <itsOutputs
+      sysId="O_45"
+      description="Output 45"/>
+  <itsOutputs
+      sysId="O_46"
+      description="Output 46"/>
+  <itsOutputs
+      sysId="O_47"
+      description="Output 47"/>
+  <itsOutputs
+      sysId="O_48"
+      description="Output 48"/>
+  <itsOutputs
+      sysId="O_49"
+      description="Output 49"/>
+  <itsParams
+      sysId="P_1"
+      description="Parameter 1"/>
+  <itsParams
+      sysId="P_2"
+      description="Parameter 2"/>
+  <itsParams
+      sysId="P_3"
+      description="Parameter 3"/>
+  <itsParams
+      sysId="P_4"
+      description="Parameter 4"/>
+  <itsParams
+      sysId="P_5"
+      description="Parameter 5"/>
+  <itsParams
+      sysId="P_6"
+      description="Parameter 6"/>
+  <itsParams
+      sysId="P_7"
+      description="Parameter 7"/>
+  <itsParams
+      sysId="P_8"
+      description="Parameter 8"/>
+  <itsParams
+      sysId="P_9"
+      description="Parameter 9"/>
+  <itsParams
+      sysId="P_10"
+      description="Parameter 10"/>
+  <itsParams
+      sysId="P_11"
+      description="Parameter 11"/>
+  <itsParams
+      sysId="P_12"
+      description="Parameter 12"/>
+  <itsParams
+      sysId="P_13"
+      description="Parameter 13"/>
+  <itsParams
+      sysId="P_14"
+      description="Parameter 14"/>
+  <itsParams
+      sysId="P_15"
+      description="Parameter 15"/>
+  <itsParams
+      sysId="P_16"
+      description="Parameter 16"/>
+  <itsParams
+      sysId="P_17"
+      description="Parameter 17"/>
+  <itsParams
+      sysId="P_18"
+      description="Parameter 18"/>
+  <itsParams
+      sysId="P_19"
+      description="Parameter 19"/>
+  <itsParams
+      sysId="P_20"
+      description="Parameter 20"/>
+  <itsParams
+      sysId="P_21"
+      description="Parameter 21"/>
+  <itsParams
+      sysId="P_22"
+      description="Parameter 22"/>
+  <itsParams
+      sysId="P_23"
+      description="Parameter 23"/>
+  <itsParams
+      sysId="P_24"
+      description="Parameter 24"/>
+  <itsParams
+      sysId="P_25"
+      description="Parameter 25"/>
+  <itsParams
+      sysId="P_26"
+      description="Parameter 26"/>
+  <itsParams
+      sysId="P_27"
+      description="Parameter 27"/>
+  <itsParams
+      sysId="P_28"
+      description="Parameter 28"/>
+  <itsParams
+      sysId="P_29"
+      description="Parameter 29"/>
+  <itsParams
+      sysId="P_30"
+      description="Parameter 30"/>
+  <itsTimers
+      sysId="T_1"
+      description="Timer 1"/>
+  <itsTimers
+      sysId="T_2"
+      description="Timer 2"/>
+  <itsTimers
+      sysId="T_3"
+      description="Timer 3"/>
+  <itsTimers
+      sysId="T_4"
+      description="Timer 4"/>
+  <itsTimers
+      sysId="T_5"
+      description="Timer 5"/>
+  <itsTimers
+      sysId="T_6"
+      description="Timer 6"/>
+  <itsTimers
+      sysId="T_7"
+      description="Timer 7"/>
+  <itsTimers
+      sysId="T_8"
+      description="Timer 8"/>
+  <itsTimers
+      sysId="T_9"
+      description="Timer 9"/>
+  <itsTimers
+      sysId="T_10"
+      description="Timer 10"/>
+  <itsTimers
+      sysId="T_11"
+      description="Timer 11"/>
+  <itsTimers
+      sysId="T_12"
+      description="Timer 12"/>
+  <itsTimers
+      sysId="T_13"
+      description="Timer 13"/>
+  <itsTimers
+      sysId="T_14"
+      description="Timer 14"/>
+  <itsTimers
+      sysId="T_15"
+      description="Timer 15"/>
+  <itsFaults
+      sysId="A_1"
+      description="Alarm 1"/>
+  <itsFaults
+      sysId="A_2"
+      description="Alarm 2"/>
+  <itsFaults
+      sysId="A_3"
+      description="Alarm 3"/>
+  <itsFaults
+      sysId="A_4"
+      description="Alarm 4"/>
+  <itsFaults
+      sysId="A_5"
+      description="Alarm 5"/>
+  <itsFaults
+      sysId="A_6"
+      description="Alarm 6"/>
+  <itsFaults
+      sysId="A_7"
+      description="Alarm 7"/>
+  <itsFaults
+      sysId="A_8"
+      description="Alarm 8"/>
+  <itsFaults
+      sysId="A_9"
+      description="Alarm 9"/>
+  <itsFaults
+      sysId="A_10"
+      description="Alarm 10"/>
+  <itsFaults
+      sysId="A_11"
+      description="Alarm 11"/>
+  <itsFaults
+      sysId="A_12"
+      description="Alarm 12"/>
+  <itsFaults
+      sysId="A_13"
+      description="Alarm 13"/>
+  <itsFaults
+      sysId="A_14"
+      description="Alarm 14"/>
+  <itsFaults
+      sysId="A_15"
+      description="Alarm 15"/>
+  <itsFaults
+      sysId="A_16"
+      description="Alarm 16"/>
+  <itsFaults
+      sysId="A_17"
+      description="Alarm 17"/>
+  <itsFaults
+      sysId="A_18"
+      description="Alarm 18"/>
+  <itsFaults
+      sysId="A_19"
+      description="Alarm 19"/>
+  <itsFaults
+      sysId="A_20"
+      description="Alarm 20"/>
+  <itsFaults
+      sysId="A_21"
+      description="Alarm 21"/>
+  <itsFaults
+      sysId="A_22"
+      description="Alarm 22"/>
+  <itsFaults
+      sysId="A_23"
+      description="Alarm 23"/>
+  <itsFaults
+      sysId="A_24"
+      description="Alarm 24"/>
+  <itsFaults
+      sysId="A_25"
+      description="Alarm 25"/>
+  <itsFaults
+      sysId="A_26"
+      description="Alarm 26"/>
+  <itsFaults
+      sysId="A_27"
+      description="Alarm 27"/>
+  <itsFaults
+      sysId="A_28"
+      description="Alarm 28"/>
+  <itsFaults
+      sysId="A_29"
+      description="Alarm 29"/>
+  <itsFaults
+      sysId="A_30"
+      description="Alarm 30"/>
+  <itsFaults
+      sysId="A_31"
+      description="Alarm 31"/>
+  <itsFaults
+      sysId="A_32"
+      description="Alarm 32"/>
+  <itsFaults
+      sysId="A_33"
+      description="Alarm 33"/>
+  <itsFaults
+      sysId="A_34"
+      description="Alarm 34"/>
+  <itsFaults
+      sysId="A_35"
+      description="Alarm 35"/>
+  <itsFaults
+      sysId="A_36"
+      description="Alarm 36"/>
+  <itsFaults
+      sysId="A_37"
+      description="Alarm 37"/>
+  <itsFaults
+      sysId="A_38"
+      description="Alarm 38"/>
+  <itsFaults
+      sysId="A_39"
+      description="Alarm 39"/>
+  <itsFaults
+      sysId="A_40"
+      description="Alarm 40"/>
+  <itsFaults
+      sysId="A_41"
+      description="Alarm 41"/>
+  <itsFaults
+      sysId="A_42"
+      description="Alarm 42"/>
+  <itsFaults
+      sysId="A_43"
+      description="Alarm 43"/>
+  <itsFaults
+      sysId="A_44"
+      description="Alarm 44"/>
+</wtc:WT>

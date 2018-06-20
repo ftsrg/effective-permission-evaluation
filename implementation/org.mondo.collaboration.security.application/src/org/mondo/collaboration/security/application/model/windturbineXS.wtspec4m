@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ASCII"?>
+<wtc:WT xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:wtc="http://WTSpec4M/5.0M"
+    sysId="WindPower4MONDO"
+    model="WindPower4MONDO"
+    version="1">
+  <itsSubsystems
+      sysId="Subsys_4"
+      description="Subsystem_4">
+    <itsWTCs
+        xsi:type="wtc:CtrlUnit29"
+        sysId="CU29_1"
+        description="Control Unit 29_1"
+        Input__iInput1="//@itsInputs.0"
+        BhvParam__BhvParam1="param1"/>
+  </itsSubsystems>
+  <itsInputs
+      sysId="I_1"
+      description="Input 1"/>
+  <itsOutputs
+      sysId="O_1"
+      description="Output 1"/>
+</wtc:WT>

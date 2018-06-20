@@ -1,0 +1,69 @@
+import "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.vql"
+
+user PrincipalEngineer
+user SubsystemManager
+user IOManager
+
+policy DemoPolicy allow by default {
+    rule restrictRoot deny W to PrincipalEngineer, IOManager, SubsystemManager {
+		from query "findRoot"
+		select obj(object)
+	} with 1 priority
+	
+	rule enableNonRoot allow RW to PrincipalEngineer {
+		from query "findObjectAssetWithoutRoot"
+		select obj(object)
+	} with 1 priority
+	
+	rule enableIO allow RW to IOManager {
+		from query "inputOutput"
+		select obj(object)
+	} with 1 priority
+
+    rule restrictNonIO deny R to IOManager {
+    	from query "nonInputOutput"
+    	select obj(object)
+    } with 1 priority
+    
+    rule enableNonIO allow RW to SubsystemManager {
+    	from query "nonInputOutput"
+    	select obj(object)
+    } with 1 priority
+    
+    rule restrictIO deny W to SubsystemManager {
+		from query "inputOutput"
+		select obj(object)
+	} with 1 priority
+
+
+
+//	rule explicitVsExplicitTest deny RW to IOManager {
+//		from query "inputOutput"
+//		select obj(object)
+//	} with 1 priority
+
+
+	
+//	rule strongVsExpolicitTest deny R to IOManager {
+//		from query "findRoot"
+//		select obj(object)
+//	} with 1 priority
+
+
+
+//  rule effective deny R to IOManager {
+//		from query "inputOutput"
+//		select obj(object)
+//	} with 2 priority
+//	
+//	rule dominated allow R to IOManager {
+//		from query "inputOutput"
+//		select obj(object)
+//	} with 1 priority
+//	
+//	rule wanted deny R to IOManager {
+//		from query "findRoot"
+//		select obj(object)
+//	} with 1 priority
+
+} with restrictive resolution

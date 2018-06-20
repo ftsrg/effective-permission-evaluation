@@ -1,0 +1,27 @@
+package org.mondo.collaboration.security.application.policy
+
+import "http://WTSpec4M/5.0M"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern findRoot(object: EObject) {
+	find root(object);
+}
+
+pattern findObjectAssetWithoutRoot(object: EObject) {
+	find objectAssetWithoutRoot(object);
+}
+
+pattern inputOutput(object: EObject) {
+	SystemInput(object);
+} or {
+	SystemOutput(object);
+}
+
+pattern nonInputOutput(object: EObject) {
+	find objectAssetWithoutRoot(object);
+	neg find inputOutput(object);
+}
+
+pattern objectInput(input: EObject) {
+	SystemInput(input);
+}
