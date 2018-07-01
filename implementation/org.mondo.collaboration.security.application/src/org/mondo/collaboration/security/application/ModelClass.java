@@ -19,10 +19,10 @@ import WTSpec4M.WTSpec4MFactory;
 import WTSpec4M.WTSpec4MPackage;
 
 public class ModelClass {
-    private static final String QUERIES_PATH = "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.vql";
-	private static final String RULES_PATH = "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.rules";
-	private static final String MODELS_PATH = "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\model\\windturbineXS.wtspec4m";
-	private static final String DELEGATION_PATH = "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.delegation";
+    private static final String QUERIES_PATH = "../org.mondo.collaboration.security.application/src/org/mondo/collaboration/security/application/query/policy.vql";
+	private static final String RULES_PATH = "../org.mondo.collaboration.security.application/src/org/mondo/collaboration/security/application/policy/policy.rules";
+	private static final String MODELS_PATH = "../org.mondo.collaboration.security.application/src/org/mondo/collaboration/security/application/model/windturbineXS.wtspec4m";
+	private static final String DELEGATION_PATH = "../org.mondo.collaboration.security.application/src/org/mondo/collaboration/security/application/policy/policy.delegation";
 
 	private XtextResourceSet resourceSet;
 	private AccessControlModel ruleModel;

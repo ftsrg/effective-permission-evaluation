@@ -14,6 +14,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.RuntimeIOException;
 import org.mondo.collaboration.policy.RulesStandaloneSetup;
+import org.mondo.collaboration.policy.delegation.DelegationStandaloneSetup;
 
 import com.google.inject.Injector;
 
@@ -22,6 +23,7 @@ public class StandaloneRulesGenerator {
 	public void generate(String path, String basePath) {
 		
 		Injector injector = new RulesStandaloneSetup().createInjectorAndDoEMFRegistration();
+		new DelegationStandaloneSetup().createInjectorAndDoEMFRegistration();
    	    new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
     	
     	XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
@@ -33,17 +35,19 @@ public class StandaloneRulesGenerator {
 		generator.doGenerate(resource, new JavaFileSystemAccess(basePath), null);
 	}
 
-	public void generateAllInOne(String pack, String path, EPackage ePackage, String basePath) {
+	public void generateAllInOne(String pack, String acPath, String delegationPath, EPackage ePackage, String basePath) {
 		Injector injector = new RulesStandaloneSetup().createInjectorAndDoEMFRegistration();
+		new DelegationStandaloneSetup().createInjectorAndDoEMFRegistration();
    	    new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
     	
     	XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
     	resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 	
-    	Resource resource = resourceSet.getResource(URI.createURI(path), true);
+    	Resource acResource = resourceSet.getResource(URI.createURI(acPath), true);
+    	Resource delegationResource = resourceSet.getResource(URI.createFileURI(delegationPath), true);
 		
 		RulesGenerator generator = new RulesGenerator();
-		generator.doGenerateAllInOne(pack, resource, ePackage, new JavaFileSystemAccess(basePath), null);
+		generator.doGenerateAllInOne(pack, acResource, delegationResource, ePackage, new JavaFileSystemAccess(basePath), null);
 	}
 	
 	public void generate(EPackage ePackage, String basePath) {

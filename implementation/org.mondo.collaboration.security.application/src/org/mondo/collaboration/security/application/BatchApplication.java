@@ -13,21 +13,19 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.policy.rules.User;
-import org.mondo.collaboration.security.application.policy.util.FindObjectAssetWithoutRootQuerySpecification;
-import org.mondo.collaboration.security.application.policy.util.FindRootQuerySpecification;
-import org.mondo.collaboration.security.application.policy.util.InputOutputQuerySpecification;
-import org.mondo.collaboration.security.application.policy.util.NonInputOutputQuerySpecification;
+import org.mondo.collaboration.security.application.query.util.FindObjectAssetWithoutRootQuerySpecification;
+import org.mondo.collaboration.security.application.query.util.FindRootQuerySpecification;
+import org.mondo.collaboration.security.application.query.util.InputOutputQuerySpecification;
+import org.mondo.collaboration.security.application.query.util.NonInputOutputQuerySpecification;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Judgement;
 import org.mondo.collaboration.security.batch.RuleManager;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-public class Application {
-	private static Logger LOGGER = Logger.getLogger(Application.class);
+public class BatchApplication {
+	private static Logger LOGGER = Logger.getLogger(BatchApplication.class);
 	
 	static Set<IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>> querySpecifications;
 	

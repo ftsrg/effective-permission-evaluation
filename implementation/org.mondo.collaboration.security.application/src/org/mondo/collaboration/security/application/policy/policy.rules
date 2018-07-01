@@ -1,10 +1,11 @@
-import "C:\\Bulisuli\\1\\Onlab1\\workspace2\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\policy\\policy.vql"
+//import "../org.mondo.collaboration.security.application/src/org/mondo/collaboration/security/application/query/policy.vql"
+import "C:\\Bulisuli\\1\\Onlab1\\Evaluation\\effective-permission-evaluation\\implementation\\org.mondo.collaboration.security.application\\src\\org\\mondo\\collaboration\\security\\application\\query\\policy.vql"
 
 user PrincipalEngineer
 user SubsystemManager
 user IOManager
 
-policy DemoPolicy allow by default {
+policy DemoPolicy deny by default {
     rule restrictRoot deny W to PrincipalEngineer, IOManager, SubsystemManager {
 		from query "findRoot"
 		select obj(object)
@@ -34,36 +35,5 @@ policy DemoPolicy allow by default {
 		from query "inputOutput"
 		select obj(object)
 	} with 1 priority
-
-
-
-//	rule explicitVsExplicitTest deny RW to IOManager {
-//		from query "inputOutput"
-//		select obj(object)
-//	} with 1 priority
-
-
-	
-//	rule strongVsExpolicitTest deny R to IOManager {
-//		from query "findRoot"
-//		select obj(object)
-//	} with 1 priority
-
-
-
-//  rule effective deny R to IOManager {
-//		from query "inputOutput"
-//		select obj(object)
-//	} with 2 priority
-//	
-//	rule dominated allow R to IOManager {
-//		from query "inputOutput"
-//		select obj(object)
-//	} with 1 priority
-//	
-//	rule wanted deny R to IOManager {
-//		from query "findRoot"
-//		select obj(object)
-//	} with 1 priority
 
 } with restrictive resolution

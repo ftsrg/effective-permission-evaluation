@@ -5,11 +5,11 @@ package org.mondo.collaboration.policy.delegation.formatting2
 
 import com.google.inject.Inject
 import org.eclipse.xtext.formatting2.IFormattableDocument
+import org.mondo.collaboration.policy.delegation.delegation.Delegation
 import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
-import org.mondo.collaboration.policy.delegation.delegation.Policy
 import org.mondo.collaboration.policy.delegation.services.DelegationGrammarAccess
 import org.mondo.collaboration.policy.formatting2.RulesFormatter
-import org.mondo.collaboration.policy.rules.Rule
+import org.mondo.collaboration.policy.rules.Binding
 
 class DelegationFormatter extends RulesFormatter {
 	
@@ -18,15 +18,18 @@ class DelegationFormatter extends RulesFormatter {
 	def dispatch void format(DelegationModel delegationModel, extension IFormattableDocument document) {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		delegationModel.getImport.format;
-		delegationModel.getPolicy.format;
+		for (Delegation delegation : delegationModel.getDelegations()) {
+			delegation.format;
+		}
 	}
 
-	def dispatch void format(Policy policy, extension IFormattableDocument document) {
+	def dispatch void format(Delegation delegation, extension IFormattableDocument document) {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		for (Rule rule : policy.getRules()) {
-			rule.format;
+		delegation.getAsset.format;
+		for (Binding binding : delegation.getBindings()) {
+			binding.format;
 		}
 	}
 	
-	// TODO: implement for Rule
+	// TODO: implement for 
 }

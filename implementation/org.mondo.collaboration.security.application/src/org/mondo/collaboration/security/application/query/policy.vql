@@ -1,4 +1,4 @@
-package org.mondo.collaboration.security.application.policy
+package org.mondo.collaboration.security.application.query
 
 import "http://WTSpec4M/5.0M"
 import "http://www.eclipse.org/emf/2002/Ecore"

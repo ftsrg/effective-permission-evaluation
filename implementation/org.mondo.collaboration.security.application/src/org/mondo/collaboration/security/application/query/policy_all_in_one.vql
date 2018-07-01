@@ -1,0 +1,2651 @@
+package org.mondo.collaboration.security.application.query
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.mondo.org/collaboration/policy/Rules"
+import "http://www.mondo.org/collaboration/policy/delegation/Delegation"
+import "http://WTSpec4M/5.0M"
+
+pattern readWriteOperation(operation) = {
+	operation == OperationType::READ;
+} or {
+	operation == OperationType::WRITE;
+}
+
+pattern allUsers(user: java String) {
+    user == "PrincipalEngineer";
+    } or {
+    user == "SubsystemManager";
+    } or {
+    user == "IOManager";
+}
+
+pattern restrictRootRuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.findRoot(object);
+}
+
+pattern restrictRootRuleUser(user: java String)
+{
+	user == "PrincipalEngineer";
+	} or {
+	user == "IOManager";
+	} or {
+	user == "SubsystemManager";
+}
+
+pattern enableNonRootRuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.findObjectAssetWithoutRoot(object);
+}
+
+pattern enableNonRootRuleUser(user: java String)
+{
+	user == "PrincipalEngineer";
+}
+
+pattern enableIORuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.inputOutput(object);
+}
+
+pattern enableIORuleUser(user: java String)
+{
+	user == "IOManager";
+}
+
+pattern restrictNonIORuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.nonInputOutput(object);
+}
+
+pattern restrictNonIORuleUser(user: java String)
+{
+	user == "IOManager";
+}
+
+pattern enableNonIORuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.nonInputOutput(object);
+}
+
+pattern enableNonIORuleUser(user: java String)
+{
+	user == "SubsystemManager";
+}
+
+pattern restrictIORuleAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.inputOutput(object);
+}
+
+pattern restrictIORuleUser(user: java String)
+{
+	user == "SubsystemManager";
+}
+
+
+pattern nonInputOutputDelegationAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.nonInputOutput(object);
+}
+
+pattern nonInputOutputDelegationUser(user: java String)
+{
+	user == "IOManager";
+}
+
+pattern rootDelegationAsset(object : EObject)
+{
+    find org.mondo.collaboration.security.application.query.findRoot(object);
+}
+
+pattern rootDelegationUser(user: java String)
+{
+	user == "IOManager";
+}
+
+pattern explicitJudgement_object_allow(user : java String, object : EObject, operation, priority : java Integer)
+{
+//  rule enableNonRoot
+    find enableNonRootRuleAsset(object);
+    find enableNonRootRuleUser(user);
+    find readWriteOperation(operation);
+    priority == 1;
+} or {
+//  rule enableIO
+    find enableIORuleAsset(object);
+    find enableIORuleUser(user);
+    find readWriteOperation(operation);
+    priority == 1;
+} or {
+//  rule enableNonIO
+    find enableNonIORuleAsset(object);
+    find enableNonIORuleUser(user);
+    find readWriteOperation(operation);
+    priority == 1;
+}
+
+pattern explicitJudgement_object_deny(user : java String, object : EObject, operation, priority : java Integer)
+{
+//  rule restrictRoot
+    find restrictRootRuleAsset(object);
+    find restrictRootRuleUser(user);
+    operation == OperationType::WRITE;
+    priority == 1;
+} or {
+//  rule restrictNonIO
+    find restrictNonIORuleAsset(object);
+    find restrictNonIORuleUser(user);
+    operation == OperationType::READ;
+    priority == 1;
+} or {
+//  rule restrictIO
+    find restrictIORuleAsset(object);
+    find restrictIORuleUser(user);
+    operation == OperationType::WRITE;
+    priority == 1;
+} or {
+//  rule default
+    find objectAsset(object);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    priority == eval(-1);
+}
+pattern delegationJudgement_object_allow(user: java String, object: EObject, operation)
+{
+	find nonInputOutputDelegationAsset(object);
+	find nonInputOutputDelegationUser(user);
+	operation == OperationType::READ;
+	} or {
+	find rootDelegationAsset(object);
+	find rootDelegationUser(user);
+	operation == OperationType::READ;
+}
+pattern effectiveJudgement_object(user: java String, object: EObject, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_object_default(user, object, operation, access);
+    priority == eval(-1);
+} or {
+    find effectiveJudgement_object_weak(user, object, operation, access);
+    priority == 0;
+} or {
+    find effectiveJudgement_object_1(user, object, operation, access);
+    priority == 1;
+} or {
+	find effectiveJudgement_object_delegation(user, object, operation, access);
+	priority == 1000;
+}
+    
+pattern effectiveJudgement_object_default(user: java String, object: EObject, operation, access)
+{
+    find explicitJudgement_object_deny(user, object, operation, eval(-1));
+        access == AccessibilityLevel::DENY;
+    neg find dominationByPriority_object_default(user, object, operation);
+}
+
+pattern effectiveJudgement_object_weak(user: java String, object: EObject, operation, access)
+{
+	find effectiveJudgement_object_weak_allow(user, object, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_object_weak_deny(user, object, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_object_weak_allow(user: java String, object: EObject, operation)
+{
+	find judgement_object_weak_allow(user, object, operation);
+    neg find dominationByPriority_object_weak(user, object, operation);
+    neg find dominationByAccess_object_weak(user, object, operation);
+}
+
+pattern effectiveJudgement_object_weak_deny(user: java String, object: EObject, operation)
+{
+    find judgement_object_weak_deny(user, object, operation);
+    neg find dominationByPriority_object_weak(user, object, operation);
+}
+
+pattern effectiveJudgement_object_1(user: java String, object: EObject, operation, access)
+{
+	find effectiveJudgement_object_1_allow(user, object, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_object_1_deny(user, object, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_object_1_allow(user: java String, object: EObject, operation)
+{
+    find judgement_object_1_allow(user, object, operation);
+    neg find dominationByPriority_object_1(user, object, operation);
+    neg find dominationByAccess_object_1(user, object, operation);
+}
+        
+pattern effectiveJudgement_object_1_deny(user: java String, object: EObject, operation)
+{
+    find judgement_object_1_deny(user, object, operation);
+    neg find dominationByPriority_object_1(user, object, operation);
+}
+
+pattern effectiveJudgement_object_delegation(user: java String, object: EObject, operation, access)
+{
+	find effectiveJudgement_object_delegation_allow(user, object, operation);
+	access == AccessibilityLevel::ALLOW;
+}
+
+pattern effectiveJudgement_object_delegation_allow(user: java String, object: EObject, operation)
+{
+	find delegationJudgement_object_allow(user, object, operation);
+} or {
+	find strongConsequenceJudgement_object_delegation_allow(user, object, operation);
+}
+
+pattern effectiveJudgement_object_allow(user: java String, object: EObject, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_object_weak_allow(user, object, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+} or {
+    find effectiveJudgement_object_1_allow(user, object, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 1;
+} or {
+	find effectiveJudgement_object_delegation_allow(user, object, operation);
+	access == AccessibilityLevel::ALLOW;
+	priority == 1000;
+}   
+pattern dominationByPriority_object_default(user: java String, object: EObject, operation)
+{
+    find effectiveJudgement_object_weak(user, object, operation, _access);
+} or {
+    find effectiveJudgement_object_1(user, object, operation, _access);
+} or {
+	find effectiveJudgement_object_delegation(user, object, operation, _access);
+}
+
+pattern dominationByPriority_object_weak(user: java String, object: EObject, operation)
+{
+    find effectiveJudgement_object_1(user, object, operation, _access);
+} or {
+	find effectiveJudgement_object_delegation(user, object, operation, _access);
+}
+
+pattern dominationByPriority_object_1(user: java String, object: EObject, operation) 
+{
+	find effectiveJudgement_object_delegation(user, object, operation, _access);
+}
+pattern dominationByAccess_object_weak(user: java String, object: EObject, operation)
+{
+	find judgement_object_weak_deny(user, object, operation);
+}
+    
+pattern dominationByAccess_object_1(user: java String, object: EObject, operation)
+{
+    find judgement_object_1_deny(user, object, operation);
+}
+pattern judgement_object_weak_allow(user: java String, object: EObject, operation)
+{
+    find strongConsequenceJudgement_object_weak_allow(user, object, operation);
+}
+
+pattern judgement_object_weak_deny(user: java String, object: EObject, operation)
+{
+    find strongConsequenceJudgement_object_weak_deny(user, object, operation);
+}
+
+pattern judgement_object_1_allow(user: java String, object: EObject, operation)
+{
+	find explicitJudgement_object_allow(user, object, operation, 1);
+	} or {
+	find strongConsequenceJudgement_object_1_allow(user, object, operation);
+}
+
+pattern judgement_object_1_deny(user: java String, object: EObject, operation)
+{
+find explicitJudgement_object_deny(user, object, operation, 1);
+} or {
+    find strongConsequenceJudgement_object_1_deny(user, object, operation);
+}
+pattern strongConsequenceJudgement_object_weak_allow(user: java String, object: EObject, operation)
+{
+    // object W -> object R
+    find effectiveJudgement_object_weak_allow(user, object, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+	// child R -> parent R
+	find effectiveJudgement_object_weak_allow(user, child, OperationType::READ);
+	find contains(object, child);
+	operation == OperationType::READ;
+} or {
+	// attribute R -> source R
+	find effectiveJudgement_attribute_weak_allow(user, object, _value, _attribute, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// reference R -> source R
+	find effectiveJudgement_reference_weak_allow(user, object, _target, _reference, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// reference R -> target R
+	find effectiveJudgement_reference_weak_allow(user, _source, object, _reference, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// containment reference W -> target W
+	find effectiveJudgement_reference_weak_allow(user, anySource, object, anyReference, OperationType::WRITE);
+	find containmentReference(anySource, object, anyReference);
+	operation == OperationType::WRITE;
+}
+
+pattern strongConsequenceJudgement_object_weak_deny(user: java String, object: EObject, operation)
+{
+    // object !R -> object !W
+    find effectiveJudgement_object_weak_deny(user, object, OperationType::READ);
+    operation == OperationType::WRITE;
+} or {
+    // deny R, containment reference -> target
+    find effectiveJudgement_reference_weak_deny(user, anySource, object, anyReference, OperationType::READ);
+    find containmentReference(anySource, object, anyReference);
+    operation == OperationType::READ;
+}
+
+pattern strongConsequenceJudgement_object_1_allow(user: java String, object: EObject, operation)
+{
+    // object W -> object R
+    find effectiveJudgement_object_1_allow(user, object, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+	// child R -> parent R
+	find effectiveJudgement_object_1_allow(user, child, OperationType::READ);
+	find contains(object, child);
+	operation == OperationType::READ;
+} or {
+	// attribute R -> source R
+	find effectiveJudgement_attribute_1_allow(user, object, _value, _attribute, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// reference R -> source R
+	find effectiveJudgement_reference_1_allow(user, object, _target, _reference, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// reference R -> target R
+	find effectiveJudgement_reference_1_allow(user, _source, object, _reference, OperationType::READ);
+	operation == OperationType::READ;
+} or {
+	// containment reference W -> target W
+	find effectiveJudgement_reference_1_allow(user, anySource, object, anyReference, OperationType::WRITE);
+	find containmentReference(anySource, object, anyReference);
+	operation == OperationType::WRITE;
+}
+
+pattern strongConsequenceJudgement_object_1_deny(user: java String, object: EObject, operation)
+{
+    // object !R -> object !W
+    find effectiveJudgement_object_1_deny(user, object, OperationType::READ);
+    operation == OperationType::WRITE;
+} or {
+    // deny R, containment reference -> target
+    find effectiveJudgement_reference_1_deny(user, anySource, object, anyReference, OperationType::READ);
+    find containmentReference(anySource, object, anyReference);
+    operation == OperationType::READ;
+}
+
+pattern strongConsequenceJudgement_object_delegation_allow(user: java String, object: EObject, operation)
+{
+    // object W -> object R
+    find effectiveJudgement_object_delegation_allow(user, object, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+    // child R -> parent R
+    find effectiveJudgement_object_delegation_allow(user, child, OperationType::READ);
+    find contains(object, child);
+    operation == OperationType::READ;
+} or {
+    // attribute R -> source R
+    find effectiveJudgement_attribute_delegation_allow(user, object, _value, _attribute, OperationType::READ);
+    operation == OperationType::READ;
+} or {
+    // reference R -> source R
+    find effectiveJudgement_reference_delegation_allow(user, object, _target, _reference, OperationType::READ);
+    operation == OperationType::READ;
+} or {
+    // reference R -> target R
+    find effectiveJudgement_reference_delegation_allow(user, _source, object, _reference, OperationType::READ);
+    operation == OperationType::READ;
+} or {
+    // containment reference W -> target W
+    find effectiveJudgement_reference_delegation_allow(user, anySource, object, anyReference, OperationType::WRITE);
+    find containmentReference(anySource, object, anyReference);
+    operation == OperationType::WRITE;
+}
+pattern explicitJudgement_attribute_deny(user : java String, source : EObject, value: java Object, attribute : java String, operation, priority: java Integer)
+{
+//  rule default
+    find attributeAsset(source, value, attribute);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    priority == eval(-1);
+}
+pattern effectiveJudgement_attribute(user: java String, source: EObject, value: java Object, attribute : java String, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_attribute_default(user, source, value, attribute, operation, access);
+    priority == eval(-1);
+} or {
+    find effectiveJudgement_attribute_weak(user, source, value, attribute, operation, access);
+    priority == 0;
+} or {
+    find effectiveJudgement_attribute_1(user, source, value, attribute, operation, access);
+    priority == 1;
+} or {
+    find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, access);
+    priority == 1000;
+}
+    
+pattern effectiveJudgement_attribute_default(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
+{
+	find explicitJudgement_attribute_deny(user, source, value, attribute, operation, eval(-1));
+	access == AccessibilityLevel::DENY;
+	neg find dominationByPriority_attribute_default(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgement_attribute_weak(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
+{
+	find effectiveJudgement_attribute_weak_allow(user, source, value, attribute, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_attribute_weak_deny(user, source, value, attribute, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_attribute_weak_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	find judgement_attribute_weak_allow(user, source, value, attribute, operation);
+    neg find dominationByPriority_attribute_weak(user, source, value, attribute, operation);
+    neg find dominationByAccess_attribute_weak(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgement_attribute_weak_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find judgement_attribute_weak_deny(user, source, value, attribute, operation);
+    neg find dominationByPriority_attribute_weak(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgement_attribute_1(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
+{
+	find effectiveJudgement_attribute_1_allow(user, source, value, attribute, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_attribute_1_deny(user, source, value, attribute, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_attribute_1_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find judgement_attribute_1_allow(user, source, value, attribute, operation);
+    neg find dominationByPriority_attribute_1(user, source, value, attribute, operation);
+    neg find dominationByAccess_attribute_1(user, source, value, attribute, operation);
+}
+        
+pattern effectiveJudgement_attribute_1_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find judgement_attribute_1_deny(user, source, value, attribute, operation);
+    neg find dominationByPriority_attribute_1(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgement_attribute_delegation(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
+{
+	find effectiveJudgement_attribute_delegation_allow(user, source, value, attribute, operation);
+	access == AccessibilityLevel::ALLOW;
+}
+
+pattern effectiveJudgement_attribute_delegation_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	find strongConsequenceJudgement_attribute_delegation_allow(user, source, value, attribute, operation);
+}
+
+pattern effectiveJudgement_attribute_allow(user: java String, source: EObject, value: java Object, attribute : java String, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_attribute_weak_allow(user, source, value, attribute, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+} or {
+    find effectiveJudgement_attribute_1_allow(user, source, value, attribute, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 1;
+} or {
+	find effectiveJudgement_attribute_delegation_allow(user, source, value, attribute, operation);
+	access == AccessibilityLevel::ALLOW;
+	priority == 1000;
+}   
+pattern dominationByPriority_attribute_default(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find effectiveJudgement_attribute_weak(user, source, value, attribute, operation, _access);
+} or {
+    find effectiveJudgement_attribute_1(user, source, value, attribute, operation, _access);
+} or {
+	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
+}
+
+pattern dominationByPriority_attribute_weak(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find effectiveJudgement_attribute_1(user, source, value, attribute, operation, _access);
+} or {
+	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
+}
+
+pattern dominationByPriority_attribute_1(user: java String, source: EObject, value: java Object, attribute : java String, operation) 
+{
+	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
+}
+pattern dominationByAccess_attribute_weak(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find judgement_attribute_weak_deny(user, source, value, attribute, operation);
+}
+        
+pattern dominationByAccess_attribute_1(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find judgement_attribute_1_deny(user, source, value, attribute, operation);
+}
+pattern judgement_attribute_weak_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find strongConsequenceJudgement_attribute_weak_allow(user, source, value, attribute, operation);
+} or {
+    find weakConsequenceJudgement_attribute_allow(user, source, value, attribute, operation);
+}
+    
+pattern judgement_attribute_weak_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find strongConsequenceJudgement_attribute_weak_deny(user, source, value, attribute, operation);
+} or {
+    find weakConsequenceJudgement_attribute_deny(user, source, value, attribute, operation);
+}
+
+pattern judgement_attribute_1_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	find strongConsequenceJudgement_attribute_1_allow(user, source, value, attribute, operation);
+}
+    
+pattern judgement_attribute_1_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find strongConsequenceJudgement_attribute_1_deny(user, source, value, attribute, operation);
+}
+pattern strongConsequenceJudgement_attribute_weak_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    // allow R, attribute W -> attribute R
+    find effectiveJudgement_attribute_weak_allow(user, source, value, attribute, OperationType::WRITE);
+    operation == OperationType::READ;
+}
+
+pattern strongConsequenceJudgement_attribute_weak_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	// attribute !R -> attribute !W
+	find effectiveJudgement_attribute_weak_deny(user, source, value, attribute, OperationType::READ);
+	operation == OperationType::WRITE;
+} or {
+	// containment reference !W -> attribute !W
+	find effectiveJudgement_reference_weak_deny(user, anySource, source, anyReference, OperationType::WRITE);
+	find containmentReference(anySource, source, anyReference);
+	find attributeAsset(source, value, attribute);
+	operation == OperationType::WRITE;
+}
+    
+pattern strongConsequenceJudgement_attribute_1_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    // allow R, attribute W -> attribute R
+    find effectiveJudgement_attribute_1_allow(user, source, value, attribute, OperationType::WRITE);
+    operation == OperationType::READ;
+}
+
+pattern strongConsequenceJudgement_attribute_1_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	// attribute !R -> attribute !W
+	find effectiveJudgement_attribute_1_deny(user, source, value, attribute, OperationType::READ);
+	operation == OperationType::WRITE;
+} or {
+	// containment reference !W -> attribute !W
+	find effectiveJudgement_reference_1_deny(user, anySource, source, anyReference, OperationType::WRITE);
+	find containmentReference(anySource, source, anyReference);
+	find attributeAsset(source, value, attribute);
+	operation == OperationType::WRITE;
+}
+
+pattern strongConsequenceJudgement_attribute_delegation_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    // allow R, attribute W -> attribute R
+    find effectiveJudgement_attribute_delegation_allow(user, source, value, attribute, OperationType::WRITE);
+    operation == OperationType::READ;
+}
+pattern weakConsequenceJudgement_attribute_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+	find effectiveJudgement_object_weak_allow(user, source, operation);
+	find attributeAsset(source, value, attribute);
+} or {
+    find effectiveJudgement_object_1_allow(user, source, operation);
+    find attributeAsset(source, value, attribute);
+} or {
+	find effectiveJudgement_object_delegation_allow(user, source, operation);
+	find attributeAsset(source, value, attribute);
+}
+
+pattern weakConsequenceJudgement_attribute_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+{
+    find effectiveJudgement_object_weak_deny(user, source, operation);
+    find attributeAsset(source, value, attribute);
+} or {
+    find effectiveJudgement_object_1_deny(user, source, operation);
+    find attributeAsset(source, value, attribute);
+}
+pattern explicitJudgement_reference_deny(user : java String, source : EObject, target : EObject, reference : java String, operation, priority: java Integer)
+{
+//  rule default
+    find referenceAsset(source, target, reference);
+    find allUsers(user);
+    find readWriteOperation(operation);
+    priority == eval(-1);
+}    
+pattern effectiveJudgement_reference(user: java String, source: EObject, target: EObject, reference: java String, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_reference_default(user, source, target, reference, operation, access);
+    priority == eval(-1);
+} or {
+    find effectiveJudgement_reference_weak(user, source, target, reference, operation, access);
+    priority == 0;
+} or {
+    find effectiveJudgement_reference_1(user, source, target, reference, operation, access);
+    priority == 1;
+} or {
+	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, access);
+	priority == 1000;
+}
+pattern effectiveJudgement_reference_default(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
+{
+    find explicitJudgement_reference_deny(user, source, target, reference, operation, eval(-1));
+    access == AccessibilityLevel::DENY;
+    neg find dominationByPriority_reference_default(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgement_reference_weak(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
+{
+	find effectiveJudgement_reference_weak_allow(user, source, target, reference, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_reference_weak_deny(user, source, target, reference, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_reference_weak_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
+{
+	find judgement_reference_weak_allow(user, source, target, reference, operation);
+    neg find dominationByPriority_reference_weak(user, source, target, reference, operation);
+    neg find dominationByAccess_reference_weak(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgement_reference_weak_deny(user: java String, source: EObject, target: EObject, reference: java String, operation)
+{
+    find judgement_reference_weak_deny(user, source, target, reference, operation);
+    neg find dominationByPriority_reference_weak(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgement_reference_1(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
+{
+	find effectiveJudgement_reference_1_allow(user, source, target, reference, operation);
+	access == AccessibilityLevel::ALLOW;
+} or {
+	find effectiveJudgement_reference_1_deny(user, source, target, reference, operation);
+	access == AccessibilityLevel::DENY;
+}
+
+pattern effectiveJudgement_reference_1_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
+{
+    find judgement_reference_1_allow(user, source, target, reference, operation);
+    neg find dominationByPriority_reference_1(user, source, target, reference, operation);
+    neg find dominationByAccess_reference_1(user, source, target, reference, operation);
+}
+        
+pattern effectiveJudgement_reference_1_deny(user: java String, source: EObject, target: EObject, reference: java String, operation)
+{
+    find judgement_reference_1_deny(user, source, target, reference, operation);
+    neg find dominationByPriority_reference_1(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgement_reference_delegation(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
+{
+	find effectiveJudgement_reference_delegation_allow(user, source, target, reference, operation);
+	access == AccessibilityLevel::ALLOW;
+}
+
+pattern effectiveJudgement_reference_delegation_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
+{
+	find strongConsequenceJudgement_reference_delegation_allow(user, source, target, reference, operation);
+}
+
+pattern effectiveJudgement_reference_allow(user: java String, source: EObject, target: EObject, reference: java String, priority: java Integer, operation, access)
+{
+    find effectiveJudgement_reference_weak_allow(user, source, target, reference, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 0;
+} or {
+    find effectiveJudgement_reference_1_allow(user, source, target, reference, operation);
+    access == AccessibilityLevel::ALLOW;
+    priority == 1;
+} or {
+	find effectiveJudgement_reference_delegation_allow(user, source, target, reference, operation);
+	access == AccessibilityLevel::ALLOW;
+	priority == 1000;
+}   
+pattern dominationByPriority_reference_default(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find effectiveJudgement_reference_weak(user, source, target, reference, operation, _access);
+} or {
+    find effectiveJudgement_reference_1(user, source, target, reference, operation, _access);
+} or {
+	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
+}
+
+pattern dominationByPriority_reference_weak(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find effectiveJudgement_reference_1(user, source, target, reference, operation, _access);
+} or {
+	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
+}
+
+pattern dominationByPriority_reference_1(user: java String, source: EObject, target: EObject, reference : java String, operation) 
+{
+	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
+}
+pattern dominationByAccess_reference_weak(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find judgement_reference_weak_deny(user, source, target, reference, operation);
+}
+            
+pattern dominationByAccess_reference_1(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find judgement_reference_1_deny(user, source, target, reference, operation);
+}
+pattern judgement_reference_weak_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find strongConsequenceJudgement_reference_weak_allow(user, source, target, reference, operation);
+} or {
+    find weakConsequenceJudgement_reference_allow(user, source, target, reference, operation);
+}
+        
+pattern judgement_reference_weak_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find strongConsequenceJudgement_reference_weak_deny(user, source, target, reference, operation);
+} or {
+    find weakConsequenceJudgement_reference_deny(user, source, target, reference, operation);
+}
+
+pattern judgement_reference_1_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+	find strongConsequenceJudgement_reference_1_allow(user, source, target, reference, operation);
+}
+    
+pattern judgement_reference_1_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find strongConsequenceJudgement_reference_1_deny(user, source, target, reference, operation);
+}
+pattern strongConsequenceJudgement_reference_weak_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    // reference W -> reference R
+    find effectiveJudgement_reference_weak_allow(user, source, target, reference, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+	// object R -> containment reference R
+	find effectiveJudgement_object_weak_allow(user, target, OperationType::READ);
+	find containmentReference(source, target, reference);
+	operation == OperationType::READ;
+} or {
+	// object W -> containment reference W
+    find effectiveJudgement_object_weak_allow(user, target, OperationType::WRITE);
+	find containmentReference(source, target, reference);
+	operation == OperationType::WRITE;
+}
+
+pattern strongConsequenceJudgement_reference_weak_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+	// reference !R -> reference !W
+	find effectiveJudgement_reference_weak_deny(user, source, target, reference, OperationType::READ);
+	operation == OperationType::WRITE;
+} or {
+	// object !R -> incoming reference !R
+	find effectiveJudgement_object_weak_deny(user, target, OperationType::READ);
+	find referenceAsset(source, target, reference);
+	operation == OperationType::READ;
+} or {
+	// object !R -> outgoing reference !R
+	find effectiveJudgement_object_weak_deny(user, source, OperationType::READ);
+	find referenceAsset(source, target, reference);
+	operation == OperationType::READ;
+}
+    
+pattern strongConsequenceJudgement_reference_1_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    // reference W -> reference R
+    find effectiveJudgement_reference_1_allow(user, source, target, reference, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+	// object R -> containment reference R
+	find effectiveJudgement_object_1_allow(user, target, OperationType::READ);
+	find containmentReference(source, target, reference);
+	operation == OperationType::READ;
+} or {
+	// object W -> containment reference W
+    find effectiveJudgement_object_1_allow(user, target, OperationType::WRITE);
+	find containmentReference(source, target, reference);
+	operation == OperationType::WRITE;
+}
+
+pattern strongConsequenceJudgement_reference_1_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+	// reference !R -> reference !W
+	find effectiveJudgement_reference_1_deny(user, source, target, reference, OperationType::READ);
+	operation == OperationType::WRITE;
+} or {
+	// object !R -> incoming reference !R
+	find effectiveJudgement_object_1_deny(user, target, OperationType::READ);
+	find referenceAsset(source, target, reference);
+	operation == OperationType::READ;
+} or {
+	// object !R -> outgoing reference !R
+	find effectiveJudgement_object_1_deny(user, source, OperationType::READ);
+	find referenceAsset(source, target, reference);
+	operation == OperationType::READ;
+}
+
+pattern strongConsequenceJudgement_reference_delegation_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    // reference W -> reference R
+    find effectiveJudgement_reference_delegation_allow(user, source, target, reference, OperationType::WRITE);
+    operation == OperationType::READ;
+} or {
+	// object R -> containment reference R
+	find effectiveJudgement_object_delegation_allow(user, target, OperationType::READ);
+	find containmentReference(source, target, reference);
+	operation == OperationType::READ;
+} or {
+	// object W -> containment reference W
+    find effectiveJudgement_object_delegation_allow(user, target, OperationType::WRITE);
+	find containmentReference(source, target, reference);
+	operation == OperationType::WRITE;
+}
+pattern weakConsequenceJudgement_reference_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+	find effectiveJudgement_object_weak_allow(user, source, operation);
+	find referenceAsset(source, target, reference);
+} or {
+    find effectiveJudgement_object_1_allow(user, source, operation);
+    find referenceAsset(source, target, reference);
+} or {
+	find effectiveJudgement_object_delegation_allow(user, source, operation);
+	find referenceAsset(source, target, reference);
+}
+    
+pattern weakConsequenceJudgement_reference_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+{
+    find effectiveJudgement_object_weak_deny(user, source, operation);
+    find referenceAsset(source, target, reference);
+} or {
+    find effectiveJudgement_object_1_deny(user, source, operation);
+    find referenceAsset(source, target, reference);
+}
+pattern attributeAsset(source : EObject, value: java Object, attribute : java String) {
+	find attributeAssetWTsysId(source, value, attribute);
+	} or {
+	find attributeAssetWTmodel(source, value, attribute);
+	} or {
+	find attributeAssetWTversion(source, value, attribute);
+	} or {
+	find attributeAssetSystemInputsysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemInputdescription(source, value, attribute);
+	} or {
+	find attributeAssetSystemOutputsysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemOutputdescription(source, value, attribute);
+	} or {
+	find attributeAssetSystemFaultsysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemFaultdescription(source, value, attribute);
+	} or {
+	find attributeAssetSystemFaultvalue(source, value, attribute);
+	} or {
+	find attributeAssetSystemParamsysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemParamdescription(source, value, attribute);
+	} or {
+	find attributeAssetSystemParamvalue(source, value, attribute);
+	} or {
+	find attributeAssetSystemParamsettable(source, value, attribute);
+	} or {
+	find attributeAssetSystemTimersysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemTimerdescription(source, value, attribute);
+	} or {
+	find attributeAssetSystemTimervalue(source, value, attribute);
+	} or {
+	find attributeAssetSystemVariablesysId(source, value, attribute);
+	} or {
+	find attributeAssetSystemVariabledescription(source, value, attribute);
+	} or {
+	find attributeAssetSubsystemsysId(source, value, attribute);
+	} or {
+	find attributeAssetSubsystemdescription(source, value, attribute);
+	} or {
+	find attributeAssetwtcsysId(source, value, attribute);
+	} or {
+	find attributeAssetwtcdescription(source, value, attribute);
+	} or {
+	find attributeAssetwtccycle(source, value, attribute);
+	} or {
+	find attributeAssetwtcpriority(source, value, attribute);
+	} or {
+	find attributeAssetwtcenabled(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit9BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit9BhvParam__BhvParam2(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit10BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit13BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit13BhvParam__BhvParam2(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit29BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit34BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit37BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit39BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit58BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit68BhvParam__BhvParam1(source, value, attribute);
+	} or {
+	find attributeAssetCtrlUnit92BhvParam__BhvParam1(source, value, attribute);
+}
+
+pattern attributeAssetWTsysId(source : EObject, value: java Object, attribute : java String)
+{
+     WT.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetWTmodel(source : EObject, value: java Object, attribute : java String)
+{
+     WT.model(source, value);
+	 attribute == "model";
+}
+
+pattern attributeAssetWTversion(source : EObject, value: java Object, attribute : java String)
+{
+     WT.version(source, value);
+	 attribute == "version";
+}
+
+pattern attributeAssetSystemInputsysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemInput.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemInputdescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemInput.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSystemOutputsysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemOutput.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemOutputdescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemOutput.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSystemFaultsysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemFault.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemFaultdescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemFault.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSystemFaultvalue(source : EObject, value: java Object, attribute : java String)
+{
+     SystemFault.value(source, value);
+	 attribute == "value";
+}
+
+pattern attributeAssetSystemParamsysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemParam.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemParamdescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemParam.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSystemParamvalue(source : EObject, value: java Object, attribute : java String)
+{
+     SystemParam.value(source, value);
+	 attribute == "value";
+}
+
+pattern attributeAssetSystemParamsettable(source : EObject, value: java Object, attribute : java String)
+{
+     SystemParam.settable(source, value);
+	 attribute == "settable";
+}
+
+pattern attributeAssetSystemTimersysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemTimer.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemTimerdescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemTimer.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSystemTimervalue(source : EObject, value: java Object, attribute : java String)
+{
+     SystemTimer.value(source, value);
+	 attribute == "value";
+}
+
+pattern attributeAssetSystemVariablesysId(source : EObject, value: java Object, attribute : java String)
+{
+     SystemVariable.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSystemVariabledescription(source : EObject, value: java Object, attribute : java String)
+{
+     SystemVariable.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetSubsystemsysId(source : EObject, value: java Object, attribute : java String)
+{
+     Subsystem.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetSubsystemdescription(source : EObject, value: java Object, attribute : java String)
+{
+     Subsystem.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetwtcsysId(source : EObject, value: java Object, attribute : java String)
+{
+     wtc.sysId(source, value);
+	 attribute == "sysId";
+}
+
+pattern attributeAssetwtcdescription(source : EObject, value: java Object, attribute : java String)
+{
+     wtc.description(source, value);
+	 attribute == "description";
+}
+
+pattern attributeAssetwtccycle(source : EObject, value: java Object, attribute : java String)
+{
+     wtc.cycle(source, value);
+	 attribute == "cycle";
+}
+
+pattern attributeAssetwtcpriority(source : EObject, value: java Object, attribute : java String)
+{
+     wtc.priority(source, value);
+	 attribute == "priority";
+}
+
+pattern attributeAssetwtcenabled(source : EObject, value: java Object, attribute : java String)
+{
+     wtc.enabled(source, value);
+	 attribute == "enabled";
+}
+
+pattern attributeAssetCtrlUnit9BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit9.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit9BhvParam__BhvParam2(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit9.BhvParam__BhvParam2(source, value);
+	 attribute == "BhvParam__BhvParam2";
+}
+
+pattern attributeAssetCtrlUnit10BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit10.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit13BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit13.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit13BhvParam__BhvParam2(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit13.BhvParam__BhvParam2(source, value);
+	 attribute == "BhvParam__BhvParam2";
+}
+
+pattern attributeAssetCtrlUnit29BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit29.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit34BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit34.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit37BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit37.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit39BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit39.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit58BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit58.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit68BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit68.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern attributeAssetCtrlUnit92BhvParam__BhvParam1(source : EObject, value: java Object, attribute : java String)
+{
+     CtrlUnit92.BhvParam__BhvParam1(source, value);
+	 attribute == "BhvParam__BhvParam1";
+}
+
+pattern referenceAsset(source : EObject, target : EObject, reference : java String) {
+	find referenceAssetWTitsSubsystems(source, target, reference);     
+	} or {
+	find referenceAssetWTitsInputs(source, target, reference);     
+	} or {
+	find referenceAssetWTitsOutputs(source, target, reference);     
+	} or {
+	find referenceAssetWTitsParams(source, target, reference);     
+	} or {
+	find referenceAssetWTitsTimers(source, target, reference);     
+	} or {
+	find referenceAssetWTitsFaults(source, target, reference);     
+	} or {
+	find referenceAssetWTitsVariables(source, target, reference);     
+	} or {
+	find referenceAssetSubsystemitsWTCs(source, target, reference);     
+	} or {
+	find referenceAssetSubsystemitsSubsystems(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit5Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit5Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit5Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Input__iInput4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit9Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam5(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit10Parameter__pParam6(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit11Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit11Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit11Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit13Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit15Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit15Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit15Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput5(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Input__iInput6(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam5(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam6(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Parameter__pParam7(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit18Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit27Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit27Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit27Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit27Output__oOutput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit27Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit29Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit29Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit29Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit31Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit31Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit31Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Output__oOutput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit34Timer__tTimer2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit36Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit36Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit36Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit36Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit37Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit39Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit39Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit39Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit39Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit40Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit40Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit40Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit44Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit44Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit46Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit47Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit47Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Input__iInput4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Output__oOutput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Parameter__pParam3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Parameter__pParam4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit49Timer__tTimer1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit50Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit50Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit58Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit58Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit58Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit59Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit59Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit65Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit65Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit68Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit68Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit68Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput5(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Input__iInput6(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit71Output__oOutput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit73Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit73Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit78Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit78Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit78Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Input__iInput3(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Input__iInput4(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Input__iInput5(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit80Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit92Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit92Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit92Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit92Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit92Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit94Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit94Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit102Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit102Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit102Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit102Fault__fFault1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit124Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit124Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit124Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit125Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit125Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit125Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit125Parameter__pParam2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Input__iInput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Input__iInput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Output__oOutput1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Output__oOutput2(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Parameter__pParam1(source, target, reference);     
+	} or {
+	find referenceAssetCtrlUnit126Parameter__pParam2(source, target, reference);     
+}
+
+pattern referenceAssetWTitsSubsystems(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsSubsystems(source, target);
+	reference == "itsSubsystems";
+}
+
+pattern referenceAssetWTitsInputs(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsInputs(source, target);
+	reference == "itsInputs";
+}
+
+pattern referenceAssetWTitsOutputs(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsOutputs(source, target);
+	reference == "itsOutputs";
+}
+
+pattern referenceAssetWTitsParams(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsParams(source, target);
+	reference == "itsParams";
+}
+
+pattern referenceAssetWTitsTimers(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsTimers(source, target);
+	reference == "itsTimers";
+}
+
+pattern referenceAssetWTitsFaults(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsFaults(source, target);
+	reference == "itsFaults";
+}
+
+pattern referenceAssetWTitsVariables(source : EObject, target : EObject, reference : java String)
+{
+	WT.itsVariables(source, target);
+	reference == "itsVariables";
+}
+
+pattern referenceAssetSubsystemitsWTCs(source : EObject, target : EObject, reference : java String)
+{
+	Subsystem.itsWTCs(source, target);
+	reference == "itsWTCs";
+}
+
+pattern referenceAssetSubsystemitsSubsystems(source : EObject, target : EObject, reference : java String)
+{
+	Subsystem.itsSubsystems(source, target);
+	reference == "itsSubsystems";
+}
+
+pattern referenceAssetCtrlUnit5Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit5.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit5Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit5.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit5Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit5.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit9Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit9Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit9Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit9Input__iInput4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Input__iInput4(source, target);
+	reference == "Input__iInput4";
+}
+
+pattern referenceAssetCtrlUnit9Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit9Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit9Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit9Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit9.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit10Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit10Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam3(source, target);
+	reference == "Parameter__pParam3";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam4(source, target);
+	reference == "Parameter__pParam4";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam5(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam5(source, target);
+	reference == "Parameter__pParam5";
+}
+
+pattern referenceAssetCtrlUnit10Parameter__pParam6(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit10.Parameter__pParam6(source, target);
+	reference == "Parameter__pParam6";
+}
+
+pattern referenceAssetCtrlUnit11Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit11.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit11Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit11.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit11Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit11.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit13Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit13Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit13Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit13Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit13Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit13Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit13.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit15Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit15.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit15Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit15.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit15Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit15.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput4(source, target);
+	reference == "Input__iInput4";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput5(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput5(source, target);
+	reference == "Input__iInput5";
+}
+
+pattern referenceAssetCtrlUnit18Input__iInput6(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Input__iInput6(source, target);
+	reference == "Input__iInput6";
+}
+
+pattern referenceAssetCtrlUnit18Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam3(source, target);
+	reference == "Parameter__pParam3";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam4(source, target);
+	reference == "Parameter__pParam4";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam5(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam5(source, target);
+	reference == "Parameter__pParam5";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam6(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam6(source, target);
+	reference == "Parameter__pParam6";
+}
+
+pattern referenceAssetCtrlUnit18Parameter__pParam7(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Parameter__pParam7(source, target);
+	reference == "Parameter__pParam7";
+}
+
+pattern referenceAssetCtrlUnit18Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit18.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit27Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit27.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit27Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit27.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit27Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit27.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit27Output__oOutput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit27.Output__oOutput2(source, target);
+	reference == "Output__oOutput2";
+}
+
+pattern referenceAssetCtrlUnit27Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit27.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit29Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit29.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit29Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit29.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit29Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit29.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit31Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit31.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit31Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit31.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit31Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit31.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit34Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit34Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit34Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit34Output__oOutput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Output__oOutput2(source, target);
+	reference == "Output__oOutput2";
+}
+
+pattern referenceAssetCtrlUnit34Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit34Timer__tTimer2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit34.Timer__tTimer2(source, target);
+	reference == "Timer__tTimer2";
+}
+
+pattern referenceAssetCtrlUnit36Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit36.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit36Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit36.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit36Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit36.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit36Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit36.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit37Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit37Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit37Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit37Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit37Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit37Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit37.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit39Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit39.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit39Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit39.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit39Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit39.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit39Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit39.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit40Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit40.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit40Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit40.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit40Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit40.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit44Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit44.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit44Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit44.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit46Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit46.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit47Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit47.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit47Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit47.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit49Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit49Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit49Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit49Input__iInput4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Input__iInput4(source, target);
+	reference == "Input__iInput4";
+}
+
+pattern referenceAssetCtrlUnit49Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit49Output__oOutput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Output__oOutput2(source, target);
+	reference == "Output__oOutput2";
+}
+
+pattern referenceAssetCtrlUnit49Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit49Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit49Parameter__pParam3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Parameter__pParam3(source, target);
+	reference == "Parameter__pParam3";
+}
+
+pattern referenceAssetCtrlUnit49Parameter__pParam4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Parameter__pParam4(source, target);
+	reference == "Parameter__pParam4";
+}
+
+pattern referenceAssetCtrlUnit49Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit49Timer__tTimer1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit49.Timer__tTimer1(source, target);
+	reference == "Timer__tTimer1";
+}
+
+pattern referenceAssetCtrlUnit50Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit50.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit50Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit50.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit58Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit58.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit58Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit58.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit58Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit58.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit59Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit59.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit59Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit59.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit65Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit65.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit65Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit65.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit68Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit68.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit68Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit68.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit68Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit68.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput4(source, target);
+	reference == "Input__iInput4";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput5(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput5(source, target);
+	reference == "Input__iInput5";
+}
+
+pattern referenceAssetCtrlUnit71Input__iInput6(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Input__iInput6(source, target);
+	reference == "Input__iInput6";
+}
+
+pattern referenceAssetCtrlUnit71Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit71Output__oOutput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit71.Output__oOutput2(source, target);
+	reference == "Output__oOutput2";
+}
+
+pattern referenceAssetCtrlUnit73Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit73.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit73Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit73.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit78Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit78.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit78Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit78.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit78Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit78.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit80Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit80Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit80Input__iInput3(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Input__iInput3(source, target);
+	reference == "Input__iInput3";
+}
+
+pattern referenceAssetCtrlUnit80Input__iInput4(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Input__iInput4(source, target);
+	reference == "Input__iInput4";
+}
+
+pattern referenceAssetCtrlUnit80Input__iInput5(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Input__iInput5(source, target);
+	reference == "Input__iInput5";
+}
+
+pattern referenceAssetCtrlUnit80Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit80.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit92Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit92.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit92Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit92.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit92Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit92.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit92Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit92.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit92Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit92.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit94Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit94.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit94Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit94.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit102Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit102.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit102Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit102.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit102Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit102.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit102Fault__fFault1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit102.Fault__fFault1(source, target);
+	reference == "Fault__fFault1";
+}
+
+pattern referenceAssetCtrlUnit124Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit124.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit124Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit124.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit124Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit124.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit125Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit125.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit125Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit125.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit125Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit125.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit125Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit125.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern referenceAssetCtrlUnit126Input__iInput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Input__iInput1(source, target);
+	reference == "Input__iInput1";
+}
+
+pattern referenceAssetCtrlUnit126Input__iInput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Input__iInput2(source, target);
+	reference == "Input__iInput2";
+}
+
+pattern referenceAssetCtrlUnit126Output__oOutput1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Output__oOutput1(source, target);
+	reference == "Output__oOutput1";
+}
+
+pattern referenceAssetCtrlUnit126Output__oOutput2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Output__oOutput2(source, target);
+	reference == "Output__oOutput2";
+}
+
+pattern referenceAssetCtrlUnit126Parameter__pParam1(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Parameter__pParam1(source, target);
+	reference == "Parameter__pParam1";
+}
+
+pattern referenceAssetCtrlUnit126Parameter__pParam2(source : EObject, target : EObject, reference : java String)
+{
+	CtrlUnit126.Parameter__pParam2(source, target);
+	reference == "Parameter__pParam2";
+}
+
+pattern containmentReference(source : EObject, target : EObject, reference : java String) {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsSubsystems";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsInputs";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsOutputs";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsParams";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsTimers";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsFaults";
+	} or {
+	find referenceAsset(source, target, reference);
+	WT(source);
+	reference == "itsVariables";
+	} or {
+	find referenceAsset(source, target, reference);
+	Subsystem(source);
+	reference == "itsWTCs";
+	} or {
+	find referenceAsset(source, target, reference);
+	Subsystem(source);
+	reference == "itsSubsystems";
+}
+
+pattern contains(container: EObject, contained: EObject) {
+	WT.itsSubsystems(container, contained);
+	} or {
+	WT.itsInputs(container, contained);
+	} or {
+	WT.itsOutputs(container, contained);
+	} or {
+	WT.itsParams(container, contained);
+	} or {
+	WT.itsTimers(container, contained);
+	} or {
+	WT.itsFaults(container, contained);
+	} or {
+	WT.itsVariables(container, contained);
+	} or {
+	Subsystem.itsWTCs(container, contained);
+	} or {
+	Subsystem.itsSubsystems(container, contained);
+}
+
+pattern objectAsset(object: EObject) {
+	WT(object);
+	} or {
+	SystemInput(object);
+	} or {
+	SystemOutput(object);
+	} or {
+	SystemFault(object);
+	} or {
+	SystemParam(object);
+	} or {
+	SystemTimer(object);
+	} or {
+	SystemVariable(object);
+	} or {
+	WTCInput(object);
+	} or {
+	WTCOutput(object);
+	} or {
+	WTCParam(object);
+	} or {
+	WTCTimer(object);
+	} or {
+	WTCFault(object);
+	} or {
+	Subsystem(object);
+	} or {
+	wtc(object);
+	} or {
+	CtrlUnit5(object);
+	} or {
+	CtrlUnit9(object);
+	} or {
+	CtrlUnit10(object);
+	} or {
+	CtrlUnit11(object);
+	} or {
+	CtrlUnit13(object);
+	} or {
+	CtrlUnit15(object);
+	} or {
+	CtrlUnit18(object);
+	} or {
+	CtrlUnit27(object);
+	} or {
+	CtrlUnit29(object);
+	} or {
+	CtrlUnit31(object);
+	} or {
+	CtrlUnit34(object);
+	} or {
+	CtrlUnit36(object);
+	} or {
+	CtrlUnit37(object);
+	} or {
+	CtrlUnit39(object);
+	} or {
+	CtrlUnit40(object);
+	} or {
+	CtrlUnit44(object);
+	} or {
+	CtrlUnit46(object);
+	} or {
+	CtrlUnit47(object);
+	} or {
+	CtrlUnit49(object);
+	} or {
+	CtrlUnit50(object);
+	} or {
+	CtrlUnit58(object);
+	} or {
+	CtrlUnit59(object);
+	} or {
+	CtrlUnit65(object);
+	} or {
+	CtrlUnit68(object);
+	} or {
+	CtrlUnit71(object);
+	} or {
+	CtrlUnit73(object);
+	} or {
+	CtrlUnit78(object);
+	} or {
+	CtrlUnit80(object);
+	} or {
+	CtrlUnit92(object);
+	} or {
+	CtrlUnit94(object);
+	} or {
+	CtrlUnit102(object);
+	} or {
+	CtrlUnit124(object);
+	} or {
+	CtrlUnit125(object);
+	} or {
+	CtrlUnit126(object);
+	} or {
+	MainSubsystem(object);
+}
+
+pattern root(object: EObject) {
+    WT(object);
+}
+
+pattern objectAssetWithoutRoot(object: EObject) {
+	find objectAsset(object);
+	neg find root(object);
+}

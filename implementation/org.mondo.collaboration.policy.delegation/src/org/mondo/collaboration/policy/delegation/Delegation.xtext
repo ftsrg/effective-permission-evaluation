@@ -10,7 +10,7 @@ DelegationModel:
 	delegations+=Delegation*;
 
 Delegation:
-	source=[ac::User] 'delegates' access=AccessibilityLevel (operation=OperationType)? 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
+	'delegation' name=ID 'from' source=[ac::User] access=AccessibilityLevel (operation=OperationType)? 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
 	    'from' 'query' pattern=[iql::Pattern|STRING]
 	    'select' asset=ModelFact
 	    bindings+=Binding*
