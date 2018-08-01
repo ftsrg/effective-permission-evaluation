@@ -5,13 +5,21 @@
   <eClassifiers xsi:type="ecore:EClass" name="DelegationModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="import" eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Import"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="policy" eType="#//Policy"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="delegations" upperBound="-1"
+        eType="#//Delegation" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Policy" eSuperTypes="platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Policy"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Rule" eSuperTypes="platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Rule">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Role"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Delegation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//User"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="access" eType="ecore:EEnum platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//AccessibilityLevel"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operation" eType="ecore:EEnum platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//OperationType"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="targets" unique="false"
         upperBound="-1" eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Role"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="pattern" eType="ecore:EClass platform:/resource/org.eclipse.viatra.query.patternlanguage.emf/model/PatternLanguage.ecore#//Pattern"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="asset" eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//ModelFact"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
+        eType="ecore:EClass platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.ecore#//Binding"
+        containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

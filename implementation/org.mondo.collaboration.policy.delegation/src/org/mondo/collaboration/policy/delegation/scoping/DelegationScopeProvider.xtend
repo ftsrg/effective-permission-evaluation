@@ -10,7 +10,6 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
@@ -19,14 +18,13 @@ import org.mondo.collaboration.policy.rules.AccessControlModel
 import org.mondo.collaboration.policy.rules.AttributeFact
 import org.mondo.collaboration.policy.rules.Binding
 import org.mondo.collaboration.policy.rules.Import
-import org.mondo.collaboration.policy.rules.ObjectFact
 import org.mondo.collaboration.policy.rules.OperationType
 import org.mondo.collaboration.policy.rules.ReferenceFact
 import org.mondo.collaboration.policy.rules.Role
 import org.mondo.collaboration.policy.rules.RulesPackage
 import org.mondo.collaboration.policy.delegation.delegation.Delegation
-import java.util.List
 import org.mondo.collaboration.policy.rules.User
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 
 /**
  * This class contains custom scoping description.

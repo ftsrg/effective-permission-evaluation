@@ -30,7 +30,7 @@ Workflow {
 		}
 		language = StandardLanguage {
 			name = "org.mondo.collaboration.policy.delegation.Delegation"
-			referencedResource = "platform:/resource/org.eclipse.viatra.query.patternlanguage/model/generated/PatternLanguage.genmodel"
+			referencedResource = "platform:/resource/org.eclipse.viatra.query.patternlanguage.emf/model/PatternLanguage.genmodel"
 			referencedResource = "platform:/resource/org.mondo.collaboration.policy/model/generated/Rules.genmodel"
 			fileExtensions = "delegation"
 			serializer = {

@@ -2,7 +2,7 @@ grammar org.mondo.collaboration.policy.delegation.Delegation with org.mondo.coll
 
 generate delegation "http://www.mondo.org/collaboration/policy/delegation/Delegation"
 
-import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as iql
+import "http://www.eclipse.org/viatra/query/patternlanguage/emf/PatternLanguage" as vql
 import "http://www.mondo.org/collaboration/policy/Rules" as ac
 
 DelegationModel:
@@ -11,7 +11,7 @@ DelegationModel:
 
 Delegation:
 	'delegation' name=ID 'from' source=[ac::User] access=AccessibilityLevel (operation=OperationType)? 'to' targets+=[ac::Role] (',' targets+=[ac::Role])* '{'
-	    'from' 'query' pattern=[iql::Pattern|STRING]
+	    'from' 'query' pattern=[vql::Pattern|STRING]
 	    'select' asset=ModelFact
 	    bindings+=Binding*
 	'}';

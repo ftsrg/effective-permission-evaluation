@@ -12,8 +12,6 @@ import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 import org.mondo.collaboration.policy.rules.AccessControlModel
@@ -25,6 +23,8 @@ import org.mondo.collaboration.policy.rules.OperationType
 import org.mondo.collaboration.policy.rules.ReferenceFact
 import org.mondo.collaboration.policy.rules.Rule
 import org.mondo.collaboration.policy.rules.RulesPackage
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
 
 /**
  * This class contains custom scoping description.

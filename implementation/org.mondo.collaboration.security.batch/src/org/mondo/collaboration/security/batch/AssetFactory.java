@@ -1,6 +1,6 @@
 package org.mondo.collaboration.security.batch;
 
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
 import org.mondo.collaboration.policy.delegation.delegation.Delegation;
 import org.mondo.collaboration.policy.rules.AttributeFact;
 import org.mondo.collaboration.policy.rules.ModelFact;

@@ -11,14 +11,12 @@ import java.util.TreeSet
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EPackage
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
+import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import org.mondo.collaboration.policy.delegation.delegation.Delegation
-import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
 import org.mondo.collaboration.policy.rules.AccessControlModel
 import org.mondo.collaboration.policy.rules.AccessibilityLevel
 import org.mondo.collaboration.policy.rules.AttributeFact
@@ -29,10 +27,11 @@ import org.mondo.collaboration.policy.rules.ObjectFact
 import org.mondo.collaboration.policy.rules.OperationType
 import org.mondo.collaboration.policy.rules.Policy
 import org.mondo.collaboration.policy.rules.ReferenceFact
-import org.mondo.collaboration.policy.rules.ResolutionType
 import org.mondo.collaboration.policy.rules.Role
 import org.mondo.collaboration.policy.rules.Rule
 import org.mondo.collaboration.policy.rules.User
+import org.mondo.collaboration.policy.delegation.delegation.Delegation
+import org.mondo.collaboration.policy.delegation.delegation.DelegationModel
 
 /**
  * Generates code from your AccessControlModel files on save.
@@ -105,13 +104,13 @@ class RulesGenerator extends AbstractGenerator {
 	}
 	
 	def generateAllInOne(String pack, AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities) '''
-	«generateImport(pack, metamodel.nsURI)»
+	ï¿½generateImport(pack, metamodel.nsURI)ï¿½
 	
-	«generateHelperPatterns(acModel, delegationModel, false)»
-	«generateObjectPatterns(acModel, delegationModel, metamodel, priorities, false)»
-	«generateAttributePatterns(acModel, delegationModel, metamodel, priorities, false)»
-	«generateReferencePatterns(acModel, delegationModel, metamodel, priorities, false)»
-	«generateMetaModelPattern(metamodel, false)»
+	ï¿½generateHelperPatterns(acModel, delegationModel, false)ï¿½
+	ï¿½generateObjectPatterns(acModel, delegationModel, metamodel, priorities, false)ï¿½
+	ï¿½generateAttributePatterns(acModel, delegationModel, metamodel, priorities, false)ï¿½
+	ï¿½generateReferencePatterns(acModel, delegationModel, metamodel, priorities, false)ï¿½
+	ï¿½generateMetaModelPattern(metamodel, false)ï¿½
 	'''
 	
 	def fillRuleLists(AccessControlModel model) {
@@ -132,13 +131,13 @@ class RulesGenerator extends AbstractGenerator {
 	}
 
 	def generateImport(String pack, String nsUri) '''
-    package org.mondo.collaboration.security.query.generated.query«pack»
-«««    package org.mondo.collaboration.security.application.query
+    package org.mondo.collaboration.security.query.generated.queryï¿½packï¿½
+ï¿½ï¿½ï¿½    package org.mondo.collaboration.security.application.query
 
     import "http://www.eclipse.org/emf/2002/Ecore"
     import "http://www.mondo.org/collaboration/policy/Rules"
     import "http://www.mondo.org/collaboration/policy/delegation/Delegation"
-    import "«nsUri»"
+    import "ï¿½nsUriï¿½"
     '''	
 
 	def generateUserSpecificPatterns(AccessControlModel model) {
@@ -147,19 +146,19 @@ class RulesGenerator extends AbstractGenerator {
 	
 	def generateUserSpecificPatterns(AccessControlModel model, boolean requiredImport)'''
 	
-	«FOR user: model.roles.usersOfRoleList2 SEPARATOR "\n"»
-	pattern effectiveJudgementOnObjectForUser«user.name»(object: EObject, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnObject("«user.name»", object, operation, access);
+	ï¿½FOR user: model.roles.usersOfRoleList2 SEPARATOR "\n"ï¿½
+	pattern effectiveJudgementOnObjectForUserï¿½user.nameï¿½(object: EObject, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnObject("ï¿½user.nameï¿½", object, operation, access);
 	}
 	
-	pattern effectiveJudgementOnReferenceForUser«user.name»(source: EObject, target: EObject, reference: java String, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnReference("«user.name»", source, target, reference, operation, access);
+	pattern effectiveJudgementOnReferenceForUserï¿½user.nameï¿½(source: EObject, target: EObject, reference: java String, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnReference("ï¿½user.nameï¿½", source, target, reference, operation, access);
 	}	
 	
-	pattern effectiveJudgementOnAttributeForUser«user.name»(source: EObject, value: java Object, attribute : java String, operation: OperationType, access: AccessibilityLevel) {
-		find effectiveJudgementOnAttribute("«user.name»", source, value, attribute, operation, access);
+	pattern effectiveJudgementOnAttributeForUserï¿½user.nameï¿½(source: EObject, value: java Object, attribute : java String, operation: OperationType, access: AccessibilityLevel) {
+		find effectiveJudgementOnAttribute("ï¿½user.nameï¿½", source, value, attribute, operation, access);
 	}
-	«ENDFOR»
+	ï¿½ENDFORï¿½
 	'''
 
 	def generateHelperPatterns(AccessControlModel acModel, DelegationModel delegationModel) {
@@ -174,22 +173,22 @@ class RulesGenerator extends AbstractGenerator {
     }
     
     pattern allUsers(user: java String) {
-        «FOR user: acModel.roles.usersOfRoleList SEPARATOR "\n} or {"»
-        user == "«user.name»";
-        «ENDFOR»
+        ï¿½FOR user: acModel.roles.usersOfRoleList SEPARATOR "\n} or {"ï¿½
+        user == "ï¿½user.nameï¿½";
+        ï¿½ENDFORï¿½
     }
     
-    «FOR rule: acModel.policy.rules SEPARATOR "\n" AFTER "\n"»
-        «generateAssetHelperPattern(rule)»
+    ï¿½FOR rule: acModel.policy.rules SEPARATOR "\n" AFTER "\n"ï¿½
+        ï¿½generateAssetHelperPattern(rule)ï¿½
         
-        «generateUserHelperPattern(rule)»
-    «ENDFOR»
+        ï¿½generateUserHelperPattern(rule)ï¿½
+    ï¿½ENDFORï¿½
     
-    «FOR delegation: delegationModel.delegations SEPARATOR "\n" AFTER "\n"»
-        «generateAssetHelperPattern(delegation)»
+    ï¿½FOR delegation: delegationModel.delegations SEPARATOR "\n" AFTER "\n"ï¿½
+        ï¿½generateAssetHelperPattern(delegation)ï¿½
         
-        «generateUserHelperPattern(delegation)»
-    «ENDFOR»
+        ï¿½generateUserHelperPattern(delegation)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateObjectPatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities) {
@@ -197,13 +196,13 @@ class RulesGenerator extends AbstractGenerator {
     }
 
     def generateObjectPatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities, boolean requiredImport) '''
-	    «generateExplicitJudgement_object(acModel)»
-	    «generateDelegationJudgement_object(delegationModel)»
-	    «generateEffectiveJudgement_object(acModel, priorities, delegationModel)»
-	    «generateDominationByPriority_object(priorities)»
-	    «generateDominationByAccess_object(acModel, priorities)»
-	    «generateJudgement_object(priorities)»
-	    «generateStrongConsequenceJudgement_object(metamodel, priorities)»
+	    ï¿½generateExplicitJudgement_object(acModel)ï¿½
+	    ï¿½generateDelegationJudgement_object(delegationModel)ï¿½
+	    ï¿½generateEffectiveJudgement_object(acModel, priorities, delegationModel)ï¿½
+	    ï¿½generateDominationByPriority_object(priorities)ï¿½
+	    ï¿½generateDominationByAccess_object(acModel, priorities)ï¿½
+	    ï¿½generateJudgement_object(priorities)ï¿½
+	    ï¿½generateStrongConsequenceJudgement_object(metamodel, priorities)ï¿½
     '''
     
     def generateAttributePatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities) {
@@ -211,14 +210,14 @@ class RulesGenerator extends AbstractGenerator {
     }
 
     def generateAttributePatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities, boolean requiredImport) '''
-	    «generateExplicitJudgement_attribute(acModel)»
-	    «generateDelegationJudgement_attribute(delegationModel)»
-	    «generateEffectiveJudgement_attribute(acModel, priorities, delegationModel)»
-	    «generateDominationByPriority_attribute(priorities)»
-	    «generateDominationByAccess_attribute(acModel, priorities)»
-	    «generateJudgement_attribute(priorities)»
-	    «generateStrongConsequenceJudgement_attribute(metamodel, priorities)»
-	    «generateWeakConsequenceJudgement_attribute(priorities)»
+	    ï¿½generateExplicitJudgement_attribute(acModel)ï¿½
+	    ï¿½generateDelegationJudgement_attribute(delegationModel)ï¿½
+	    ï¿½generateEffectiveJudgement_attribute(acModel, priorities, delegationModel)ï¿½
+	    ï¿½generateDominationByPriority_attribute(priorities)ï¿½
+	    ï¿½generateDominationByAccess_attribute(acModel, priorities)ï¿½
+	    ï¿½generateJudgement_attribute(priorities)ï¿½
+	    ï¿½generateStrongConsequenceJudgement_attribute(metamodel, priorities)ï¿½
+	    ï¿½generateWeakConsequenceJudgement_attribute(priorities)ï¿½
     '''
     
     def generateReferencePatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities) {
@@ -226,62 +225,62 @@ class RulesGenerator extends AbstractGenerator {
     }
 
     def generateReferencePatterns(AccessControlModel acModel, DelegationModel delegationModel, EPackage metamodel, TreeSet<Integer> priorities, boolean requiredImport) '''
-	    «generateExplicitJudgement_reference(acModel)»
-	    «generateDelegationJudgement_reference(delegationModel)»
-	    «generateEffectiveJudgement_reference(acModel, priorities, delegationModel)»
-	    «generateDominationByPriority_reference(priorities)»
-	    «generateDominationByAccess_reference(acModel, priorities)»
-	    «generateJudgement_reference(priorities)»
-	    «generateStrongConsequenceJudgement_reference(metamodel, priorities)»
-	    «generateWeakConsequenceJudgement_reference(priorities)»
+	    ï¿½generateExplicitJudgement_reference(acModel)ï¿½
+	    ï¿½generateDelegationJudgement_reference(delegationModel)ï¿½
+	    ï¿½generateEffectiveJudgement_reference(acModel, priorities, delegationModel)ï¿½
+	    ï¿½generateDominationByPriority_reference(priorities)ï¿½
+	    ï¿½generateDominationByAccess_reference(acModel, priorities)ï¿½
+	    ï¿½generateJudgement_reference(priorities)ï¿½
+	    ï¿½generateStrongConsequenceJudgement_reference(metamodel, priorities)ï¿½
+	    ï¿½generateWeakConsequenceJudgement_reference(priorities)ï¿½
     '''
 
     def generateExplicitJudgement_object(AccessControlModel model) '''
-	    «IF !explicitRulesObjectAllow.empty || model.policy.access == AccessibilityLevel.ALLOW»
-            «generateExplicitJudgement_object_allow(model)»
-	    «ENDIF»
+	    ï¿½IF !explicitRulesObjectAllow.empty || model.policy.access == AccessibilityLevel.ALLOWï¿½
+            ï¿½generateExplicitJudgement_object_allow(model)ï¿½
+	    ï¿½ENDIFï¿½
     
-	    «IF !explicitRulesObjectDeny.empty || model.policy.access == AccessibilityLevel.DENY»
-            «generateExplicitJudgement_object_deny(model)»
-	    «ENDIF»
+	    ï¿½IF !explicitRulesObjectDeny.empty || model.policy.access == AccessibilityLevel.DENYï¿½
+            ï¿½generateExplicitJudgement_object_deny(model)ï¿½
+	    ï¿½ENDIFï¿½
     '''
     
     def generateExplicitJudgement_object_allow(AccessControlModel model) '''
 	    pattern explicitJudgement_object_allow(user : java String, object : EObject, operation, priority : java Integer)
 	    {
-	    «FOR rule : explicitRulesObjectAllow SEPARATOR "\n} or {"»
-	        «generateRule_object(rule)»
-	    «ENDFOR»
-	    «IF model.policy.access == AccessibilityLevel.ALLOW»
-	        «IF !explicitRulesObjectAllow.empty»
+	    ï¿½FOR rule : explicitRulesObjectAllow SEPARATOR "\n} or {"ï¿½
+	        ï¿½generateRule_object(rule)ï¿½
+	    ï¿½ENDFORï¿½
+	    ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
+	        ï¿½IF !explicitRulesObjectAllow.emptyï¿½
 	            } or {
-	        «ENDIF»
-	        «generateDefaultRule_object(model.policy)»
-	    «ENDIF»
+	        ï¿½ENDIFï¿½
+	        ï¿½generateDefaultRule_object(model.policy)ï¿½
+	    ï¿½ENDIFï¿½
 	    }
     '''
     
     def generateExplicitJudgement_object_deny(AccessControlModel model) '''
 	    pattern explicitJudgement_object_deny(user : java String, object : EObject, operation, priority : java Integer)
 	    {
-	    «FOR rule : explicitRulesObjectDeny SEPARATOR "\n} or {"»
-	        «generateRule_object(rule)»
-	    «ENDFOR»
-	    «IF model.policy.access == AccessibilityLevel.DENY»
-	        «IF !explicitRulesObjectDeny.empty»
+	    ï¿½FOR rule : explicitRulesObjectDeny SEPARATOR "\n} or {"ï¿½
+	        ï¿½generateRule_object(rule)ï¿½
+	    ï¿½ENDFORï¿½
+	    ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
+	        ï¿½IF !explicitRulesObjectDeny.emptyï¿½
 	            } or {
-	        «ENDIF»
-	        «generateDefaultRule_object(model.policy)»
-	    «ENDIF»
+	        ï¿½ENDIFï¿½
+	        ï¿½generateDefaultRule_object(model.policy)ï¿½
+	    ï¿½ENDIFï¿½
 	    }
     '''
     
     def generateRule_object(Rule rule) '''
-    //  rule «rule.name»
-        find «rule.name»RuleAsset(object);
-        find «rule.name»RuleUser(user);
-        «generateOperationType(rule.operation)»
-        priority == «rule.priority»;
+    //  rule ï¿½rule.nameï¿½
+        find ï¿½rule.nameï¿½RuleAsset(object);
+        find ï¿½rule.nameï¿½RuleUser(user);
+        ï¿½generateOperationType(rule.operation)ï¿½
+        priority == ï¿½rule.priorityï¿½;
     '''
 
     def generateDefaultRule_object(Policy policy) '''
@@ -294,50 +293,50 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateExplicitJudgement_attribute(AccessControlModel model) '''
-    «IF !explicitRulesAttributeAllow.empty || model.policy.access == AccessibilityLevel.ALLOW»
-    «generateExplicitJudgement_attribute_allow(model)»
-    «ENDIF»
-    «IF !explicitRulesAttributeDeny.empty || model.policy.access == AccessibilityLevel.DENY»
-    «generateExplicitJudgement_attribute_deny(model)»
-    «ENDIF»
+    ï¿½IF !explicitRulesAttributeAllow.empty || model.policy.access == AccessibilityLevel.ALLOWï¿½
+    ï¿½generateExplicitJudgement_attribute_allow(model)ï¿½
+    ï¿½ENDIFï¿½
+    ï¿½IF !explicitRulesAttributeDeny.empty || model.policy.access == AccessibilityLevel.DENYï¿½
+    ï¿½generateExplicitJudgement_attribute_deny(model)ï¿½
+    ï¿½ENDIFï¿½
     '''
     
     def generateExplicitJudgement_attribute_allow(AccessControlModel model) '''
     pattern explicitJudgement_attribute_allow(user : java String, source : EObject, value: java Object, attribute : java String, operation, priority: java Integer)
     {
-    «FOR rule : explicitRulesAttributeAllow SEPARATOR "\n} or {"»
-        «generateRule_attribute(rule)»
-    «ENDFOR»
-    «IF model.policy.access == AccessibilityLevel.ALLOW»
-        «IF !explicitRulesAttributeAllow.empty»
+    ï¿½FOR rule : explicitRulesAttributeAllow SEPARATOR "\n} or {"ï¿½
+        ï¿½generateRule_attribute(rule)ï¿½
+    ï¿½ENDFORï¿½
+    ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
+        ï¿½IF !explicitRulesAttributeAllow.emptyï¿½
             } or {
-        «ENDIF»
-        «generateDefaultRule_attribute(model.policy)»
-    «ENDIF»
+        ï¿½ENDIFï¿½
+        ï¿½generateDefaultRule_attribute(model.policy)ï¿½
+    ï¿½ENDIFï¿½
     }    
     '''
     
     def generateExplicitJudgement_attribute_deny(AccessControlModel model) '''
     pattern explicitJudgement_attribute_deny(user : java String, source : EObject, value: java Object, attribute : java String, operation, priority: java Integer)
     {
-    «FOR rule : explicitRulesAttributeDeny SEPARATOR "\n} or {"»
-        «generateRule_attribute(rule)»
-    «ENDFOR»
-    «IF model.policy.access == AccessibilityLevel.DENY»
-       «IF !explicitRulesAttributeDeny.empty»
+    ï¿½FOR rule : explicitRulesAttributeDeny SEPARATOR "\n} or {"ï¿½
+        ï¿½generateRule_attribute(rule)ï¿½
+    ï¿½ENDFORï¿½
+    ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
+       ï¿½IF !explicitRulesAttributeDeny.emptyï¿½
             } or {
-       «ENDIF»
-       «generateDefaultRule_attribute(model.policy)»
-    «ENDIF»
+       ï¿½ENDIFï¿½
+       ï¿½generateDefaultRule_attribute(model.policy)ï¿½
+    ï¿½ENDIFï¿½
     }
     '''
     
     def generateRule_attribute(Rule rule) '''
-    //  rule «rule.name»
-        find «rule.name»RuleAsset(source, value, attribute);
-        find «rule.name»RuleUser(user);
-        «generateOperationType(rule.operation)»
-        priority == «rule.priority»;
+    //  rule ï¿½rule.nameï¿½
+        find ï¿½rule.nameï¿½RuleAsset(source, value, attribute);
+        find ï¿½rule.nameï¿½RuleUser(user);
+        ï¿½generateOperationType(rule.operation)ï¿½
+        priority == ï¿½rule.priorityï¿½;
     '''
 
     def generateDefaultRule_attribute(Policy policy) '''
@@ -350,50 +349,50 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateExplicitJudgement_reference(AccessControlModel model) '''
-    «IF !explicitRulesReferenceAllow.empty || model.policy.access == AccessibilityLevel.ALLOW»
-    «generateExplicitJudgement_reference_allow(model)»
-    «ENDIF»
-    «IF !explicitRulesReferenceDeny.empty || model.policy.access == AccessibilityLevel.DENY»    
-    «generateExplicitJudgement_reference_deny(model)»
-    «ENDIF»
+    ï¿½IF !explicitRulesReferenceAllow.empty || model.policy.access == AccessibilityLevel.ALLOWï¿½
+    ï¿½generateExplicitJudgement_reference_allow(model)ï¿½
+    ï¿½ENDIFï¿½
+    ï¿½IF !explicitRulesReferenceDeny.empty || model.policy.access == AccessibilityLevel.DENYï¿½    
+    ï¿½generateExplicitJudgement_reference_deny(model)ï¿½
+    ï¿½ENDIFï¿½
     '''
     
     def generateExplicitJudgement_reference_allow(AccessControlModel model) '''
     pattern explicitJudgement_reference_allow(user : java String, source : EObject, target : EObject, reference : java String, operation, priority: java Integer)
     {
-    «FOR rule : explicitRulesReferenceAllow SEPARATOR "\n} or {"»
-        «generateRule_reference(rule)»
-    «ENDFOR»
-    «IF model.policy.access == AccessibilityLevel.ALLOW»
-        «IF !explicitRulesReferenceAllow.empty»
+    ï¿½FOR rule : explicitRulesReferenceAllow SEPARATOR "\n} or {"ï¿½
+        ï¿½generateRule_reference(rule)ï¿½
+    ï¿½ENDFORï¿½
+    ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
+        ï¿½IF !explicitRulesReferenceAllow.emptyï¿½
             } or {
-        «ENDIF»
-        «generateDefaultRule_reference(model.policy)»
-    «ENDIF»
+        ï¿½ENDIFï¿½
+        ï¿½generateDefaultRule_reference(model.policy)ï¿½
+    ï¿½ENDIFï¿½
     }
     '''
     
     def generateExplicitJudgement_reference_deny(AccessControlModel model) '''
     pattern explicitJudgement_reference_deny(user : java String, source : EObject, target : EObject, reference : java String, operation, priority: java Integer)
     {
-    «FOR rule : explicitRulesReferenceDeny SEPARATOR "\n} or {"»
-        «generateRule_reference(rule)»
-    «ENDFOR»
-    «IF model.policy.access == AccessibilityLevel.DENY»
-       «IF !explicitRulesReferenceDeny.empty»
+    ï¿½FOR rule : explicitRulesReferenceDeny SEPARATOR "\n} or {"ï¿½
+        ï¿½generateRule_reference(rule)ï¿½
+    ï¿½ENDFORï¿½
+    ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
+       ï¿½IF !explicitRulesReferenceDeny.emptyï¿½
            } or {
-       «ENDIF»
-       «generateDefaultRule_reference(model.policy)»
-    «ENDIF»
+       ï¿½ENDIFï¿½
+       ï¿½generateDefaultRule_reference(model.policy)ï¿½
+    ï¿½ENDIFï¿½
     }    
     '''
     
     def generateRule_reference(Rule rule) '''
-    //  rule «rule.name»
-        find «rule.name»RuleAsset(source, target, reference);
-        find «rule.name»RuleUser(user);
-        «generateOperationType(rule.operation)»
-        priority == «rule.priority»;
+    //  rule ï¿½rule.nameï¿½
+        find ï¿½rule.nameï¿½RuleAsset(source, target, reference);
+        find ï¿½rule.nameï¿½RuleUser(user);
+        ï¿½generateOperationType(rule.operation)ï¿½
+        priority == ï¿½rule.priorityï¿½;
     '''
 
     def generateDefaultRule_reference(Policy policy) '''
@@ -407,59 +406,59 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateDelegationJudgement_object(DelegationModel model) '''
-    «IF !delegationsObjectAllow.empty»
+    ï¿½IF !delegationsObjectAllow.emptyï¿½
     pattern delegationJudgement_object_allow(user: java String, object: EObject, operation)
     {
-    	«FOR Delegation delegation : delegationsObjectAllow SEPARATOR "\n} or {"»
-    	    «generateDelegation_object_allow(delegation)»
-    	«ENDFOR»
+    	ï¿½FOR Delegation delegation : delegationsObjectAllow SEPARATOR "\n} or {"ï¿½
+    	    ï¿½generateDelegation_object_allow(delegation)ï¿½
+    	ï¿½ENDFORï¿½
     }
-    «ENDIF»
+    ï¿½ENDIFï¿½
     '''
     
     def generateDelegation_object_allow(Delegation delegation) '''
-«««    find effectiveJudgement_object_allow("«delegation.source.name»", object, _priority, operation, AccessibilityLevel::ALLOW);
-    find «delegation.name»DelegationAsset(object);
-    find «delegation.name»DelegationUser(user);
-    «generateOperationType(delegation.operation)»
+ï¿½ï¿½ï¿½    find effectiveJudgement_object_allow("ï¿½delegation.source.nameï¿½", object, _priority, operation, AccessibilityLevel::ALLOW);
+    find ï¿½delegation.nameï¿½DelegationAsset(object);
+    find ï¿½delegation.nameï¿½DelegationUser(user);
+    ï¿½generateOperationType(delegation.operation)ï¿½
     '''
     
     
     def generateDelegationJudgement_attribute(DelegationModel model) '''
-    «IF !delegationsAttributeAllow.empty»
+    ï¿½IF !delegationsAttributeAllow.emptyï¿½
     pattern delegationJudgement_attribute_allow(user: java String, object: EObject, operation)
     {
-        «FOR Delegation delegation : delegationsAttributeAllow SEPARATOR "\n} or {"»
-            «generateDelegation_attribute_allow(delegation)»
-        «ENDFOR»
+        ï¿½FOR Delegation delegation : delegationsAttributeAllow SEPARATOR "\n} or {"ï¿½
+            ï¿½generateDelegation_attribute_allow(delegation)ï¿½
+        ï¿½ENDFORï¿½
     }
-    «ENDIF»
+    ï¿½ENDIFï¿½
     '''
     
     def generateDelegation_attribute_allow(Delegation delegation) '''
-«««    find effectiveJudgement_attribute_allow("«delegation.source.name»", source, value, attribute, _priority, operation, AccessibilityLevel::ALLOW);
-    find «delegation.name»DelegationAsset(source, value, attribute);
-    find «delegation.name»DelegationUser(user);
-    «generateOperationType(delegation.operation)»
+ï¿½ï¿½ï¿½    find effectiveJudgement_attribute_allow("ï¿½delegation.source.nameï¿½", source, value, attribute, _priority, operation, AccessibilityLevel::ALLOW);
+    find ï¿½delegation.nameï¿½DelegationAsset(source, value, attribute);
+    find ï¿½delegation.nameï¿½DelegationUser(user);
+    ï¿½generateOperationType(delegation.operation)ï¿½
     '''
 
 
     def generateDelegationJudgement_reference(DelegationModel model) '''
-    «IF !delegationsReferenceAllow.empty»
+    ï¿½IF !delegationsReferenceAllow.emptyï¿½
     pattern delegationJudgement_reference_allow(user: java String, object: EObject, operation)
     {
-        «FOR Delegation delegation : delegationsReferenceAllow SEPARATOR "\n} or {"»
-        	«generateDelegation_reference_allow(delegation)»
-        «ENDFOR»
+        ï¿½FOR Delegation delegation : delegationsReferenceAllow SEPARATOR "\n} or {"ï¿½
+        	ï¿½generateDelegation_reference_allow(delegation)ï¿½
+        ï¿½ENDFORï¿½
     }
-    «ENDIF»
+    ï¿½ENDIFï¿½
     '''
     
     def generateDelegation_reference_allow(Delegation delegation) '''
-«««    find effectiveJudgement_reference_allow("«delegation.source.name»", source, target, reference, _priority, operation, AccessibilityLevel::ALLOW);
-    find «delegation.name»DelegationAsset(source, target, reference);
-    find «delegation.name»DelegationUser(user);
-    «generateOperationType(delegation.operation)»
+ï¿½ï¿½ï¿½    find effectiveJudgement_reference_allow("ï¿½delegation.source.nameï¿½", source, target, reference, _priority, operation, AccessibilityLevel::ALLOW);
+    find ï¿½delegation.nameï¿½DelegationAsset(source, target, reference);
+    find ï¿½delegation.nameï¿½DelegationUser(user);
+    ï¿½generateOperationType(delegation.operation)ï¿½
     '''
     
     
@@ -473,37 +472,37 @@ class RulesGenerator extends AbstractGenerator {
         find effectiveJudgement_object_weak(user, object, operation, access);
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-            find effectiveJudgement_object_«prio»(user, object, operation, access);
-            priority == «prio»;
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+            find effectiveJudgement_object_ï¿½prioï¿½(user, object, operation, access);
+            priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation(user, object, operation, access);
     	priority == 1000;
     }
         
-    «generateEffectiveJudgement_object_default(acModel)»
+    ï¿½generateEffectiveJudgement_object_default(acModel)ï¿½
     
-    «generateEffectiveJudgement_object_weak(acModel)»
+    ï¿½generateEffectiveJudgement_object_weak(acModel)ï¿½
     
-    «generateEffectiveJudgement_object_priority(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_object_priority(acModel, priorities)ï¿½
     
-    «generateEffectiveJudgement_object_delegation(delegationModel)»
+    ï¿½generateEffectiveJudgement_object_delegation(delegationModel)ï¿½
     
-    «generateEffectiveJudgement_object_allow(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_object_allow(acModel, priorities)ï¿½
     '''
     
     def generateEffectiveJudgement_object_default(AccessControlModel model) '''
     pattern effectiveJudgement_object_default(user: java String, object: EObject, operation, access)
     {
-    	«IF model.policy.access == AccessibilityLevel.ALLOW»
+    	ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
     	    find explicitJudgement_object_allow(user, object, operation, eval(-1));
     	    access == AccessibilityLevel::ALLOW;
-    	«ENDIF»
-        «IF model.policy.access == AccessibilityLevel.DENY»
+    	ï¿½ENDIFï¿½
+        ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
         find explicitJudgement_object_deny(user, object, operation, eval(-1));
             access == AccessibilityLevel::DENY;
-        «ENDIF»
+        ï¿½ENDIFï¿½
         neg find dominationByPriority_object_default(user, object, operation);
     }
     '''
@@ -518,9 +517,9 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_object_weak_allow(model)»
+    ï¿½generateEffectiveJudgement_object_weak_allow(model)ï¿½
     
-    «generateEffectiveJudgement_object_weak_deny(model)»
+    ï¿½generateEffectiveJudgement_object_weak_deny(model)ï¿½
     '''
     
     def generateEffectiveJudgement_object_weak_allow(AccessControlModel model) '''
@@ -528,9 +527,9 @@ class RulesGenerator extends AbstractGenerator {
     {
     	find judgement_object_weak_allow(user, object, operation);
         neg find dominationByPriority_object_weak(user, object, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
             neg find dominationByAccess_object_weak(user, object, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -539,48 +538,48 @@ class RulesGenerator extends AbstractGenerator {
     {
         find judgement_object_weak_deny(user, object, operation);
         neg find dominationByPriority_object_weak(user, object, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
             neg find dominationByAccess_object_weak(user, object, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_object_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern effectiveJudgement_object_«prio»(user: java String, object: EObject, operation, access)
+    ï¿½FOR prio: prioritiesï¿½
+    pattern effectiveJudgement_object_ï¿½prioï¿½(user: java String, object: EObject, operation, access)
     {
-    	find effectiveJudgement_object_«prio»_allow(user, object, operation);
+    	find effectiveJudgement_object_ï¿½prioï¿½_allow(user, object, operation);
     	access == AccessibilityLevel::ALLOW;
     } or {
-    	find effectiveJudgement_object_«prio»_deny(user, object, operation);
+    	find effectiveJudgement_object_ï¿½prioï¿½_deny(user, object, operation);
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_object_priority_allow(model, priorities, prio)»
+    ï¿½generateEffectiveJudgement_object_priority_allow(model, priorities, prio)ï¿½
             
-    «generateEffectiveJudgement_object_priority_deny(model, priorities, prio)»
-    «ENDFOR»
+    ï¿½generateEffectiveJudgement_object_priority_deny(model, priorities, prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateEffectiveJudgement_object_priority_allow(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_object_«prio»_allow(user: java String, object: EObject, operation)
+    pattern effectiveJudgement_object_ï¿½prioï¿½_allow(user: java String, object: EObject, operation)
     {
-        find judgement_object_«prio»_allow(user, object, operation);
-        neg find dominationByPriority_object_«prio»(user, object, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
-            neg find dominationByAccess_object_«prio»(user, object, operation);
-        «ENDIF»
+        find judgement_object_ï¿½prioï¿½_allow(user, object, operation);
+        neg find dominationByPriority_object_ï¿½prioï¿½(user, object, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
+            neg find dominationByAccess_object_ï¿½prioï¿½(user, object, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_object_priority_deny(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_object_«prio»_deny(user: java String, object: EObject, operation)
+    pattern effectiveJudgement_object_ï¿½prioï¿½_deny(user: java String, object: EObject, operation)
     {
-        find judgement_object_«prio»_deny(user, object, operation);
-        neg find dominationByPriority_object_«prio»(user, object, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
-            neg find dominationByAccess_object_«prio»(user, object, operation);
-        «ENDIF»
+        find judgement_object_ï¿½prioï¿½_deny(user, object, operation);
+        neg find dominationByPriority_object_ï¿½prioï¿½(user, object, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
+            neg find dominationByAccess_object_ï¿½prioï¿½(user, object, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -591,16 +590,16 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::ALLOW;
     }
     
-    «generateEffectiveJudgement_object_delegation_allow(model)»
+    ï¿½generateEffectiveJudgement_object_delegation_allow(model)ï¿½
     '''
     
     def generateEffectiveJudgement_object_delegation_allow(DelegationModel model) '''
     pattern effectiveJudgement_object_delegation_allow(user: java String, object: EObject, operation)
     {
-    «IF !delegationsObjectAllow.empty»
+    ï¿½IF !delegationsObjectAllow.emptyï¿½
     	find delegationJudgement_object_allow(user, object, operation);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
     	find strongConsequenceJudgement_object_delegation_allow(user, object, operation);
     }
     '''
@@ -608,22 +607,22 @@ class RulesGenerator extends AbstractGenerator {
     def generateEffectiveJudgement_object_allow(AccessControlModel acModel, TreeSet<Integer> priorities) '''
     pattern effectiveJudgement_object_allow(user: java String, object: EObject, priority: java Integer, operation, access)
     {
-    «IF acModel.policy.access == AccessibilityLevel.ALLOW»
+    ï¿½IF acModel.policy.access == AccessibilityLevel.ALLOWï¿½
     	find explicitJudgement_object_allow(user, object, operation, eval(-1));
     	access == AccessibilityLevel::ALLOW;
     	neg find dominationByPriority_object_default(user, object, operation);
     	priority == eval(-1);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
         find effectiveJudgement_object_weak_allow(user, object, operation);
         access == AccessibilityLevel::ALLOW;
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-           find effectiveJudgement_object_«prio»_allow(user, object, operation);
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+           find effectiveJudgement_object_ï¿½prioï¿½_allow(user, object, operation);
            access == AccessibilityLevel::ALLOW;
-           priority == «prio»;
-        «ENDFOR»
+           priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation_allow(user, object, operation);
     	access == AccessibilityLevel::ALLOW;
@@ -641,37 +640,37 @@ class RulesGenerator extends AbstractGenerator {
         find effectiveJudgement_attribute_weak(user, source, value, attribute, operation, access);
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-           find effectiveJudgement_attribute_«prio»(user, source, value, attribute, operation, access);
-           priority == «prio»;
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+           find effectiveJudgement_attribute_ï¿½prioï¿½(user, source, value, attribute, operation, access);
+           priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
         find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, access);
         priority == 1000;
     }
         
-    «generateEffectiveJudgement_attribute_default(acModel)»
+    ï¿½generateEffectiveJudgement_attribute_default(acModel)ï¿½
     
-    «generateEffectiveJudgement_attribute_weak(acModel)»
+    ï¿½generateEffectiveJudgement_attribute_weak(acModel)ï¿½
     
-    «generateEffectiveJudgement_attribute_priority(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_attribute_priority(acModel, priorities)ï¿½
     
-    «generateEffectiveJudgement_attribute_delegation(delegationModel)»
+    ï¿½generateEffectiveJudgement_attribute_delegation(delegationModel)ï¿½
     
-    «generateEffectiveJudgement_attribute_allow(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_attribute_allow(acModel, priorities)ï¿½
     '''
     
     def generateEffectiveJudgement_attribute_default(AccessControlModel model) '''
     pattern effectiveJudgement_attribute_default(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
     {
-    	«IF model.policy.access == AccessibilityLevel.ALLOW»
+    	ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
     	    find explicitJudgement_attribute_allow(user, source, value, attribute, operation, eval(-1));
     	    access == AccessibilityLevel::ALLOW;
-    	«ENDIF»
-    	«IF model.policy.access == AccessibilityLevel.DENY»
+    	ï¿½ENDIFï¿½
+    	ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
     	    find explicitJudgement_attribute_deny(user, source, value, attribute, operation, eval(-1));
     	    access == AccessibilityLevel::DENY;
-    	«ENDIF»
+    	ï¿½ENDIFï¿½
     	neg find dominationByPriority_attribute_default(user, source, value, attribute, operation);
     }
     '''
@@ -686,9 +685,9 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_attribute_weak_allow(model)»
+    ï¿½generateEffectiveJudgement_attribute_weak_allow(model)ï¿½
     
-    «generateEffectiveJudgement_attribute_weak_deny(model)»
+    ï¿½generateEffectiveJudgement_attribute_weak_deny(model)ï¿½
     '''
     
     def generateEffectiveJudgement_attribute_weak_allow(AccessControlModel model) '''
@@ -696,9 +695,9 @@ class RulesGenerator extends AbstractGenerator {
     {
     	find judgement_attribute_weak_allow(user, source, value, attribute, operation);
         neg find dominationByPriority_attribute_weak(user, source, value, attribute, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
             neg find dominationByAccess_attribute_weak(user, source, value, attribute, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -707,48 +706,48 @@ class RulesGenerator extends AbstractGenerator {
     {
         find judgement_attribute_weak_deny(user, source, value, attribute, operation);
         neg find dominationByPriority_attribute_weak(user, source, value, attribute, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
             neg find dominationByAccess_attribute_weak(user, source, value, attribute, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_attribute_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern effectiveJudgement_attribute_«prio»(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
+    ï¿½FOR prio: prioritiesï¿½
+    pattern effectiveJudgement_attribute_ï¿½prioï¿½(user: java String, source: EObject, value: java Object, attribute : java String, operation, access)
     {
-    	find effectiveJudgement_attribute_«prio»_allow(user, source, value, attribute, operation);
+    	find effectiveJudgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, operation);
     	access == AccessibilityLevel::ALLOW;
     } or {
-    	find effectiveJudgement_attribute_«prio»_deny(user, source, value, attribute, operation);
+    	find effectiveJudgement_attribute_ï¿½prioï¿½_deny(user, source, value, attribute, operation);
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_attribute_priority_allow(model, priorities, prio)»
+    ï¿½generateEffectiveJudgement_attribute_priority_allow(model, priorities, prio)ï¿½
             
-    «generateEffectiveJudgement_attribute_priority_deny(model, priorities, prio)»
-    «ENDFOR»
+    ï¿½generateEffectiveJudgement_attribute_priority_deny(model, priorities, prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateEffectiveJudgement_attribute_priority_allow(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_attribute_«prio»_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern effectiveJudgement_attribute_ï¿½prioï¿½_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-        find judgement_attribute_«prio»_allow(user, source, value, attribute, operation);
-        neg find dominationByPriority_attribute_«prio»(user, source, value, attribute, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
-            neg find dominationByAccess_attribute_«prio»(user, source, value, attribute, operation);
-        «ENDIF»
+        find judgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, operation);
+        neg find dominationByPriority_attribute_ï¿½prioï¿½(user, source, value, attribute, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
+            neg find dominationByAccess_attribute_ï¿½prioï¿½(user, source, value, attribute, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_attribute_priority_deny(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_attribute_«prio»_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern effectiveJudgement_attribute_ï¿½prioï¿½_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-        find judgement_attribute_«prio»_deny(user, source, value, attribute, operation);
-        neg find dominationByPriority_attribute_«prio»(user, source, value, attribute, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
-            neg find dominationByAccess_attribute_«prio»(user, source, value, attribute, operation);
-        «ENDIF»
+        find judgement_attribute_ï¿½prioï¿½_deny(user, source, value, attribute, operation);
+        neg find dominationByPriority_attribute_ï¿½prioï¿½(user, source, value, attribute, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
+            neg find dominationByAccess_attribute_ï¿½prioï¿½(user, source, value, attribute, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -759,16 +758,16 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::ALLOW;
     }
     
-    «generateEffectiveJudgement_attribute_delegation_allow(model)»
+    ï¿½generateEffectiveJudgement_attribute_delegation_allow(model)ï¿½
     '''
     
     def generateEffectiveJudgement_attribute_delegation_allow(DelegationModel model) '''
     pattern effectiveJudgement_attribute_delegation_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-    «IF !delegationsAttributeAllow.empty»
+    ï¿½IF !delegationsAttributeAllow.emptyï¿½
     	find delegationJudgement_attribute_allow(user, source, value, attribute, operation);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
     	find strongConsequenceJudgement_attribute_delegation_allow(user, source, value, attribute, operation);
     }
     '''
@@ -776,22 +775,22 @@ class RulesGenerator extends AbstractGenerator {
     def generateEffectiveJudgement_attribute_allow(AccessControlModel acModel, TreeSet<Integer> priorities) '''
     pattern effectiveJudgement_attribute_allow(user: java String, source: EObject, value: java Object, attribute : java String, priority: java Integer, operation, access)
     {
-    «IF acModel.policy.access == AccessibilityLevel.ALLOW»
+    ï¿½IF acModel.policy.access == AccessibilityLevel.ALLOWï¿½
     	find explicitJudgement_attribute_allow(user, source, value, attribute, operation, eval(-1));
     	access == AccessibilityLevel::ALLOW;
     	neg find dominationByPriority_attribute_default(user, source, value, attribute, operation);
     	priority == eval(-1);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
         find effectiveJudgement_attribute_weak_allow(user, source, value, attribute, operation);
         access == AccessibilityLevel::ALLOW;
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-           find effectiveJudgement_attribute_«prio»_allow(user, source, value, attribute, operation);
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+           find effectiveJudgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, operation);
            access == AccessibilityLevel::ALLOW;
-           priority == «prio»;
-        «ENDFOR»
+           priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_attribute_delegation_allow(user, source, value, attribute, operation);
     	access == AccessibilityLevel::ALLOW;
@@ -809,36 +808,36 @@ class RulesGenerator extends AbstractGenerator {
         find effectiveJudgement_reference_weak(user, source, target, reference, operation, access);
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-           find effectiveJudgement_reference_«prio»(user, source, target, reference, operation, access);
-           priority == «prio»;
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+           find effectiveJudgement_reference_ï¿½prioï¿½(user, source, target, reference, operation, access);
+           priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, access);
     	priority == 1000;
     }
-    «generateEffectiveJudgement_reference_default(acModel)»
+    ï¿½generateEffectiveJudgement_reference_default(acModel)ï¿½
     
-    «generateEffectiveJudgement_reference_weak(acModel)»
+    ï¿½generateEffectiveJudgement_reference_weak(acModel)ï¿½
     
-    «generateEffectiveJudgement_reference_priority(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_reference_priority(acModel, priorities)ï¿½
     
-    «generateEffectiveJudgement_reference_delegation(delegationModel)»
+    ï¿½generateEffectiveJudgement_reference_delegation(delegationModel)ï¿½
     
-    «generateEffectiveJudgement_reference_allow(acModel, priorities)»
+    ï¿½generateEffectiveJudgement_reference_allow(acModel, priorities)ï¿½
     '''
     
     def generateEffectiveJudgement_reference_default(AccessControlModel model) '''
     pattern effectiveJudgement_reference_default(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
     {
-        «IF model.policy.access == AccessibilityLevel.ALLOW»
+        ï¿½IF model.policy.access == AccessibilityLevel.ALLOWï¿½
             find explicitJudgement_reference_allow(user, source, target, reference, operation, eval(-1));
             access == AccessibilityLevel::ALLOW;
-        «ENDIF»
-        «IF model.policy.access == AccessibilityLevel.DENY»
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.access == AccessibilityLevel.DENYï¿½
             find explicitJudgement_reference_deny(user, source, target, reference, operation, eval(-1));
             access == AccessibilityLevel::DENY;
-        «ENDIF»
+        ï¿½ENDIFï¿½
         neg find dominationByPriority_reference_default(user, source, target, reference, operation);
     }
     '''
@@ -853,9 +852,9 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_reference_weak_allow(model)»
+    ï¿½generateEffectiveJudgement_reference_weak_allow(model)ï¿½
     
-    «generateEffectiveJudgement_reference_weak_deny(model)»
+    ï¿½generateEffectiveJudgement_reference_weak_deny(model)ï¿½
     '''
     
     def generateEffectiveJudgement_reference_weak_allow(AccessControlModel model) '''
@@ -863,9 +862,9 @@ class RulesGenerator extends AbstractGenerator {
     {
     	find judgement_reference_weak_allow(user, source, target, reference, operation);
         neg find dominationByPriority_reference_weak(user, source, target, reference, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
             neg find dominationByAccess_reference_weak(user, source, target, reference, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -874,48 +873,48 @@ class RulesGenerator extends AbstractGenerator {
     {
         find judgement_reference_weak_deny(user, source, target, reference, operation);
         neg find dominationByPriority_reference_weak(user, source, target, reference, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
             neg find dominationByAccess_reference_weak(user, source, target, reference, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_reference_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern effectiveJudgement_reference_«prio»(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
+    ï¿½FOR prio: prioritiesï¿½
+    pattern effectiveJudgement_reference_ï¿½prioï¿½(user: java String, source: EObject, target: EObject, reference: java String, operation, access)
     {
-    	find effectiveJudgement_reference_«prio»_allow(user, source, target, reference, operation);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, operation);
     	access == AccessibilityLevel::ALLOW;
     } or {
-    	find effectiveJudgement_reference_«prio»_deny(user, source, target, reference, operation);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_deny(user, source, target, reference, operation);
     	access == AccessibilityLevel::DENY;
     }
     
-    «generateEffectiveJudgement_reference_priority_allow(model, priorities, prio)»
+    ï¿½generateEffectiveJudgement_reference_priority_allow(model, priorities, prio)ï¿½
             
-    «generateEffectiveJudgement_reference_priority_deny(model, priorities, prio)»
-    «ENDFOR»
+    ï¿½generateEffectiveJudgement_reference_priority_deny(model, priorities, prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateEffectiveJudgement_reference_priority_allow(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_reference_«prio»_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
+    pattern effectiveJudgement_reference_ï¿½prioï¿½_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
     {
-        find judgement_reference_«prio»_allow(user, source, target, reference, operation);
-        neg find dominationByPriority_reference_«prio»(user, source, target, reference, operation);
-        «IF model.policy.resolution != ResolutionType.PERMISSIVE»
-            neg find dominationByAccess_reference_«prio»(user, source, target, reference, operation);
-        «ENDIF»
+        find judgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, operation);
+        neg find dominationByPriority_reference_ï¿½prioï¿½(user, source, target, reference, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.PERMISSIVEï¿½
+            neg find dominationByAccess_reference_ï¿½prioï¿½(user, source, target, reference, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
     def generateEffectiveJudgement_reference_priority_deny(AccessControlModel model, TreeSet<Integer> priorities, Integer prio) '''
-    pattern effectiveJudgement_reference_«prio»_deny(user: java String, source: EObject, target: EObject, reference: java String, operation)
+    pattern effectiveJudgement_reference_ï¿½prioï¿½_deny(user: java String, source: EObject, target: EObject, reference: java String, operation)
     {
-        find judgement_reference_«prio»_deny(user, source, target, reference, operation);
-        neg find dominationByPriority_reference_«prio»(user, source, target, reference, operation);
-        «IF model.policy.resolution != ResolutionType.RESTRICTIVE»
-            neg find dominationByAccess_reference_«prio»(user, source, target, reference, operation);
-        «ENDIF»
+        find judgement_reference_ï¿½prioï¿½_deny(user, source, target, reference, operation);
+        neg find dominationByPriority_reference_ï¿½prioï¿½(user, source, target, reference, operation);
+        ï¿½IF model.policy.resolution != ResolutionType.RESTRICTIVEï¿½
+            neg find dominationByAccess_reference_ï¿½prioï¿½(user, source, target, reference, operation);
+        ï¿½ENDIFï¿½
     }
     '''
     
@@ -926,16 +925,16 @@ class RulesGenerator extends AbstractGenerator {
     	access == AccessibilityLevel::ALLOW;
     }
     
-    «generateEffectiveJudgement_reference_delegation_allow(model)»
+    ï¿½generateEffectiveJudgement_reference_delegation_allow(model)ï¿½
     '''
     
     def generateEffectiveJudgement_reference_delegation_allow(DelegationModel model) '''
     pattern effectiveJudgement_reference_delegation_allow(user: java String, source: EObject, target: EObject, reference: java String, operation)
     {
-    «IF !delegationsReferenceAllow.empty»
+    ï¿½IF !delegationsReferenceAllow.emptyï¿½
     	find delegationJudgement_reference_allow(user, source, target, reference, operation);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
     	find strongConsequenceJudgement_reference_delegation_allow(user, source, target, reference, operation);
     }
     '''
@@ -943,22 +942,22 @@ class RulesGenerator extends AbstractGenerator {
     def generateEffectiveJudgement_reference_allow(AccessControlModel acModel, TreeSet<Integer> priorities) '''
     pattern effectiveJudgement_reference_allow(user: java String, source: EObject, target: EObject, reference: java String, priority: java Integer, operation, access)
     {
-    «IF acModel.policy.access == AccessibilityLevel.ALLOW»
+    ï¿½IF acModel.policy.access == AccessibilityLevel.ALLOWï¿½
     	find explicitJudgement_reference_allow(user, source, target, reference, operation, eval(-1));
     	access == AccessibilityLevel::ALLOW;
     	neg find dominationByPriority_reference_default(user, source, target, reference, operation);
     	priority == eval(-1);
     } or {
-    «ENDIF»
+    ï¿½ENDIFï¿½
         find effectiveJudgement_reference_weak_allow(user, source, target, reference, operation);
         access == AccessibilityLevel::ALLOW;
         priority == 0;
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {"»
-           find effectiveJudgement_reference_«prio»_allow(user, source, target, reference, operation);
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {"ï¿½
+           find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, operation);
            access == AccessibilityLevel::ALLOW;
-           priority == «prio»;
-        «ENDFOR»
+           priority == ï¿½prioï¿½;
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_reference_delegation_allow(user, source, target, reference, operation);
     	access == AccessibilityLevel::ALLOW;
@@ -968,11 +967,11 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateDominationByPriority_object(TreeSet<Integer> priorities) '''
-    «generateDominationByPriority_object_default(priorities)»
+    ï¿½generateDominationByPriority_object_default(priorities)ï¿½
     
-    «generateDominationByPriority_object_weak(priorities)»
+    ï¿½generateDominationByPriority_object_weak(priorities)ï¿½
     
-    «generateDominationByPriority_object_priority(priorities)»
+    ï¿½generateDominationByPriority_object_priority(priorities)ï¿½
     '''
     
     def generateDominationByPriority_object_default(TreeSet<Integer> priorities) '''
@@ -980,9 +979,9 @@ class RulesGenerator extends AbstractGenerator {
     {
         find effectiveJudgement_object_weak(user, object, operation, _access);
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_object_«prio»(user, object, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_object_ï¿½prioï¿½(user, object, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation(user, object, operation, _access);
     }
@@ -991,33 +990,33 @@ class RulesGenerator extends AbstractGenerator {
     def generateDominationByPriority_object_weak(TreeSet<Integer> priorities) '''
     pattern dominationByPriority_object_weak(user: java String, object: EObject, operation)
     {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_object_«prio»(user, object, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_object_ï¿½prioï¿½(user, object, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation(user, object, operation, _access);
     }
     '''
     
     def generateDominationByPriority_object_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern dominationByPriority_object_«prio»(user: java String, object: EObject, operation) 
+    ï¿½FOR prio: prioritiesï¿½
+    pattern dominationByPriority_object_ï¿½prioï¿½(user: java String, object: EObject, operation) 
     {
-        «FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"»
-        find effectiveJudgement_object_«prevailingPrio»(user, object, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"ï¿½
+        find effectiveJudgement_object_ï¿½prevailingPrioï¿½(user, object, operation, _access);
+        ï¿½ENDFORï¿½
     	find effectiveJudgement_object_delegation(user, object, operation, _access);
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     
     def generateDominationByPriority_attribute(TreeSet<Integer> priorities) '''
-    «generateDominationByPriority_attribute_default(priorities)»
+    ï¿½generateDominationByPriority_attribute_default(priorities)ï¿½
     
-    «generateDominationByPriority_attribute_weak(priorities)»
+    ï¿½generateDominationByPriority_attribute_weak(priorities)ï¿½
     
-    «generateDominationByPriority_attribute_priority(priorities)»
+    ï¿½generateDominationByPriority_attribute_priority(priorities)ï¿½
     '''
     
     def generateDominationByPriority_attribute_default(TreeSet<Integer> priorities) '''
@@ -1025,9 +1024,9 @@ class RulesGenerator extends AbstractGenerator {
     {
         find effectiveJudgement_attribute_weak(user, source, value, attribute, operation, _access);
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_attribute_«prio»(user, source, value, attribute, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_attribute_ï¿½prioï¿½(user, source, value, attribute, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
     }
@@ -1036,33 +1035,33 @@ class RulesGenerator extends AbstractGenerator {
     def generateDominationByPriority_attribute_weak(TreeSet<Integer> priorities) '''
     pattern dominationByPriority_attribute_weak(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_attribute_«prio»(user, source, value, attribute, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_attribute_ï¿½prioï¿½(user, source, value, attribute, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
     }
     '''
     
     def generateDominationByPriority_attribute_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern dominationByPriority_attribute_«prio»(user: java String, source: EObject, value: java Object, attribute : java String, operation) 
+    ï¿½FOR prio: prioritiesï¿½
+    pattern dominationByPriority_attribute_ï¿½prioï¿½(user: java String, source: EObject, value: java Object, attribute : java String, operation) 
     {
-        «FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"»
-        find effectiveJudgement_attribute_«prevailingPrio»(user, source, value, attribute, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"ï¿½
+        find effectiveJudgement_attribute_ï¿½prevailingPrioï¿½(user, source, value, attribute, operation, _access);
+        ï¿½ENDFORï¿½
     	find effectiveJudgement_attribute_delegation(user, source, value, attribute, operation, _access);
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     
     def generateDominationByPriority_reference(TreeSet<Integer> priorities) '''
-    «generateDominationByPriority_reference_default(priorities)»
+    ï¿½generateDominationByPriority_reference_default(priorities)ï¿½
     
-    «generateDominationByPriority_reference_weak(priorities)»
+    ï¿½generateDominationByPriority_reference_weak(priorities)ï¿½
     
-    «generateDominationByPriority_reference_priority(priorities)»
+    ï¿½generateDominationByPriority_reference_priority(priorities)ï¿½
     '''
     
     def generateDominationByPriority_reference_default(TreeSet<Integer> priorities) '''
@@ -1070,9 +1069,9 @@ class RulesGenerator extends AbstractGenerator {
     {
         find effectiveJudgement_reference_weak(user, source, target, reference, operation, _access);
     } or {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_reference_«prio»(user, source, target, reference, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_reference_ï¿½prioï¿½(user, source, target, reference, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
     }
@@ -1081,134 +1080,134 @@ class RulesGenerator extends AbstractGenerator {
     def generateDominationByPriority_reference_weak(TreeSet<Integer> priorities) '''
     pattern dominationByPriority_reference_weak(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
-        «FOR prio: priorities SEPARATOR "\n} or {" »
-            find effectiveJudgement_reference_«prio»(user, source, target, reference, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prio: priorities SEPARATOR "\n} or {" ï¿½
+            find effectiveJudgement_reference_ï¿½prioï¿½(user, source, target, reference, operation, _access);
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
     }
     '''
     
     def generateDominationByPriority_reference_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    pattern dominationByPriority_reference_«prio»(user: java String, source: EObject, target: EObject, reference : java String, operation) 
+    ï¿½FOR prio: prioritiesï¿½
+    pattern dominationByPriority_reference_ï¿½prioï¿½(user: java String, source: EObject, target: EObject, reference : java String, operation) 
     {
-        «FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"»
-        find effectiveJudgement_reference_«prevailingPrio»(user, source, target, reference, operation, _access);
-        «ENDFOR»
+        ï¿½FOR prevailingPrio: priorities.filter[it > prio] SEPARATOR "\n} or {" AFTER "\n} or {"ï¿½
+        find effectiveJudgement_reference_ï¿½prevailingPrioï¿½(user, source, target, reference, operation, _access);
+        ï¿½ENDFORï¿½
     	find effectiveJudgement_reference_delegation(user, source, target, reference, operation, _access);
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     def generateDominationByAccess_object(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «generateDominationByAccess_object_weak(model)»
+    ï¿½generateDominationByAccess_object_weak(model)ï¿½
         
-    «generateDominationByAccess_object_priority(model, priorities)»
+    ï¿½generateDominationByAccess_object_priority(model, priorities)ï¿½
     '''
     
     def generateDominationByAccess_object_weak(AccessControlModel model) '''
     pattern dominationByAccess_object_weak(user: java String, object: EObject, operation)
     {
-    	«IF model.policy.resolution == ResolutionType.PERMISSIVE»
+    	ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
     	    find judgement_object_weak_allow(user, object, operation);
-    	«ENDIF»
-    	«IF model.policy.resolution == ResolutionType.RESTRICTIVE»
+    	ï¿½ENDIFï¿½
+    	ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
     	    find judgement_object_weak_deny(user, object, operation);
-    	«ENDIF»
+    	ï¿½ENDIFï¿½
     }
     '''
     
     def generateDominationByAccess_object_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio : priorities»
-    pattern dominationByAccess_object_«prio»(user: java String, object: EObject, operation)
+    ï¿½FOR prio : prioritiesï¿½
+    pattern dominationByAccess_object_ï¿½prioï¿½(user: java String, object: EObject, operation)
     {
-        «IF model.policy.resolution == ResolutionType.PERMISSIVE»
-            find judgement_object_«prio»_allow(user, object, operation);
-        «ENDIF»
-        «IF model.policy.resolution == ResolutionType.RESTRICTIVE»
-            find judgement_object_«prio»_deny(user, object, operation);
-        «ENDIF»
+        ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
+            find judgement_object_ï¿½prioï¿½_allow(user, object, operation);
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
+            find judgement_object_ï¿½prioï¿½_deny(user, object, operation);
+        ï¿½ENDIFï¿½
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     
     def generateDominationByAccess_attribute(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «generateDominationByAccess_attribute_weak(model)»
+    ï¿½generateDominationByAccess_attribute_weak(model)ï¿½
             
-    «generateDominationByAccess_attribute_priority(model, priorities)»
+    ï¿½generateDominationByAccess_attribute_priority(model, priorities)ï¿½
     '''
         
     def generateDominationByAccess_attribute_weak(AccessControlModel model) '''
     pattern dominationByAccess_attribute_weak(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-        «IF model.policy.resolution == ResolutionType.PERMISSIVE»
+        ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
         	find judgement_attribute_weak_allow(user, source, value, attribute, operation);
-        «ENDIF»
-        «IF model.policy.resolution == ResolutionType.RESTRICTIVE»
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
         	find judgement_attribute_weak_deny(user, source, value, attribute, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
         
     def generateDominationByAccess_attribute_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio : priorities»
-    pattern dominationByAccess_attribute_«prio»(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    ï¿½FOR prio : prioritiesï¿½
+    pattern dominationByAccess_attribute_ï¿½prioï¿½(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-        «IF model.policy.resolution == ResolutionType.PERMISSIVE»
-            find judgement_attribute_«prio»_allow(user, source, value, attribute, operation);
-        «ENDIF»
-        «IF model.policy.resolution == ResolutionType.RESTRICTIVE»
-            find judgement_attribute_«prio»_deny(user, source, value, attribute, operation);
-        «ENDIF»
+        ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
+            find judgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, operation);
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
+            find judgement_attribute_ï¿½prioï¿½_deny(user, source, value, attribute, operation);
+        ï¿½ENDIFï¿½
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     
     def generateDominationByAccess_reference(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «generateDominationByAccess_reference_weak(model)»
+    ï¿½generateDominationByAccess_reference_weak(model)ï¿½
                 
-    «generateDominationByAccess_reference_priority(model, priorities)»
+    ï¿½generateDominationByAccess_reference_priority(model, priorities)ï¿½
     '''
             
     def generateDominationByAccess_reference_weak(AccessControlModel model) '''
     pattern dominationByAccess_reference_weak(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
-        «IF model.policy.resolution == ResolutionType.PERMISSIVE»
+        ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
             find judgement_reference_weak_allow(user, source, target, reference, operation);
-        «ENDIF»
-        «IF model.policy.resolution == ResolutionType.RESTRICTIVE»
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
             find judgement_reference_weak_deny(user, source, target, reference, operation);
-        «ENDIF»
+        ï¿½ENDIFï¿½
     }
     '''
             
     def generateDominationByAccess_reference_priority(AccessControlModel model, TreeSet<Integer> priorities) '''
-    «FOR prio : priorities»
-    pattern dominationByAccess_reference_«prio»(user: java String, source: EObject, target: EObject, reference : java String, operation)
+    ï¿½FOR prio : prioritiesï¿½
+    pattern dominationByAccess_reference_ï¿½prioï¿½(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
-        «IF model.policy.resolution == ResolutionType.PERMISSIVE»
-            find judgement_reference_«prio»_allow(user, source, target, reference, operation);
-        «ENDIF»
-        «IF model.policy.resolution == ResolutionType.RESTRICTIVE»
-            find judgement_reference_«prio»_deny(user, source, target, reference, operation);
-        «ENDIF»
+        ï¿½IF model.policy.resolution == ResolutionType.PERMISSIVEï¿½
+            find judgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, operation);
+        ï¿½ENDIFï¿½
+        ï¿½IF model.policy.resolution == ResolutionType.RESTRICTIVEï¿½
+            find judgement_reference_ï¿½prioï¿½_deny(user, source, target, reference, operation);
+        ï¿½ENDIFï¿½
     }
-    «ENDFOR»
+    ï¿½ENDFORï¿½
     '''
     
     def generateJudgement_object(TreeSet<Integer> priorities) '''
-    «generateJudgement_object_weak»
+    ï¿½generateJudgement_object_weakï¿½
     
-    «generateJudgement_object_priority(priorities)»
+    ï¿½generateJudgement_object_priority(priorities)ï¿½
     '''
     
     def generateJudgement_object_weak() '''
-    «generateJudgement_object_weak_allow»
+    ï¿½generateJudgement_object_weak_allowï¿½
     
-    «generateJudgement_object_weak_deny»
+    ï¿½generateJudgement_object_weak_denyï¿½
     '''
     
     def generateJudgement_object_weak_allow() '''
@@ -1226,46 +1225,46 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateJudgement_object_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-        «generateJudgement_object_priority_allow(prio)»
+    ï¿½FOR prio: prioritiesï¿½
+        ï¿½generateJudgement_object_priority_allow(prio)ï¿½
         
-        «generateJudgement_object_priority_deny(prio)»
-    «ENDFOR»
+        ï¿½generateJudgement_object_priority_deny(prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateJudgement_object_priority_allow(Integer prio) '''
-    pattern judgement_object_«prio»_allow(user: java String, object: EObject, operation)
+    pattern judgement_object_ï¿½prioï¿½_allow(user: java String, object: EObject, operation)
     {
-    	«IF !explicitRulesObjectAllow.empty»
-    	find explicitJudgement_object_allow(user, object, operation, «prio»);
+    	ï¿½IF !explicitRulesObjectAllow.emptyï¿½
+    	find explicitJudgement_object_allow(user, object, operation, ï¿½prioï¿½);
     	} or {
-    	«ENDIF»
-    	find strongConsequenceJudgement_object_«prio»_allow(user, object, operation);
+    	ï¿½ENDIFï¿½
+    	find strongConsequenceJudgement_object_ï¿½prioï¿½_allow(user, object, operation);
     }
     '''
     
     def generateJudgement_object_priority_deny(Integer prio) '''
-    pattern judgement_object_«prio»_deny(user: java String, object: EObject, operation)
+    pattern judgement_object_ï¿½prioï¿½_deny(user: java String, object: EObject, operation)
     {
-    «IF !explicitRulesObjectDeny.empty»
-    	find explicitJudgement_object_deny(user, object, operation, «prio»);
+    ï¿½IF !explicitRulesObjectDeny.emptyï¿½
+    	find explicitJudgement_object_deny(user, object, operation, ï¿½prioï¿½);
     	} or {
-    «ENDIF»
-        find strongConsequenceJudgement_object_«prio»_deny(user, object, operation);
+    ï¿½ENDIFï¿½
+        find strongConsequenceJudgement_object_ï¿½prioï¿½_deny(user, object, operation);
     }
     '''
     
     
     def generateJudgement_attribute(TreeSet<Integer> priorities) '''
-    «generateJudgement_attribute_weak»
+    ï¿½generateJudgement_attribute_weakï¿½
     
-    «generateJudgement_attribute_priority(priorities)»
+    ï¿½generateJudgement_attribute_priority(priorities)ï¿½
     '''
     
     def generateJudgement_attribute_weak() '''
-    «generateJudgement_attribute_weak_allow»
+    ï¿½generateJudgement_attribute_weak_allowï¿½
         
-    «generateJudgement_attribute_weak_deny»
+    ï¿½generateJudgement_attribute_weak_denyï¿½
     '''
     
     def generateJudgement_attribute_weak_allow() '''
@@ -1287,46 +1286,46 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateJudgement_attribute_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-        «generateJudgement_attribute_priority_allow(prio)»
+    ï¿½FOR prio: prioritiesï¿½
+        ï¿½generateJudgement_attribute_priority_allow(prio)ï¿½
             
-        «generateJudgement_attribute_priority_deny(prio)»
-    «ENDFOR»
+        ï¿½generateJudgement_attribute_priority_deny(prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateJudgement_attribute_priority_allow(Integer prio) '''
-    pattern judgement_attribute_«prio»_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern judgement_attribute_ï¿½prioï¿½_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-    	«IF !explicitRulesAttributeAllow.empty»
-    	find explicitJudgement_attribute_allow(user, source, value, attribute, operation, «prio»);
+    	ï¿½IF !explicitRulesAttributeAllow.emptyï¿½
+    	find explicitJudgement_attribute_allow(user, source, value, attribute, operation, ï¿½prioï¿½);
     	} or {
-    	«ENDIF»
-    	find strongConsequenceJudgement_attribute_«prio»_allow(user, source, value, attribute, operation);
+    	ï¿½ENDIFï¿½
+    	find strongConsequenceJudgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, operation);
     }
     '''
     
     def generateJudgement_attribute_priority_deny(Integer prio) '''
-    pattern judgement_attribute_«prio»_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern judgement_attribute_ï¿½prioï¿½_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
-    	«IF !explicitRulesAttributeDeny.empty»
-    	find explicitJudgement_attribute_deny(user, source, value, attribute, operation, «prio»);
+    	ï¿½IF !explicitRulesAttributeDeny.emptyï¿½
+    	find explicitJudgement_attribute_deny(user, source, value, attribute, operation, ï¿½prioï¿½);
     	} or {
-    	«ENDIF»
-        find strongConsequenceJudgement_attribute_«prio»_deny(user, source, value, attribute, operation);
+    	ï¿½ENDIFï¿½
+        find strongConsequenceJudgement_attribute_ï¿½prioï¿½_deny(user, source, value, attribute, operation);
     }
     '''
     
     
     def generateJudgement_reference(TreeSet<Integer> priorities) '''
-    «generateJudgement_reference_weak»
+    ï¿½generateJudgement_reference_weakï¿½
     
-    «generateJudgement_reference_priority(priorities)»
+    ï¿½generateJudgement_reference_priority(priorities)ï¿½
     '''
     
     def generateJudgement_reference_weak() '''
-    «generateJudgement_reference_weak_allow»
+    ï¿½generateJudgement_reference_weak_allowï¿½
             
-    «generateJudgement_reference_weak_deny»
+    ï¿½generateJudgement_reference_weak_denyï¿½
     '''
     
     def generateJudgement_reference_weak_allow() '''
@@ -1348,47 +1347,47 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateJudgement_reference_priority(TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-        «generateJudgement_reference_priority_allow(prio)»
+    ï¿½FOR prio: prioritiesï¿½
+        ï¿½generateJudgement_reference_priority_allow(prio)ï¿½
             
-        «generateJudgement_reference_priority_deny(prio)»
-    «ENDFOR»
+        ï¿½generateJudgement_reference_priority_deny(prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
 
     def generateJudgement_reference_priority_allow(Integer prio) '''
-    pattern judgement_reference_«prio»_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+    pattern judgement_reference_ï¿½prioï¿½_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
-    	«IF !explicitRulesReferenceAllow.empty»
-    	find explicitJudgement_reference_allow(user, source, target, reference, operation, «prio»);
+    	ï¿½IF !explicitRulesReferenceAllow.emptyï¿½
+    	find explicitJudgement_reference_allow(user, source, target, reference, operation, ï¿½prioï¿½);
     	} or {
-    	«ENDIF»
-    	find strongConsequenceJudgement_reference_«prio»_allow(user, source, target, reference, operation);
+    	ï¿½ENDIFï¿½
+    	find strongConsequenceJudgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, operation);
     }
     '''
     
     def generateJudgement_reference_priority_deny(Integer prio) '''
-    pattern judgement_reference_«prio»_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+    pattern judgement_reference_ï¿½prioï¿½_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
-    	«IF !explicitRulesReferenceDeny.empty»
-    	find explicitJudgement_reference_deny(user, source, target, reference, operation, «prio»);
+    	ï¿½IF !explicitRulesReferenceDeny.emptyï¿½
+    	find explicitJudgement_reference_deny(user, source, target, reference, operation, ï¿½prioï¿½);
     	} or {
-    	«ENDIF»
-        find strongConsequenceJudgement_reference_«prio»_deny(user, source, target, reference, operation);
+    	ï¿½ENDIFï¿½
+        find strongConsequenceJudgement_reference_ï¿½prioï¿½_deny(user, source, target, reference, operation);
     }
     '''
     
     def generateStrongConsequenceJudgement_object(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «generateStrongConsequenceJudgement_object_weak(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_object_weak(metamodel)ï¿½
     
-    «generateStrongConsequenceJudgement_object_priority(metamodel, priorities)»
+    ï¿½generateStrongConsequenceJudgement_object_priority(metamodel, priorities)ï¿½
     
-    «generateStrongConsequenceJudgement_object_delegation()»
+    ï¿½generateStrongConsequenceJudgement_object_delegation()ï¿½
     '''
     
     def generateStrongConsequenceJudgement_object_weak(EPackage metamodel) '''
-    «generateStrongConsequenceJudgement_object_weak_allow»
+    ï¿½generateStrongConsequenceJudgement_object_weak_allowï¿½
     
-    «generateStrongConsequenceJudgement_object_weak_deny(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_object_weak_deny(metamodel)ï¿½
     '''
     
     def generateStrongConsequenceJudgement_object_weak_allow() '''
@@ -1428,12 +1427,12 @@ class RulesGenerator extends AbstractGenerator {
         // object !R -> object !W
         find effectiveJudgement_object_weak_deny(user, object, OperationType::READ);
         operation == OperationType::WRITE;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]»or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½or {
         // ID attribute !R -> source !R
         find effectiveJudgement_attribute_weak_deny(user, object, anyValue, anyAttribute, OperationType::READ);
         find idAttribute(object, anyValue, anyAttribute);
         operation == OperationType::READ;
-    }«ENDIF» or {
+    }ï¿½ENDIFï¿½ or {
         // deny R, containment reference -> target
         find effectiveJudgement_reference_weak_deny(user, anySource, object, anyReference, OperationType::READ);
         find containmentReference(anySource, object, anyReference);
@@ -1442,65 +1441,65 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateStrongConsequenceJudgement_object_priority(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    «generateStrongConsequenceJudgement_object_priority_allow(prio)»
+    ï¿½FOR prio: prioritiesï¿½
+    ï¿½generateStrongConsequenceJudgement_object_priority_allow(prio)ï¿½
     
-    «generateStrongConsequenceJudgement_object_priority_deny(metamodel, prio)»
-    «ENDFOR»
+    ï¿½generateStrongConsequenceJudgement_object_priority_deny(metamodel, prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateStrongConsequenceJudgement_object_priority_allow(Integer prio) '''
-    pattern strongConsequenceJudgement_object_«prio»_allow(user: java String, object: EObject, operation)
+    pattern strongConsequenceJudgement_object_ï¿½prioï¿½_allow(user: java String, object: EObject, operation)
     {
         // object W -> object R
-        find effectiveJudgement_object_«prio»_allow(user, object, OperationType::WRITE);
+        find effectiveJudgement_object_ï¿½prioï¿½_allow(user, object, OperationType::WRITE);
         operation == OperationType::READ;
     } or {
     	// child R -> parent R
-    	find effectiveJudgement_object_«prio»_allow(user, child, OperationType::READ);
+    	find effectiveJudgement_object_ï¿½prioï¿½_allow(user, child, OperationType::READ);
     	find contains(object, child);
     	operation == OperationType::READ;
     } or {
     	// attribute R -> source R
-    	find effectiveJudgement_attribute_«prio»_allow(user, object, _value, _attribute, OperationType::READ);
+    	find effectiveJudgement_attribute_ï¿½prioï¿½_allow(user, object, _value, _attribute, OperationType::READ);
     	operation == OperationType::READ;
     } or {
     	// reference R -> source R
-    	find effectiveJudgement_reference_«prio»_allow(user, object, _target, _reference, OperationType::READ);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, object, _target, _reference, OperationType::READ);
     	operation == OperationType::READ;
     } or {
     	// reference R -> target R
-    	find effectiveJudgement_reference_«prio»_allow(user, _source, object, _reference, OperationType::READ);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, _source, object, _reference, OperationType::READ);
     	operation == OperationType::READ;
     } or {
     	// containment reference W -> target W
-    	find effectiveJudgement_reference_«prio»_allow(user, anySource, object, anyReference, OperationType::WRITE);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, anySource, object, anyReference, OperationType::WRITE);
     	find containmentReference(anySource, object, anyReference);
     	operation == OperationType::WRITE;
     }
     '''
     
     def generateStrongConsequenceJudgement_object_priority_deny(EPackage metamodel, Integer prio) '''
-    pattern strongConsequenceJudgement_object_«prio»_deny(user: java String, object: EObject, operation)
+    pattern strongConsequenceJudgement_object_ï¿½prioï¿½_deny(user: java String, object: EObject, operation)
     {
         // object !R -> object !W
-        find effectiveJudgement_object_«prio»_deny(user, object, OperationType::READ);
+        find effectiveJudgement_object_ï¿½prioï¿½_deny(user, object, OperationType::READ);
         operation == OperationType::WRITE;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
         // ID attribute !R -> source !R
-        find effectiveJudgement_attribute_«prio»_deny(user, object, anyValue, anyAttribute, OperationType::READ);
+        find effectiveJudgement_attribute_ï¿½prioï¿½_deny(user, object, anyValue, anyAttribute, OperationType::READ);
         find idAttribute(object, anyValue, anyAttribute);
         operation == OperationType::READ;
-    }«ENDIF» or {
+    }ï¿½ENDIFï¿½ or {
         // deny R, containment reference -> target
-        find effectiveJudgement_reference_«prio»_deny(user, anySource, object, anyReference, OperationType::READ);
+        find effectiveJudgement_reference_ï¿½prioï¿½_deny(user, anySource, object, anyReference, OperationType::READ);
         find containmentReference(anySource, object, anyReference);
         operation == OperationType::READ;
     }
     '''
     
     def generateStrongConsequenceJudgement_object_delegation() '''
-    «generateStrongConsequenceJudgement_object_delegation_allow»
+    ï¿½generateStrongConsequenceJudgement_object_delegation_allowï¿½
     '''
     
     def generateStrongConsequenceJudgement_object_delegation_allow() '''
@@ -1536,17 +1535,17 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateStrongConsequenceJudgement_attribute(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «generateStrongConsequenceJudgement_attribute_weak(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_attribute_weak(metamodel)ï¿½
         
-    «generateStrongConsequenceJudgement_attribute_priority(metamodel, priorities)»
+    ï¿½generateStrongConsequenceJudgement_attribute_priority(metamodel, priorities)ï¿½
     
-    «generateStrongConsequenceJudgement_attribute_delegation(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_attribute_delegation(metamodel)ï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_weak(EPackage metamodel) '''
-    «generateStrongConsequenceJudgement_attribute_weak_allow(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_attribute_weak_allow(metamodel)ï¿½
     
-    «generateStrongConsequenceJudgement_attribute_weak_deny»
+    ï¿½generateStrongConsequenceJudgement_attribute_weak_denyï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_weak_allow(EPackage metamodel) '''
@@ -1555,12 +1554,12 @@ class RulesGenerator extends AbstractGenerator {
         // allow R, attribute W -> attribute R
         find effectiveJudgement_attribute_weak_allow(user, source, value, attribute, OperationType::WRITE);
         operation == OperationType::READ;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
     	// object R -> ID attribute R
     	find effectiveJudgement_object_weak_allow(user, source, OperationType::READ);
     	find idAttribute(source, value, attribute);
     	operation == OperationType::READ;
-    }«ENDIF»
+    }ï¿½ENDIFï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_weak_deny() '''
@@ -1579,36 +1578,36 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateStrongConsequenceJudgement_attribute_priority(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    «generateStrongConsequenceJudgement_attribute_priority_allow(metamodel, prio)»
+    ï¿½FOR prio: prioritiesï¿½
+    ï¿½generateStrongConsequenceJudgement_attribute_priority_allow(metamodel, prio)ï¿½
     
-    «generateStrongConsequenceJudgement_attribute_priority_deny(prio)»
-    «ENDFOR»
+    ï¿½generateStrongConsequenceJudgement_attribute_priority_deny(prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_priority_allow(EPackage metamodel, Integer prio) '''
-    pattern strongConsequenceJudgement_attribute_«prio»_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern strongConsequenceJudgement_attribute_ï¿½prioï¿½_allow(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
         // allow R, attribute W -> attribute R
-        find effectiveJudgement_attribute_«prio»_allow(user, source, value, attribute, OperationType::WRITE);
+        find effectiveJudgement_attribute_ï¿½prioï¿½_allow(user, source, value, attribute, OperationType::WRITE);
         operation == OperationType::READ;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
     	// object R -> ID attribute R
-    	find effectiveJudgement_object_«prio»_allow(user, source, OperationType::READ);
+    	find effectiveJudgement_object_ï¿½prioï¿½_allow(user, source, OperationType::READ);
     	find idAttribute(source, value, attribute);
     	operation == OperationType::READ;
-    }«ENDIF»
+    }ï¿½ENDIFï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_priority_deny(Integer prio) '''
-    pattern strongConsequenceJudgement_attribute_«prio»_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
+    pattern strongConsequenceJudgement_attribute_ï¿½prioï¿½_deny(user: java String, source: EObject, value: java Object, attribute : java String, operation)
     {
     	// attribute !R -> attribute !W
-    	find effectiveJudgement_attribute_«prio»_deny(user, source, value, attribute, OperationType::READ);
+    	find effectiveJudgement_attribute_ï¿½prioï¿½_deny(user, source, value, attribute, OperationType::READ);
     	operation == OperationType::WRITE;
     } or {
     	// containment reference !W -> attribute !W
-    	find effectiveJudgement_reference_«prio»_deny(user, anySource, source, anyReference, OperationType::WRITE);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_deny(user, anySource, source, anyReference, OperationType::WRITE);
     	find containmentReference(anySource, source, anyReference);
     	find attributeAsset(source, value, attribute);
     	operation == OperationType::WRITE;
@@ -1616,7 +1615,7 @@ class RulesGenerator extends AbstractGenerator {
     '''
     
     def generateStrongConsequenceJudgement_attribute_delegation(EPackage metamodel) '''
-    «generateStrongConsequenceJudgement_attribute_delegation_allow(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_attribute_delegation_allow(metamodel)ï¿½
     '''
     
     def generateStrongConsequenceJudgement_attribute_delegation_allow(EPackage metamodel) '''
@@ -1625,27 +1624,27 @@ class RulesGenerator extends AbstractGenerator {
         // allow R, attribute W -> attribute R
         find effectiveJudgement_attribute_delegation_allow(user, source, value, attribute, OperationType::WRITE);
         operation == OperationType::READ;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
         // object R -> ID attribute R
         find effectiveJudgement_object_delegation_allow(user, source, OperationType::READ);
         find idAttribute(source, value, attribute);
         operation == OperationType::READ;
-    }«ENDIF»
+    }ï¿½ENDIFï¿½
     '''
     
     
     def generateStrongConsequenceJudgement_reference(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «generateStrongConsequenceJudgement_reference_weak(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_reference_weak(metamodel)ï¿½
         
-    «generateStrongConsequenceJudgement_reference_priority(metamodel, priorities)»
+    ï¿½generateStrongConsequenceJudgement_reference_priority(metamodel, priorities)ï¿½
     
-    «generateStrongConsequenceJudgement_reference_delegation(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_reference_delegation(metamodel)ï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_weak(EPackage metamodel) '''
-    «generateStrongConsequenceJudgement_reference_weak_allow»
+    ï¿½generateStrongConsequenceJudgement_reference_weak_allowï¿½
     
-    «generateStrongConsequenceJudgement_reference_weak_deny(metamodel)»
+    ï¿½generateStrongConsequenceJudgement_reference_weak_deny(metamodel)ï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_weak_allow() '''
@@ -1683,69 +1682,69 @@ class RulesGenerator extends AbstractGenerator {
     	find effectiveJudgement_object_weak_deny(user, source, OperationType::READ);
     	find referenceAsset(source, target, reference);
     	operation == OperationType::READ;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
     	// ID attribute !R -> source !R
     	find effectiveJudgement_attribute_weak_deny(user, target, anyValue, anyAttribute, OperationType::READ);
     	find idAttribute(target, anyValue, anyAttribute);
         find referenceAsset(source, target, reference);
     	operation == OperationType::READ;
-    }«ENDIF»
+    }ï¿½ENDIFï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_priority(EPackage metamodel, TreeSet<Integer> priorities) '''
-    «FOR prio: priorities»
-    «generateStrongConsequenceJudgement_reference_priority_allow(prio)»
+    ï¿½FOR prio: prioritiesï¿½
+    ï¿½generateStrongConsequenceJudgement_reference_priority_allow(prio)ï¿½
     
-    «generateStrongConsequenceJudgement_reference_priority_deny(metamodel, prio)»
-    «ENDFOR»
+    ï¿½generateStrongConsequenceJudgement_reference_priority_deny(metamodel, prio)ï¿½
+    ï¿½ENDFORï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_priority_allow(Integer prio) '''
-    pattern strongConsequenceJudgement_reference_«prio»_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
+    pattern strongConsequenceJudgement_reference_ï¿½prioï¿½_allow(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
         // reference W -> reference R
-        find effectiveJudgement_reference_«prio»_allow(user, source, target, reference, OperationType::WRITE);
+        find effectiveJudgement_reference_ï¿½prioï¿½_allow(user, source, target, reference, OperationType::WRITE);
         operation == OperationType::READ;
     } or {
     	// object R -> containment reference R
-    	find effectiveJudgement_object_«prio»_allow(user, target, OperationType::READ);
+    	find effectiveJudgement_object_ï¿½prioï¿½_allow(user, target, OperationType::READ);
     	find containmentReference(source, target, reference);
     	operation == OperationType::READ;
     } or {
     	// object W -> containment reference W
-        find effectiveJudgement_object_«prio»_allow(user, target, OperationType::WRITE);
+        find effectiveJudgement_object_ï¿½prioï¿½_allow(user, target, OperationType::WRITE);
     	find containmentReference(source, target, reference);
     	operation == OperationType::WRITE;
     }
     '''
     
     def generateStrongConsequenceJudgement_reference_priority_deny(EPackage metamodel, Integer prio) '''
-    pattern strongConsequenceJudgement_reference_«prio»_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
+    pattern strongConsequenceJudgement_reference_ï¿½prioï¿½_deny(user: java String, source: EObject, target: EObject, reference : java String, operation)
     {
     	// reference !R -> reference !W
-    	find effectiveJudgement_reference_«prio»_deny(user, source, target, reference, OperationType::READ);
+    	find effectiveJudgement_reference_ï¿½prioï¿½_deny(user, source, target, reference, OperationType::READ);
     	operation == OperationType::WRITE;
     } or {
     	// object !R -> incoming reference !R
-    	find effectiveJudgement_object_«prio»_deny(user, target, OperationType::READ);
+    	find effectiveJudgement_object_ï¿½prioï¿½_deny(user, target, OperationType::READ);
     	find referenceAsset(source, target, reference);
     	operation == OperationType::READ;
     } or {
     	// object !R -> outgoing reference !R
-    	find effectiveJudgement_object_«prio»_deny(user, source, OperationType::READ);
+    	find effectiveJudgement_object_ï¿½prioï¿½_deny(user, source, OperationType::READ);
     	find referenceAsset(source, target, reference);
     	operation == OperationType::READ;
-    }«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]» or {
+    }ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½ or {
     	// ID attribute !R -> source !R
-    	find effectiveJudgement_attribute_«prio»_deny(user, target, anyValue, anyAttribute, OperationType::READ);
+    	find effectiveJudgement_attribute_ï¿½prioï¿½_deny(user, target, anyValue, anyAttribute, OperationType::READ);
     	find idAttribute(target, anyValue, anyAttribute);
         find referenceAsset(source, target, reference);
     	operation == OperationType::READ;
-    }«ENDIF»
+    }ï¿½ENDIFï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_delegation(EPackage metamodel) '''
-    «generateStrongConsequenceJudgement_reference_delegation_allow»
+    ï¿½generateStrongConsequenceJudgement_reference_delegation_allowï¿½
     '''
     
     def generateStrongConsequenceJudgement_reference_delegation_allow() '''
@@ -1769,9 +1768,9 @@ class RulesGenerator extends AbstractGenerator {
     
     
     def generateWeakConsequenceJudgement_attribute(TreeSet<Integer> priorities) '''
-    «generateWeakConsequenceJudgement_attribute_allow(priorities)»
+    ï¿½generateWeakConsequenceJudgement_attribute_allow(priorities)ï¿½
     
-    «generateWeakConsequenceJudgement_attribute_deny(priorities)»
+    ï¿½generateWeakConsequenceJudgement_attribute_deny(priorities)ï¿½
     '''
     
     def generateWeakConsequenceJudgement_attribute_allow(TreeSet<Integer> priorities) '''
@@ -1780,10 +1779,10 @@ class RulesGenerator extends AbstractGenerator {
     	find effectiveJudgement_object_weak_allow(user, source, operation);
     	find attributeAsset(source, value, attribute);
     } or {
-        «FOR prio : priorities SEPARATOR "\n} or {"»
-        find effectiveJudgement_object_«prio»_allow(user, source, operation);
+        ï¿½FOR prio : priorities SEPARATOR "\n} or {"ï¿½
+        find effectiveJudgement_object_ï¿½prioï¿½_allow(user, source, operation);
         find attributeAsset(source, value, attribute);
-        «ENDFOR»
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation_allow(user, source, operation);
     	find attributeAsset(source, value, attribute);
@@ -1796,18 +1795,18 @@ class RulesGenerator extends AbstractGenerator {
         find effectiveJudgement_object_weak_deny(user, source, operation);
         find attributeAsset(source, value, attribute);
     } or {
-        «FOR prio : priorities SEPARATOR "\n} or {"»
-        find effectiveJudgement_object_«prio»_deny(user, source, operation);
+        ï¿½FOR prio : priorities SEPARATOR "\n} or {"ï¿½
+        find effectiveJudgement_object_ï¿½prioï¿½_deny(user, source, operation);
         find attributeAsset(source, value, attribute);
-        «ENDFOR»
+        ï¿½ENDFORï¿½
     }
     '''
     
     
     def generateWeakConsequenceJudgement_reference(TreeSet<Integer> priorities) '''
-    «generateWeakConsequenceJudgement_reference_allow(priorities)»
+    ï¿½generateWeakConsequenceJudgement_reference_allow(priorities)ï¿½
         
-    «generateWeakConsequenceJudgement_reference_deny(priorities)»
+    ï¿½generateWeakConsequenceJudgement_reference_deny(priorities)ï¿½
     '''
     
     def generateWeakConsequenceJudgement_reference_allow(TreeSet<Integer> priorities) '''
@@ -1816,10 +1815,10 @@ class RulesGenerator extends AbstractGenerator {
     	find effectiveJudgement_object_weak_allow(user, source, operation);
     	find referenceAsset(source, target, reference);
     } or {
-        «FOR prio : priorities SEPARATOR "\n} or {"»
-        find effectiveJudgement_object_«prio»_allow(user, source, operation);
+        ï¿½FOR prio : priorities SEPARATOR "\n} or {"ï¿½
+        find effectiveJudgement_object_ï¿½prioï¿½_allow(user, source, operation);
         find referenceAsset(source, target, reference);
-        «ENDFOR»
+        ï¿½ENDFORï¿½
     } or {
     	find effectiveJudgement_object_delegation_allow(user, source, operation);
     	find referenceAsset(source, target, reference);
@@ -1832,104 +1831,104 @@ class RulesGenerator extends AbstractGenerator {
         find effectiveJudgement_object_weak_deny(user, source, operation);
         find referenceAsset(source, target, reference);
     } or {
-        «FOR prio : priorities SEPARATOR "\n} or {"»
-        find effectiveJudgement_object_«prio»_deny(user, source, operation);
+        ï¿½FOR prio : priorities SEPARATOR "\n} or {"ï¿½
+        find effectiveJudgement_object_ï¿½prioï¿½_deny(user, source, operation);
         find referenceAsset(source, target, reference);
-        «ENDFOR»
+        ï¿½ENDFORï¿½
     }
     '''
 
     def generateAssetHelperPattern(Rule rule) '''
-    «IF rule.asset instanceof ObjectFact»
-        «val object = rule.asset as ObjectFact»
-        pattern «rule.name»RuleAsset(«object.variable.name» : EObject)
+    ï¿½IF rule.asset instanceof ObjectFactï¿½
+        ï¿½val object = rule.asset as ObjectFactï¿½
+        pattern ï¿½rule.nameï¿½RuleAsset(ï¿½object.variable.nameï¿½ : EObject)
         {
-            find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
+            find ï¿½rule.pattern.qualifiedNameï¿½(ï¿½FOR bind: rule.bindList SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
         }
-    «ENDIF»
-    «IF rule.asset instanceof AttributeFact»
-        «val attribute = rule.asset as AttributeFact»
-        pattern «rule.name»RuleAsset(«attribute.variable.name» : EObject, value: java Object, attribute : java String)
+    ï¿½ENDIFï¿½
+    ï¿½IF rule.asset instanceof AttributeFactï¿½
+        ï¿½val attribute = rule.asset as AttributeFactï¿½
+        pattern ï¿½rule.nameï¿½RuleAsset(ï¿½attribute.variable.nameï¿½ : EObject, value: java Object, attribute : java String)
         {
-        	find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
-        	find attributeAsset(«attribute.variable.name», value, attribute);
-        	attribute ==  "«attribute.attribute.name»";
+        	find ï¿½rule.pattern.qualifiedNameï¿½(ï¿½FOR bind: rule.bindList SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
+        	find attributeAsset(ï¿½attribute.variable.nameï¿½, value, attribute);
+        	attribute ==  "ï¿½attribute.attribute.nameï¿½";
         }
-    «ENDIF»
-    «IF rule.asset instanceof ReferenceFact»
-        «val reference = rule.asset as ReferenceFact»
-        pattern «rule.name»RuleAsset(«reference.sourceVar» : EObject, «reference.targetVar» : EObject, reference : java String)
+    ï¿½ENDIFï¿½
+    ï¿½IF rule.asset instanceof ReferenceFactï¿½
+        ï¿½val reference = rule.asset as ReferenceFactï¿½
+        pattern ï¿½rule.nameï¿½RuleAsset(ï¿½reference.sourceVarï¿½ : EObject, ï¿½reference.targetVarï¿½ : EObject, reference : java String)
         {
-            find «rule.pattern.qualifiedName»(«FOR bind: rule.bindList SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
-            find attributeAsset(«reference.sourceVar», «reference.targetVar», reference);
-            reference = "«reference.reference.name»";
+            find ï¿½rule.pattern.qualifiedNameï¿½(ï¿½FOR bind: rule.bindList SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
+            find attributeAsset(ï¿½reference.sourceVarï¿½, ï¿½reference.targetVarï¿½, reference);
+            reference = "ï¿½reference.reference.nameï¿½";
         }
-    «ENDIF»
+    ï¿½ENDIFï¿½
     '''
     
     def generateAssetHelperPattern(Delegation delegation) '''
-    «IF delegation.asset instanceof ObjectFact»
-        «val object = delegation.asset as ObjectFact»
-        pattern «delegation.name»DelegationAsset(«object.variable.name» : EObject)
+    ï¿½IF delegation.asset instanceof ObjectFactï¿½
+        ï¿½val object = delegation.asset as ObjectFactï¿½
+        pattern ï¿½delegation.nameï¿½DelegationAsset(ï¿½object.variable.nameï¿½ : EObject)
         {
-            find «delegation.pattern.qualifiedName»(«FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
+            find ï¿½delegation.pattern.qualifiedNameï¿½(ï¿½FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
         }
-    «ENDIF»
-    «IF delegation.asset instanceof AttributeFact»
-        «val attribute = delegation.asset as AttributeFact»
-        pattern «delegation.name»DelegationAsset(«attribute.variable.name» : EObject, value: java Object, attribute : java String)
+    ï¿½ENDIFï¿½
+    ï¿½IF delegation.asset instanceof AttributeFactï¿½
+        ï¿½val attribute = delegation.asset as AttributeFactï¿½
+        pattern ï¿½delegation.nameï¿½DelegationAsset(ï¿½attribute.variable.nameï¿½ : EObject, value: java Object, attribute : java String)
         {
-        	find «delegation.pattern.qualifiedName»(«FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
-        	find attributeAsset(«attribute.variable.name», value, attribute);
-        	attribute ==  "«attribute.attribute.name»";
+        	find ï¿½delegation.pattern.qualifiedNameï¿½(ï¿½FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
+        	find attributeAsset(ï¿½attribute.variable.nameï¿½, value, attribute);
+        	attribute ==  "ï¿½attribute.attribute.nameï¿½";
         }
-    «ENDIF»
-    «IF delegation.asset instanceof ReferenceFact»
-        «val reference = delegation.asset as ReferenceFact»
-        pattern «delegation.name»DelegationAsset(«reference.sourceVar» : EObject, «reference.targetVar» : EObject, reference : java String)
+    ï¿½ENDIFï¿½
+    ï¿½IF delegation.asset instanceof ReferenceFactï¿½
+        ï¿½val reference = delegation.asset as ReferenceFactï¿½
+        pattern ï¿½delegation.nameï¿½DelegationAsset(ï¿½reference.sourceVarï¿½ : EObject, ï¿½reference.targetVarï¿½ : EObject, reference : java String)
         {
-            find «delegation.pattern.qualifiedName»(«FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"»«bind»«ENDFOR»
-            find attributeAsset(«reference.sourceVar», «reference.targetVar», reference);
-            reference = "«reference.reference.name»";
+            find ï¿½delegation.pattern.qualifiedNameï¿½(ï¿½FOR bind: getBindList(delegation) SEPARATOR ", " AFTER ");"ï¿½ï¿½bindï¿½ï¿½ENDFORï¿½
+            find attributeAsset(ï¿½reference.sourceVarï¿½, ï¿½reference.targetVarï¿½, reference);
+            reference = "ï¿½reference.reference.nameï¿½";
         }
-    «ENDIF»
+    ï¿½ENDIFï¿½
     '''
     
     def generateUserHelperPattern(Rule rule) '''
-    pattern «rule.name»RuleUser(user: java String)
+    pattern ï¿½rule.nameï¿½RuleUser(user: java String)
     {
-    	«FOR user: getUsersOfRoleList(rule.roles) SEPARATOR "\n} or {" AFTER "}"»
-    	user == "«user.name»";
-    	«ENDFOR»
+    	ï¿½FOR user: getUsersOfRoleList(rule.roles) SEPARATOR "\n} or {" AFTER "}"ï¿½
+    	user == "ï¿½user.nameï¿½";
+    	ï¿½ENDFORï¿½
     '''
     
     def generateUserHelperPattern(Delegation delegation) '''
-    pattern «delegation.name»DelegationUser(user: java String)
+    pattern ï¿½delegation.nameï¿½DelegationUser(user: java String)
     {
-    	«FOR user: getUsersOfRoleList(delegation.targets) SEPARATOR "\n} or {" AFTER "}"»
-    	user == "«user.name»";
-    	«ENDFOR»
+    	ï¿½FOR user: getUsersOfRoleList(delegation.targets) SEPARATOR "\n} or {" AFTER "}"ï¿½
+    	user == "ï¿½user.nameï¿½";
+    	ï¿½ENDFORï¿½
     '''
     
     def generateOperationType(OperationType operation) '''
-        «IF operation == OperationType.READWRITE»
+        ï¿½IF operation == OperationType.READWRITEï¿½
         find readWriteOperation(operation);
-        «ENDIF»
-        «IF operation == OperationType.READ»
+        ï¿½ENDIFï¿½
+        ï¿½IF operation == OperationType.READï¿½
         operation == OperationType::READ;
-        «ENDIF»
-        «IF operation == OperationType.WRITE»
+        ï¿½ENDIFï¿½
+        ï¿½IF operation == OperationType.WRITEï¿½
         operation == OperationType::WRITE;
-        «ENDIF»
+        ï¿½ENDIFï¿½
     '''
 
     def generateAccessibilityLevel(AccessibilityLevel access) '''
-        «IF access == AccessibilityLevel.ALLOW»
+        ï¿½IF access == AccessibilityLevel.ALLOWï¿½
         access == AccessibilityLevel::ALLOW;
-        «ENDIF»
-        «IF access == AccessibilityLevel.DENY»
+        ï¿½ENDIFï¿½
+        ï¿½IF access == AccessibilityLevel.DENYï¿½
         access == AccessibilityLevel::DENY;
-        «ENDIF»
+        ï¿½ENDIFï¿½
     '''
 
     def getBindList(Rule rule) {
@@ -2031,97 +2030,97 @@ class RulesGenerator extends AbstractGenerator {
 	}
 	
 	def generateMetaModelPattern(EPackage metamodel, boolean requiredImport) '''
-	«generateAttributeAssetPattern(metamodel)»
+	ï¿½generateAttributeAssetPattern(metamodel)ï¿½
 	
-	«generateReferenceAssetPattern(metamodel)»
+	ï¿½generateReferenceAssetPattern(metamodel)ï¿½
 	
-	«generateContainmentReferencePattern(metamodel)»
-	«IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]»
-	«generateIdAttributePattern(metamodel)»
-	«ENDIF»
+	ï¿½generateContainmentReferencePattern(metamodel)ï¿½
+	ï¿½IF metamodel.EClassifiers.filter(EClass).exists[x | x.EAttributes.exists[y | y.ID]]ï¿½
+	ï¿½generateIdAttributePattern(metamodel)ï¿½
+	ï¿½ENDIFï¿½
 	
-	«generateContainsPattern(metamodel)»
+	ï¿½generateContainsPattern(metamodel)ï¿½
 	
-	«generateObjectAssetPattern(metamodel)»
+	ï¿½generateObjectAssetPattern(metamodel)ï¿½
 	
-	«generateRootPattern(metamodel)»
+	ï¿½generateRootPattern(metamodel)ï¿½
 	
-	«generateObjectAssetWithoutRootPattern»
+	ï¿½generateObjectAssetWithoutRootPatternï¿½
 	'''
 
     def generateAttributeAssetPattern(EPackage metamodel)'''
 		pattern attributeAsset(source : EObject, value: java Object, attribute : java String) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EAttributes.empty) SEPARATOR "\n} or {"»
-				«FOR attribute : eClass.EAttributes SEPARATOR "\n} or {"»
-				    find attributeAsset«eClass.name»«attribute.name»(source, value, attribute);
-				«ENDFOR»
-		    «ENDFOR»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EAttributes.empty) SEPARATOR "\n} or {"ï¿½
+				ï¿½FOR attribute : eClass.EAttributes SEPARATOR "\n} or {"ï¿½
+				    find attributeAssetï¿½eClass.nameï¿½ï¿½attribute.nameï¿½(source, value, attribute);
+				ï¿½ENDFORï¿½
+		    ï¿½ENDFORï¿½
 		}
 		
-		«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EAttributes.empty) SEPARATOR "\n"»
-		    «generateAttributeConstraints(eClass)»
-		«ENDFOR»
+		ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EAttributes.empty) SEPARATOR "\n"ï¿½
+		    ï¿½generateAttributeConstraints(eClass)ï¿½
+		ï¿½ENDFORï¿½
 	'''
 	
 	def generateReferenceAssetPattern(EPackage metamodel)'''
 		pattern referenceAsset(source : EObject, target : EObject, reference : java String) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EReferences.empty) SEPARATOR "\n} or {"»
-				«FOR reference : eClass.EReferences SEPARATOR "\n} or {"»
-				   find referenceAsset«eClass.name»«reference.name»(source, target, reference);     
-			    «ENDFOR»
-			«ENDFOR»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EReferences.empty) SEPARATOR "\n} or {"ï¿½
+				ï¿½FOR reference : eClass.EReferences SEPARATOR "\n} or {"ï¿½
+				   find referenceAssetï¿½eClass.nameï¿½ï¿½reference.nameï¿½(source, target, reference);     
+			    ï¿½ENDFORï¿½
+			ï¿½ENDFORï¿½
 		}
 		
-		«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EReferences.empty) SEPARATOR "\n"»
-		    «generateReferenceConstraints(eClass)»
-		«ENDFOR»
+		ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | !x.EReferences.empty) SEPARATOR "\n"ï¿½
+		    ï¿½generateReferenceConstraints(eClass)ï¿½
+		ï¿½ENDFORï¿½
 	'''
 
     def generateContainmentReferencePattern(EPackage metamodel)'''
 		pattern containmentReference(source : EObject, target : EObject, reference : java String) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EReferences.exists[y | y.containment]) SEPARATOR "\n} or {"»
-				«FOR eReference : eClass.EReferences.filter[x | x.containment] SEPARATOR "\n} or {"»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EReferences.exists[y | y.containment]) SEPARATOR "\n} or {"ï¿½
+				ï¿½FOR eReference : eClass.EReferences.filter[x | x.containment] SEPARATOR "\n} or {"ï¿½
 					find referenceAsset(source, target, reference);
-					«eClass.name»(source);
-					reference == "«eReference.name»";
-				«ENDFOR»
-		    «ENDFOR»
+					ï¿½eClass.nameï¿½(source);
+					reference == "ï¿½eReference.nameï¿½";
+				ï¿½ENDFORï¿½
+		    ï¿½ENDFORï¿½
 		}
 	'''
 
     def generateIdAttributePattern(EPackage metamodel)'''
 		pattern idAttribute(source:EObject, value: java Object, attribute : java String) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EAttributes.exists[y | y.ID]) SEPARATOR "\n} or {"»
-				«FOR eAttribute : eClass.EAttributes.filter[x | x.ID] SEPARATOR "\n} or {"»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EAttributes.exists[y | y.ID]) SEPARATOR "\n} or {"ï¿½
+				ï¿½FOR eAttribute : eClass.EAttributes.filter[x | x.ID] SEPARATOR "\n} or {"ï¿½
 					find attributeAsset(source, value, attribute);
-					«eClass.name»(source);
-					attribute == "«eAttribute.name»";
-				«ENDFOR»
-		    «ENDFOR»
+					ï¿½eClass.nameï¿½(source);
+					attribute == "ï¿½eAttribute.nameï¿½";
+				ï¿½ENDFORï¿½
+		    ï¿½ENDFORï¿½
 		}
 	'''
 
     def generateContainsPattern(EPackage metamodel)'''
 		pattern contains(container: EObject, contained: EObject) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EReferences.exists[y | y.containment]) SEPARATOR "\n} or {"»
-				«FOR eReference : eClass.EReferences.filter[x | x.isContainment] SEPARATOR "\n} or {"»
-				«eClass.name».«eReference.name»(container, contained);
-				«ENDFOR»
-		    «ENDFOR»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass).filter(x | x.EReferences.exists[y | y.containment]) SEPARATOR "\n} or {"ï¿½
+				ï¿½FOR eReference : eClass.EReferences.filter[x | x.isContainment] SEPARATOR "\n} or {"ï¿½
+				ï¿½eClass.nameï¿½.ï¿½eReference.nameï¿½(container, contained);
+				ï¿½ENDFORï¿½
+		    ï¿½ENDFORï¿½
 		}
 	'''
 	
 	def generateObjectAssetPattern(EPackage metamodel)'''
 		pattern objectAsset(object: EObject) {
-			«FOR eClass : metamodel.EClassifiers.filter(EClass) SEPARATOR "\n} or {"»
-			«eClass.name»(object);
-		    «ENDFOR»
+			ï¿½FOR eClass : metamodel.EClassifiers.filter(EClass) SEPARATOR "\n} or {"ï¿½
+			ï¿½eClass.nameï¿½(object);
+		    ï¿½ENDFORï¿½
 		}
 	'''
 	
 	def generateRootPattern(EPackage metamodel)'''
 		pattern root(object: EObject) {
-		    «metamodel.EClassifiers.filter(EClass).head.name»(object);
+		    ï¿½metamodel.EClassifiers.filter(EClass).head.nameï¿½(object);
 		}
 	'''
 	
@@ -2133,23 +2132,23 @@ class RulesGenerator extends AbstractGenerator {
 	'''
 
     def generateAttributeConstraints(EClass eClass)'''
-        «FOR attribute : eClass.EAttributes SEPARATOR "\n"»
-		pattern attributeAsset«eClass.name»«attribute.name»(source : EObject, value: java Object, attribute : java String)
+        ï¿½FOR attribute : eClass.EAttributes SEPARATOR "\n"ï¿½
+		pattern attributeAssetï¿½eClass.nameï¿½ï¿½attribute.nameï¿½(source : EObject, value: java Object, attribute : java String)
 		{
-		     «eClass.name».«attribute.name»(source, value);
-			 attribute == "«attribute.name»";
+		     ï¿½eClass.nameï¿½.ï¿½attribute.nameï¿½(source, value);
+			 attribute == "ï¿½attribute.nameï¿½";
 		}
-	    «ENDFOR»
+	    ï¿½ENDFORï¿½
 	'''
 	
 	def generateReferenceConstraints(EClass eClass)'''
-        «FOR reference : eClass.EReferences SEPARATOR "\n"»
-        pattern referenceAsset«eClass.name»«reference.name»(source : EObject, target : EObject, reference : java String)
+        ï¿½FOR reference : eClass.EReferences SEPARATOR "\n"ï¿½
+        pattern referenceAssetï¿½eClass.nameï¿½ï¿½reference.nameï¿½(source : EObject, target : EObject, reference : java String)
         {
-        	«eClass.name».«reference.name»(source, target);
-        	reference == "«reference.name»";
+        	ï¿½eClass.nameï¿½.ï¿½reference.nameï¿½(source, target);
+        	reference == "ï¿½reference.nameï¿½";
         }
-	    «ENDFOR»
+	    ï¿½ENDFORï¿½
 	'''
 	
 	def static qualifiedName(Pattern pattern) {

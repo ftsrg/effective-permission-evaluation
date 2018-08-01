@@ -8,7 +8,6 @@ Require-Bundle: org.eclipse.emf.common,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
  org.mondo.collaboration.policy,
- org.eclipse.viatra.query.patternlanguage,
  org.eclipse.viatra.query.patternlanguage.emf,
  org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.base.itc,
@@ -16,6 +15,7 @@ Require-Bundle: org.eclipse.emf.common,
  com.google.guava,
  org.apache.log4j,
  org.eclipse.xtend.lib,
- org.eclipse.xtend
+ org.eclipse.xtend,
+ org.mondo.collaboration.policy.delegation
 Export-Package: org.mondo.collaboration.security.batch
 
