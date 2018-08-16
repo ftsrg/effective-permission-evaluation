@@ -27,6 +27,7 @@ import org.mondo.collaboration.policy.delegation.delegation.DelegationModel;
 import org.mondo.collaboration.policy.rules.AccessControlModel;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.Binding;
+import org.mondo.collaboration.policy.rules.EnumValue;
 import org.mondo.collaboration.policy.rules.Group;
 import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.policy.rules.ResolutionType;
@@ -462,10 +463,13 @@ public class RuleManager {
 
 	private Object getBoundValue(Binding binding) {
 		String valueString = binding.getBind().getValueString();
-		if (valueString == null) {
-			return binding.getBind().getValueInteger();
-		}
-		return valueString;
+		if (valueString != null) return valueString;
+		
+		EnumValue enumLiteral = binding.getBind().getValueEnumLiteral();
+        if (enumLiteral != null) return enumLiteral.getLiteral().getInstance();
+		
+		final int valueInteger = binding.getBind().getValueInteger();
+        return valueInteger;
 	}
 
 	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {

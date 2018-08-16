@@ -1951,7 +1951,9 @@ class RulesGenerator extends AbstractGenerator {
 		for(Binding binding : bindings) {
 			if(binding.variable.equals(parameter)){
 				if(binding.bind.valueString !== null) {
-					return "\"" + binding.bind.valueString + "\"";
+					return '''"«binding.bind.valueString»"''';
+				} else if(binding.bind.valueEnumLiteral !== null) {
+					return '''::«binding.bind.valueEnumLiteral.literal.literal»''';
 				} else {
 					return binding.bind.valueInteger;
 				}

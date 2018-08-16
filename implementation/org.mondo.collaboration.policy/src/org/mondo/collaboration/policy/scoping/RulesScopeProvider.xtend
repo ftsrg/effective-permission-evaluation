@@ -25,6 +25,8 @@ import org.mondo.collaboration.policy.rules.Rule
 import org.mondo.collaboration.policy.rules.RulesPackage
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern
 import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType
+import org.mondo.collaboration.policy.rules.EnumValue
+import org.eclipse.emf.ecore.EEnum
 
 /**
  * This class contains custom scoping description.
@@ -60,9 +62,12 @@ class RulesScopeProvider extends AbstractRulesScopeProvider {
 		if (reference == RulesPackage.eINSTANCE.getAttributeFact_Attribute() && context instanceof AttributeFact) {
 			return context.scopeAttributeFact_Attribute(reference)
 		}
+		if (reference == RulesPackage.eINSTANCE.getEnumValue_Literal() && context instanceof EnumValue) {
+			return (context as EnumValue).scopeEnumValue_Literal(reference)
+		}
 		return super.getScope(context, reference)
 	}
-
+	
 	def TreeIterator<Notifier> queries(EObject context){
 		val model = context.eResource().contents.get(0) as AccessControlModel
 		val resourceSet = context.eResource.resourceSet
@@ -81,6 +86,19 @@ class RulesScopeProvider extends AbstractRulesScopeProvider {
 		val rule = context.eContainer() as Rule
 		return Scopes.scopeFor(rule.pattern.parameters)
 	}
+	
+	def IScope scopeEnumValue_Literal(EnumValue context, EReference reference){
+		val binding = context.eContainer?.eContainer as Binding
+		val paramType = binding?.variable?.type
+		if (paramType instanceof ClassType) {
+			val classifier = paramType.classname
+			if (classifier instanceof EEnum) {
+				return Scopes.scopeFor(classifier.ELiterals)
+			}
+		}
+		return Scopes.scopeFor(#[])
+	}
+
 	
 	def IScope scopeReferenceFact_Reference(EObject context, EReference reference){
 	    val refFact = context as ReferenceFact

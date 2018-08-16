@@ -50,7 +50,11 @@ Binding:
 	'where' variable=[vql::Variable] 'is' 'bound' 'to' bind=Bind;
 	
 Bind:
-	valueString=STRING | valueInteger=INT;
+	valueString=STRING | valueInteger=INT | valueEnumLiteral=EnumValue;
+	
+EnumValue:
+    '::' literal=[ecore::EEnumLiteral];
+	
 	
 enum AccessibilityLevel:
 	ALLOW='allow' | OBFUSCATE='obfuscate' | DENY='deny';
