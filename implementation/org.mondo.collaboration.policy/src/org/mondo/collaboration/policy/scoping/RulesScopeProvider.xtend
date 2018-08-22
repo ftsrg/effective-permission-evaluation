@@ -72,7 +72,7 @@ class RulesScopeProvider extends AbstractRulesScopeProvider {
 		val model = context.eResource().contents.get(0) as AccessControlModel
 		val resourceSet = context.eResource.resourceSet
 		for(Import im : model.imports) {
-			resourceSet.getResource(URI.createFileURI(im.importURI), true)
+			resourceSet.getResource(URI.createURI(im.importURI), true)
 		}
 		return resourceSet.allContents
 	}
