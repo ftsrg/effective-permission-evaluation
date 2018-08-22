@@ -69,10 +69,12 @@ class RulesScopeProvider extends AbstractRulesScopeProvider {
 	}
 	
 	def TreeIterator<Notifier> queries(EObject context){
-		val model = context.eResource().contents.get(0) as AccessControlModel
+		val contextResource = context.eResource()
+		val model = contextResource.contents.get(0) as AccessControlModel
 		val resourceSet = context.eResource.resourceSet
 		for(Import im : model.imports) {
-			resourceSet.getResource(URI.createURI(im.importURI), true)
+			val absoluteURI = URI.createURI(im.importURI).resolve(contextResource.URI)
+			resourceSet.getResource(absoluteURI, true)
 		}
 		return resourceSet.allContents
 	}
