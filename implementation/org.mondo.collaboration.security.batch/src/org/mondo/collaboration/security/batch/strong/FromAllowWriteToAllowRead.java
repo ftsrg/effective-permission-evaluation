@@ -20,7 +20,7 @@ public class FromAllowWriteToAllowRead extends Consequence{
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getOperation() == OperationType.WRITE) {
 			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {

@@ -23,7 +23,7 @@ public class AllowReadFromObjectToContainer extends Consequence{
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getAsset() instanceof ObjectAsset) {
 			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {

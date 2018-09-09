@@ -30,14 +30,20 @@ public class DenyReadFromObjectToReference extends Consequence{
 	
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getAsset() instanceof ObjectAsset) {
 			if(judgement.getAccess() == AccessibilityLevel.DENY) {
 				if(judgement.getOperation() == OperationType.READ) {
 					EObject object = ((ObjectAsset)judgement.getAsset()).getObject();
+					
 				    Collection<ReferenceAsset> incomingReferences = manager.getIncomingReferences(object);
 					for (ReferenceAsset referenceAsset : incomingReferences) {
+				        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), referenceAsset, judgement.getPriority()));
+					}
+					
+					Collection<ReferenceAsset> outgoingReferences = manager.getOutgoingReferences(object);
+					for (ReferenceAsset referenceAsset : outgoingReferences) {
 				        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), referenceAsset, judgement.getPriority()));
 					}
 				}

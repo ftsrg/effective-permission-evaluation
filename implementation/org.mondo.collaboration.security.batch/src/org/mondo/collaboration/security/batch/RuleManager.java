@@ -40,6 +40,7 @@ import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -64,7 +65,8 @@ public class RuleManager {
 
 	private Map<Rule, Map<Variable, Object>> bindingMap = Maps.newHashMap();
 	private Map<Delegation, Map<Variable, Object>> delegationBindingMap = Maps.newHashMap();
-	private Multimap<EObject, ReferenceAsset> incomingReferenceMap = ArrayListMultimap.create();
+	private Multimap<EObject, ReferenceAsset> incomingReferenceMap = LinkedHashMultimap.create();
+	private Multimap<EObject, ReferenceAsset> outgoingReferenceMap = LinkedHashMultimap.create();
 
 	private int numOfConsequences;
 	private int numOfAssets;
@@ -102,7 +104,7 @@ public class RuleManager {
 	}
 
 	public void initialize() throws ViatraQueryException {
-		LOGGER.info("Inizialize ViatraQueryEngine");
+		LOGGER.info("Initialize ViatraQueryEngine");
 		long start = System.nanoTime();
 		advancedQueryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(instanceModel));
 
@@ -352,8 +354,8 @@ public class RuleManager {
 
 		if (asset instanceof ReferenceAsset) {
 			ReferenceAsset referenceAsset = (ReferenceAsset) asset;
-			if (!referenceAsset.getReference().isContainment())
-				incomingReferenceMap.put(referenceAsset.getTarget(), referenceAsset);
+			incomingReferenceMap.put(referenceAsset.getTarget(), referenceAsset);
+			outgoingReferenceMap.put(referenceAsset.getSource(), referenceAsset);
 		}
 	}
 
@@ -474,6 +476,10 @@ public class RuleManager {
 
 	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {
 		return incomingReferenceMap.get(obj);
+	}
+	
+	public Collection<ReferenceAsset> getOutgoingReferences(EObject obj) {
+		return outgoingReferenceMap.get(obj);
 	}
 
 	public int getNumOfAssets() {

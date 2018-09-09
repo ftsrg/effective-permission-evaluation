@@ -15,15 +15,15 @@ import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class FromObjectToReferenceWeakConsequence extends Consequence {
-	private FromObjectToReferenceWeakConsequence() {
+public class FromObjectToReference extends Consequence {
+	private FromObjectToReference() {
 	}
 	
-	public static Consequence instance = new FromObjectToReferenceWeakConsequence();
+	public static Consequence instance = new FromObjectToReference();
 	
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getAsset() instanceof ObjectAsset) {
 			if(judgement.getAccess() != AccessibilityLevel.OBFUSCATE) {

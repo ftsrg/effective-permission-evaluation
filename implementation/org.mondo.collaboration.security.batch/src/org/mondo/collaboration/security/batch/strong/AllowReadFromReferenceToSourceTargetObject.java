@@ -21,7 +21,7 @@ public class AllowReadFromReferenceToSourceTargetObject extends Consequence{
 
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getAsset() instanceof ReferenceAsset) {
 			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {

@@ -1,5 +1,6 @@
 package org.mondo.collaboration.security.batch;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.mondo.collaboration.security.batch.strong.AllowReadFromAttributeToContainerObject;
@@ -17,9 +18,12 @@ import org.mondo.collaboration.security.batch.strong.FromAllowWriteToAllowRead;
 import org.mondo.collaboration.security.batch.strong.FromDenyReadToDenyWrite;
 import org.mondo.collaboration.security.batch.strong.FromObfuscateReadToDenyWrite;
 import org.mondo.collaboration.security.batch.strong.ObfuscateReadFromObjectToAttribute;
-import org.mondo.collaboration.security.batch.weak.FromObjectToAttributeWeakConsequence;
-import org.mondo.collaboration.security.batch.weak.FromObjectToReferenceWeakConsequence;
+import org.mondo.collaboration.security.batch.strong.ObfuscateReadFromObjectToContainer;
+import org.mondo.collaboration.security.batch.weak.FromObjectToAttribute;
+import org.mondo.collaboration.security.batch.weak.FromObjectToContainedObject;
+import org.mondo.collaboration.security.batch.weak.FromObjectToReference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public abstract class Consequence {
@@ -29,27 +33,33 @@ public abstract class Consequence {
 	
 	public static final class DefaultConsequenceTypes {
 		
-		public static final Set<Consequence> DefaultStrongConsequences = Sets.newHashSet(
+		public static final ArrayList<Consequence> strongConsequences = Lists.newArrayList(
+				AllowReadFromAttributeToContainerObject.instance,
+				AllowReadFromObjectToContainer.instance,
+				AllowReadFromObjectToIDAttribute.instance,
+				AllowReadFromReferenceToSourceTargetObject.instance,
+				AllowWriteFromContainmentReferenceToChildrenObject.instance,
+				AllowWriteFromIDAttributeToContainerReference.instance,
+				AllowWriteFromObjectToContainerReference.instance,
+				DenyReadFromContainmentReferenceToChildrenObject.instance,
+				DenyReadFromIDAttributeToContainerObject.instance,
+				DenyReadFromObjectToReference.instance,
+				DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
 			    FromAllowWriteToAllowRead.instance,
 			    FromDenyReadToDenyWrite.instance,
 			    FromObfuscateReadToDenyWrite.instance,
 			    ObfuscateReadFromObjectToAttribute.instance,
-				AllowReadFromObjectToContainer.instance,
-				AllowReadFromObjectToIDAttribute.instance,
-				AllowWriteFromObjectToContainerReference.instance,
-				DenyReadFromObjectToReference.instance,
-				AllowReadFromReferenceToSourceTargetObject.instance,
-				DenyReadFromContainmentReferenceToChildrenObject.instance,
-				DenyWriteFromContainerReferenceToChildrenIDAttribute.instance,
-				AllowWriteFromContainmentReferenceToChildrenObject.instance,
-				AllowReadFromAttributeToContainerObject.instance,
-			    AllowWriteFromIDAttributeToContainerReference.instance,
-			    DenyReadFromIDAttributeToContainerObject.instance
+			    ObfuscateReadFromObjectToContainer.instance
 			);
 		
-		public static final Set<Consequence> DefaultWeakConsequences = Sets.newHashSet(
-			    FromObjectToAttributeWeakConsequence.instance,
-			    FromObjectToReferenceWeakConsequence.instance
+		public static final Set<Consequence> DefaultStrongConsequences = Sets.newLinkedHashSet(strongConsequences);
+		
+		public static final ArrayList<Consequence> weakConsequences = Lists.newArrayList(
+			    FromObjectToAttribute.instance,
+			    FromObjectToContainedObject.instance,
+			    FromObjectToReference.instance
 			);
+		
+		public static final Set<Consequence> DefaultWeakConsequences = Sets.newLinkedHashSet(weakConsequences);
 	}
 }

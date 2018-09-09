@@ -24,23 +24,19 @@ public class DenyReadFromContainmentReferenceToChildrenObject extends Consequenc
 	
 	@Override
 	public Set<Judgement> propagate(Judgement judgement) {
-		HashSet<Judgement> consequences = Sets.newHashSet();
+		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getAsset() instanceof ReferenceAsset) {
-			if(judgement.getAccess() == AccessibilityLevel.DENY) {
-				if(judgement.getOperation() == OperationType.READ) {
-					EObject source = ((ReferenceAsset) judgement.getAsset()).getSource();
-					EReference reference = ((ReferenceAsset) judgement.getAsset()).getReference();
-					if(reference.isMany()) {
-						@SuppressWarnings("unchecked")
-						EList<EObject> targets = (EList<EObject>) source.eGet(reference);
-						for (EObject target : targets) {
-							ObjectAsset objAsset = new Asset.ObjectAsset(target);
-							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority()));
-						}
-					}
+			EReference reference = ((ReferenceAsset) judgement.getAsset()).getReference();
+			if(reference.isContainment()) {
+				if(judgement.getAccess() == AccessibilityLevel.DENY) {
+					if(judgement.getOperation() == OperationType.READ) {
+						EObject target = ((ReferenceAsset) judgement.getAsset()).getTarget();
+						ObjectAsset objAsset = new Asset.ObjectAsset(target);
+						consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset, judgement.getPriority()));
+				    }
 			    }
-		    }
+			}
 		}
 		
 		return consequences;

@@ -53,11 +53,19 @@ public class Judgement implements Comparable<Judgement> {
 	public boolean equals(Object obj) {
 		if(obj instanceof Judgement) {
 			Judgement other = (Judgement) obj;
+			
 			if(other.asset.equals(asset)
 			&& other.access.equals(access)
 			&& other.operation.equals(operation)
 			&& other.priority == priority)
 				return true;
+			
+			if(other.asset.equals(asset)
+			&& other.access.equals(AccessibilityLevel.ALLOW) && access.equals(AccessibilityLevel.OBFUSCATE)
+			&& other.operation.equals(OperationType.READ)
+			&& other.priority == priority)
+				return true;
+			
 		}
 		
 		return super.equals(obj);

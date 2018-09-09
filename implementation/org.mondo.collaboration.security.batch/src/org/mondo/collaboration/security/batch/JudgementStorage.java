@@ -1,7 +1,10 @@
 package org.mondo.collaboration.security.batch;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
@@ -9,21 +12,21 @@ import org.mondo.collaboration.policy.rules.OperationType;
 import org.mondo.collaboration.policy.rules.ResolutionType;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
 
 public class JudgementStorage {
 
 	Map<Asset, Map<OperationType, Multimap<AccessibilityLevel, Judgement>>> judgementsByAttributes;
-	TreeMultimap<Integer, Judgement> judgementsByPriorities;
+	Multimap<Integer, Judgement> judgementsByPriorities;
 	ResolutionType resolution;
 	
 	public JudgementStorage(ResolutionType resolution) {
 		this.resolution = resolution;
 		judgementsByAttributes = Maps.newHashMap();
-		judgementsByPriorities = TreeMultimap.create();
+		judgementsByPriorities = LinkedListMultimap.create();
 	}
 	
 	public boolean isEmpty() {
@@ -50,7 +53,9 @@ public class JudgementStorage {
 			assetMap.put(j.getOperation(), operationMap);
 		}
 		operationMap.put(j.getAccess(), j);
-		judgementsByPriorities.get(j.getPriority()).add(j);
+		
+		List<Judgement> judgements = (List<Judgement>) judgementsByPriorities.get(j.getPriority());
+		judgements.add(0, j);
 	}
 	
 	public void remove(Judgement j) {
@@ -82,8 +87,8 @@ public class JudgementStorage {
 	}
 	
 	public Judgement last() {
-		int priority = judgementsByPriorities.keySet().last();
-		return judgementsByPriorities.get(priority).first();
+		Integer priority = judgementsByPriorities.keySet().stream().max(Comparator.naturalOrder()).get();
+		return judgementsByPriorities.get(priority).iterator().next();
 	}
 	
 	public int size() {
