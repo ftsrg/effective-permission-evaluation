@@ -6,39 +6,52 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromObjectToContainer extends Consequence{
-	
+public class AllowReadFromObjectToContainer extends Consequence {
+
 	private AllowReadFromObjectToContainer() {
 	}
-	
+
 	public static Consequence instance = new AllowReadFromObjectToContainer();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement) {
+	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
-		if(judgement.getAsset() instanceof ObjectAsset) {
-			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
-				if(judgement.getOperation() == OperationType.READ) {
-					EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
-					if(object.eContainer() != null) {
-						ObjectAsset objAsset = new Asset.ObjectAsset(object.eContainer());
-					    consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority()));
-					    ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(), object.eContainmentFeature(), object);
-					    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, judgement.getPriority()));
+		if (judgement.getAsset() instanceof ObjectAsset) {
+			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+				if (judgement.getOperation() == OperationType.READ) {
+					if (judgement.getBound() == BoundType.LOWER) {
+						EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
+						if (object.eContainer() != null) {
+							ObjectAsset objAsset = new Asset.ObjectAsset(object.eContainer());
+							int obfPriority = judgement.getPriority();
+							if (resolution.equals(ResolutionType.PERMISSIVE)) {
+								obfPriority -= 1;
+							} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
+								obfPriority += 1;
+							}
+							consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
+									objAsset, obfPriority, judgement.getBound()));
+							ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(),
+									object.eContainmentFeature(), object);
+							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
+									judgement.getPriority(), judgement.getBound()));
+						}
 					}
-			    }
-		    }
+				}
+			}
 		}
-		
+
 		return consequences;
 	}
 

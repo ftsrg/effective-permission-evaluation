@@ -1,5 +1,6 @@
 package org.mondo.collaboration.security.batch.weak;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,47 +8,66 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
+import org.mondo.collaboration.security.batch.Constants;
 import org.mondo.collaboration.security.batch.Judgement;
+import org.mondo.collaboration.security.batch.RuleManager;
 
 import com.google.common.collect.Sets;
 
 public class FromObjectToReference extends Consequence {
 	private FromObjectToReference() {
 	}
-	
+
 	public static Consequence instance = new FromObjectToReference();
-	
+	private RuleManager manager;
+
 	@Override
-	public Set<Judgement> propagate(Judgement judgement) {
+	public void setRuleManager(RuleManager manager) {
+		this.manager = manager;
+		super.setRuleManager(manager);
+	}
+
+	@Override
+	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
-		if(judgement.getAsset() instanceof ObjectAsset) {
-			if(judgement.getAccess() != AccessibilityLevel.OBFUSCATE) {
-				EObject source = ((ObjectAsset)judgement.getAsset()).getObject();
-			    EList<EReference> eReferences = source.eClass().getEAllReferences();
-			    for (EReference reference : eReferences) {
-				    if(reference.isMany()) {
-					    @SuppressWarnings("unchecked")
-					    EList<EObject> targets = (EList<EObject>) source.eGet(reference);
-					    for (EObject target : targets) {
-						    ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-						    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0));
-					    }
-				    } else {
-					    EObject target = (EObject) source.eGet(reference);
-					    if(target != null){
-					        ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-					        consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset, 0));
-					    }
-				    }
-			    }
-		    }
+		if (judgement.getAsset() instanceof ObjectAsset) {
+			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+				EObject source = ((ObjectAsset) judgement.getAsset()).getObject();
+				
+				Collection<ReferenceAsset> outgoingReferences = manager.getOutgoingReferences(source);
+				for (ReferenceAsset referenceAsset : outgoingReferences) {
+					consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
+							referenceAsset, Constants.WEAK_PRIORITY, judgement.getBound()));
+				}
+//				EList<EReference> eReferences = source.eClass().getEAllReferences();
+//				for (EReference reference : eReferences) {
+//					if (reference.isMany()) {
+//						@SuppressWarnings("unchecked")
+//						EList<EObject> targets = (EList<EObject>) source.eGet(reference);
+//						for (EObject target : targets) {
+//							ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
+//							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
+//									Constants.WEAK_PRIORITY, judgement.getBound()));
+//						}
+//					} else {
+//						EObject target = (EObject) source.eGet(reference);
+//						if (target != null) {
+//							ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
+//							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
+//									Constants.WEAK_PRIORITY, judgement.getBound()));
+//						}
+//					}
+//				}
+			}
 		}
-		
+
 		return consequences;
 	}
 }

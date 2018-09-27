@@ -3,6 +3,7 @@ package org.mondo.collaboration.security.batch;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.strong.AllowReadFromAttributeToContainerObject;
 import org.mondo.collaboration.security.batch.strong.AllowReadFromObjectToContainer;
 import org.mondo.collaboration.security.batch.strong.AllowReadFromObjectToIDAttribute;
@@ -28,7 +29,7 @@ import com.google.common.collect.Sets;
 
 public abstract class Consequence {
 
-	public abstract Set<Judgement> propagate(Judgement judgement);
+	public abstract Set<Judgement> propagate(Judgement judgement, ResolutionType reoslution);
 	public void setRuleManager(RuleManager manager) {}
 	
 	public static final class DefaultConsequenceTypes {

@@ -9,7 +9,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 import org.mondo.collaboration.security.batch.Consequence;
@@ -24,7 +26,7 @@ public class DenyWriteFromContainerReferenceToChildrenIDAttribute extends Conseq
 	public static Consequence instance = new DenyWriteFromContainerReferenceToChildrenIDAttribute();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement) {
+	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ReferenceAsset) {
@@ -32,13 +34,15 @@ public class DenyWriteFromContainerReferenceToChildrenIDAttribute extends Conseq
 			if (reference.isContainment()) {
 				if (judgement.getAccess() == AccessibilityLevel.DENY) {
 					if (judgement.getOperation() == OperationType.WRITE) {
-						EObject object = ((ReferenceAsset) judgement.getAsset()).getTarget();
-						EList<EAttribute> eAllAttributes = object.eClass().getEAllAttributes();
-						for (EAttribute eAttribute : eAllAttributes) {
-							if (eAttribute.isID()) {
-								AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
-								consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
-										attrAsset, judgement.getPriority()));
+						if (judgement.getBound() == BoundType.UPPER) {
+							EObject object = ((ReferenceAsset) judgement.getAsset()).getTarget();
+							EList<EAttribute> eAllAttributes = object.eClass().getEAllAttributes();
+							for (EAttribute eAttribute : eAllAttributes) {
+								if (eAttribute.isID()) {
+									AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
+									consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
+											attrAsset, judgement.getPriority(), judgement.getBound()));
+								}
 							}
 						}
 					}

@@ -3,22 +3,24 @@ package org.mondo.collaboration.security.batch;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
 
-public class Judgement implements Comparable<Judgement> {
+public class Judgement {
 	
 	private Asset asset;
 	private AccessibilityLevel access;
 	private OperationType operation;
 	private int priority;
+	private BoundType bound;
 	
 	public Judgement(AccessibilityLevel access, OperationType operation, Asset asset) {
-		this(access, operation, asset, -1);
+		this(access, operation, asset, -1, null);
 	}
 
-	public Judgement(AccessibilityLevel access, OperationType operation, Asset asset, int priority) {
+	public Judgement(AccessibilityLevel access, OperationType operation, Asset asset, int priority, BoundType bound) {
 		this.access = access;
 		this.operation = operation;
 		this.asset = asset;
 		this.priority = priority;
+		this.bound = bound;
 	}
 
 	public OperationType getOperation() {
@@ -28,6 +30,10 @@ public class Judgement implements Comparable<Judgement> {
 	public AccessibilityLevel getAccess() {
 		return access;
 	}
+	
+	public void setAccess(AccessibilityLevel access) {
+		this.access = access;
+	}
 
 	public Asset getAsset() {
 		return asset;
@@ -35,6 +41,14 @@ public class Judgement implements Comparable<Judgement> {
 
 	public int getPriority() {
 		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
+	public BoundType getBound() {
+		return this.bound;
 	}
 
 	@Override
@@ -45,34 +59,45 @@ public class Judgement implements Comparable<Judgement> {
 		result = prime * result + operation.hashCode();
 		result = prime * result + access.hashCode();
 		result = prime * result + priority;
-		
-		return super.hashCode();
+		result = prime * result + bound.hashCode();
+		return result;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Judgement) {
 			Judgement other = (Judgement) obj;
-			
-			if(other.asset.equals(asset)
-			&& other.access.equals(access)
-			&& other.operation.equals(operation)
-			&& other.priority == priority)
-				return true;
-			
-			if(other.asset.equals(asset)
-			&& other.access.equals(AccessibilityLevel.ALLOW) && access.equals(AccessibilityLevel.OBFUSCATE)
-			&& other.operation.equals(OperationType.READ)
-			&& other.priority == priority)
-				return true;
-			
+			if(!other.asset.equals(asset)) {
+				return false;
+			}
+			if(!other.access.equals(access)) {
+				return false;
+			}
+			if(!other.operation.equals(operation)) {
+				return false;
+			}
+			if(other.priority != priority) {
+				return false;
+			}
+			if(!other.bound.equals(bound)) {
+				return false;
+			}
 		}
-		
-		return super.equals(obj);
+		return true;
 	}
 
+//	@Override
+//	public int compareTo(Judgement other) {
+//		int hashCode = hashCode();
+//		int otherHashCode = other.hashCode();
+//		return hashCode - otherHashCode;
+//	}
+
 	@Override
-	public int compareTo(Judgement other) {
-		return hashCode() - other.hashCode();
+	public String toString() {
+		return "Judgement [asset=" + asset + ", access=" + access + ", operation=" + operation + ", priority="
+				+ priority + ", bound=" + bound + "]";
 	}
+	
+	
 }

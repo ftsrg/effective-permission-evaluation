@@ -39,18 +39,14 @@ import org.mondo.collaboration.security.batch.Asset.Factory;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 public class RuleManager {
 	private Logger LOGGER = Logger.getLogger(RuleManager.class);
 
 	private JudgementStorage judgementStorage;
-	private Map<Asset, Map<OperationType, Judgement>> effectivePermissionsMap;
-	private Collection<Judgement> effectiveJudgements;
 
 	private Collection<Consequence> weakConsequences = Consequence.DefaultConsequenceTypes.DefaultWeakConsequences;
 	private Collection<Consequence> strongConsequences = Consequence.DefaultConsequenceTypes.DefaultStrongConsequences;
@@ -90,8 +86,6 @@ public class RuleManager {
 
 	public void dispose() {
 		judgementStorage.dispose();
-		effectiveJudgements.clear();
-		effectivePermissionsMap.clear();
 		advancedQueryEngine.dispose();
 	}
 
@@ -139,50 +133,28 @@ public class RuleManager {
 		LOGGER.info("Started calculating effective permissions of " + user.getName());
 		ResolutionType resolution = accessControlModel.getPolicy().getResolution();
 		judgementStorage = new JudgementStorage(resolution);
-		effectivePermissionsMap = Maps.newHashMap();
-		effectiveJudgements = Sets.newHashSet();
 
 		addInitialPermissions(user);
 		LOGGER.info(String.format("Initial permissions of %s: %d", user.getName(), judgementStorage.size()));
 		long start = System.nanoTime();
 
 		numOfConsequences = 0;
-		for (Judgement dominant = null; !judgementStorage.isEmpty();) {
-			dominant = judgementStorage.last();
-			dominant = judgementStorage.resolveConflict(dominant);
-			if (dominant.getPriority() > -1) {
-				propagateStrongConsequences(dominant);
-				propagateWeakConsequences(dominant);
+		while (!judgementStorage.allJudgementProcessed()) {
+			Judgement dominant = judgementStorage.chooseDominant();
+			if (dominant.getPriority() > Constants.WEAK_PRIORITY) {
+				propagateStrongConsequences(dominant, resolution);
 			}
-			addEffectivePermission(dominant);
+			if (dominant.getPriority() > Constants.DEFAULT_PRIORITY) {
+				propagateWeakConsequences(dominant, resolution);
+			}
+			judgementStorage.resolveConflict(dominant);
 		}
 		long end = System.nanoTime();
-		LOGGER.info(String.format("Effective permissions of " + user.getName() + " are calculated in %d nanosec", end - start));
+		LOGGER.info(String.format("Effective permissions of " + user.getName() + " are calculated in %d nanosec",
+				end - start));
+		Collection<Judgement> effectiveJudgements = judgementStorage.getEffectiveJudgements();
 		LOGGER.info(String.format("Effective judgements of %s: %d", user.getName(), effectiveJudgements.size()));
 		return effectiveJudgements;
-	}
-
-	private boolean isEffectivePermissionsContains(Judgement j) {
-		Map<OperationType, Judgement> operationMap = effectivePermissionsMap.get(j.getAsset());
-		if (operationMap == null) {
-			return false;
-		}
-		if (!operationMap.containsKey(j.getOperation())) {
-			return false;
-		}
-		return true;
-	}
-
-	private void addEffectivePermission(Judgement j) {
-		Map<OperationType, Judgement> operationMap = effectivePermissionsMap.get(j.getAsset());
-		if (operationMap == null) {
-			operationMap = Maps.newHashMap();
-			effectivePermissionsMap.put(j.getAsset(), operationMap);
-		}
-		if (!operationMap.containsKey(j.getOperation())) {
-			operationMap.put(j.getOperation(), j);
-			effectiveJudgements.add(j);
-		}
 	}
 
 	private void addInitialPermissions(User user) throws ViatraQueryException {
@@ -199,7 +171,7 @@ public class RuleManager {
 					for (IPatternMatch match : matchesOf(rule)) {
 						Factory factory = AssetFactory.factoryFrom(rule);
 						for (Asset asset : factory.apply(match)) {
-							addExplicitPermission(rule, asset);
+							addExplicitPermission(rule, asset, accessControlModel.getPolicy().getResolution());
 						}
 					}
 					break;
@@ -209,21 +181,25 @@ public class RuleManager {
 		LOGGER.info(String.format("Explicit judgements of %s: %d", user.getName(), numOfExplicits));
 	}
 
-	private void addExplicitPermission(Rule rule, Asset asset) {
+	private void addExplicitPermission(Rule rule, Asset asset, ResolutionType resolution) {
 		AccessibilityLevel access = rule.getAccess();
-		int priority = rule.getPriority();
+		int priority = calculatePriority(rule.getPriority(), resolution, access);
 		if (access == AccessibilityLevel.OBFUSCATE) {
-			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-			numOfExplicits++;
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
+			numOfExplicits += 2;
 		} else {
 			OperationType operation = rule.getOperation();
 			if (operation == OperationType.READWRITE) {
-				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
-				numOfExplicits+=2;
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.UPPER));
+				numOfExplicits += 4;
 			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-				judgementStorage.add(new Judgement(access, operation, asset, priority));
-				numOfExplicits++;
+				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.UPPER));
+				numOfExplicits += 2;
 			}
 		}
 	}
@@ -241,7 +217,6 @@ public class RuleManager {
 						for (Asset asset : factory.apply(match)) {
 							if (checkPermissionsOfSource(delegation, asset, permissionsOfSource)) {
 								addDelegatedPermission(delegation, asset);
-								numOfDelegations++;
 							}
 						}
 					}
@@ -254,16 +229,23 @@ public class RuleManager {
 
 	private void addDelegatedPermission(Delegation delegation, Asset asset) {
 		AccessibilityLevel access = delegation.getAccess();
-		int priority = 1000;
+		int priority = Constants.DELEGATION_PRIORITY;
 		if (access == AccessibilityLevel.OBFUSCATE) {
-			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
+			numOfDelegations += 2;
 		} else {
 			OperationType operation = delegation.getOperation();
 			if (operation == OperationType.READWRITE) {
-				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority));
-				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.UPPER));
+				numOfDelegations += 4;
 			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-				judgementStorage.add(new Judgement(access, operation, asset, priority));
+				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.UPPER));
+				numOfDelegations += 2;
 			}
 		}
 	}
@@ -284,8 +266,6 @@ public class RuleManager {
 			}
 		}
 		judgementStorage = tempStorage;
-		effectivePermissionsMap = Maps.newHashMap();
-		effectiveJudgements = Sets.newHashSet();
 		return sourcePermissionsMap;
 	}
 
@@ -293,13 +273,15 @@ public class RuleManager {
 			Map<Asset, Map<OperationType, AccessibilityLevel>> permissionsOfSource) throws ViatraQueryException {
 		if (delegation.getAccess() == AccessibilityLevel.ALLOW) {
 			if (delegation.getOperation() == OperationType.READWRITE) {
-				return permissionsOfSource.get(asset).values().stream().noneMatch(access -> access != AccessibilityLevel.ALLOW);
+				return permissionsOfSource.get(asset).values().stream()
+						.noneMatch(access -> access != AccessibilityLevel.ALLOW);
 			} else {
 				return permissionsOfSource.get(asset).get(delegation.getOperation()) == AccessibilityLevel.ALLOW;
 			}
 		} else {
 			if (delegation.getOperation() == OperationType.READWRITE) {
-				return permissionsOfSource.get(asset).values().stream().anyMatch(access -> access == AccessibilityLevel.DENY);
+				return permissionsOfSource.get(asset).values().stream()
+						.anyMatch(access -> access == AccessibilityLevel.DENY);
 			} else {
 				return permissionsOfSource.get(asset).get(delegation.getOperation()) != AccessibilityLevel.DENY;
 			}
@@ -349,8 +331,14 @@ public class RuleManager {
 
 	private void addDefaultPermission(Asset asset) {
 		AccessibilityLevel access = accessControlModel.getPolicy().getAccess();
-		judgementStorage.add(new Judgement(access, OperationType.READ, asset, -1));
-		judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, -1));
+		judgementStorage
+				.add(new Judgement(access, OperationType.READ, asset, Constants.DEFAULT_PRIORITY, BoundType.LOWER));
+		judgementStorage
+				.add(new Judgement(access, OperationType.READ, asset, Constants.DEFAULT_PRIORITY, BoundType.UPPER));
+		judgementStorage
+				.add(new Judgement(access, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.LOWER));
+		judgementStorage
+				.add(new Judgement(access, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.UPPER));
 
 		if (asset instanceof ReferenceAsset) {
 			ReferenceAsset referenceAsset = (ReferenceAsset) asset;
@@ -359,11 +347,11 @@ public class RuleManager {
 		}
 	}
 
-	private void propagateWeakConsequences(Judgement judgement) {
+	private void propagateWeakConsequences(Judgement judgement, ResolutionType resolution) {
 		for (Consequence weakConsequence : weakConsequences) {
-			Set<Judgement> consequences = weakConsequence.propagate(judgement);
+			Set<Judgement> consequences = weakConsequence.propagate(judgement, resolution);
 			for (Judgement j : consequences) {
-				if (!isEffectivePermissionsContains(j)) {
+				if (!judgementStorage.conflictWithProcessed(j)) {
 					judgementStorage.add(j);
 					numOfConsequences++;
 				}
@@ -371,14 +359,12 @@ public class RuleManager {
 		}
 	}
 
-	private void propagateStrongConsequences(Judgement judgement) {
+	private void propagateStrongConsequences(Judgement judgement, ResolutionType resolution) {
 		for (Consequence strongConsequence : strongConsequences) {
-			Set<Judgement> consequences = strongConsequence.propagate(judgement);
+			Set<Judgement> consequences = strongConsequence.propagate(judgement, resolution);
 			for (Judgement j : consequences) {
-				if (!isEffectivePermissionsContains(j)) {
-					judgementStorage.add(j);
-					numOfConsequences++;
-				}
+				judgementStorage.add(j);
+				numOfConsequences++;
 			}
 		}
 	}
@@ -465,19 +451,21 @@ public class RuleManager {
 
 	private Object getBoundValue(Binding binding) {
 		String valueString = binding.getBind().getValueString();
-		if (valueString != null) return valueString;
-		
+		if (valueString != null)
+			return valueString;
+
 		EnumValue enumLiteral = binding.getBind().getValueEnumLiteral();
-        if (enumLiteral != null) return enumLiteral.getLiteral().getInstance();
-		
+		if (enumLiteral != null)
+			return enumLiteral.getLiteral().getInstance();
+
 		final int valueInteger = binding.getBind().getValueInteger();
-        return valueInteger;
+		return valueInteger;
 	}
 
 	public Collection<ReferenceAsset> getIncomingReferences(EObject obj) {
 		return incomingReferenceMap.get(obj);
 	}
-	
+
 	public Collection<ReferenceAsset> getOutgoingReferences(EObject obj) {
 		return outgoingReferenceMap.get(obj);
 	}
@@ -492,5 +480,22 @@ public class RuleManager {
 
 	public int getNumOfExplicits() {
 		return numOfExplicits;
+	}
+
+	public int calculatePriority(int priority, ResolutionType resolution, AccessibilityLevel access) {
+		int newPrio = priority * 3;
+		if (resolution == ResolutionType.PERMISSIVE) {
+			if (access == AccessibilityLevel.OBFUSCATE)
+				newPrio -= 1;
+			if (access == AccessibilityLevel.DENY)
+				newPrio -= 2;
+		}
+		if (resolution == ResolutionType.RESTRICTIVE) {
+			if (access == AccessibilityLevel.OBFUSCATE)
+				newPrio -= 1;
+			if (access == AccessibilityLevel.ALLOW)
+				newPrio -= 2;
+		}
+		return newPrio;
 	}
 }

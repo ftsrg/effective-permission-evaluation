@@ -5,33 +5,45 @@ import java.util.Set;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromAttributeToContainerObject extends Consequence{
+public class AllowReadFromAttributeToContainerObject extends Consequence {
 	private AllowReadFromAttributeToContainerObject() {
 	}
-	
+
 	public static Consequence instance = new AllowReadFromAttributeToContainerObject();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement) {
+	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
-		if(judgement.getAsset() instanceof AttributeAsset){
-			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
-				if(judgement.getOperation() == OperationType.READ) {
-					ObjectAsset objAsset = new Asset.ObjectAsset(((AttributeAsset) judgement.getAsset()).getSource());
-					consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset, judgement.getPriority()));
-			    }
-		    }
+		if (judgement.getAsset() instanceof AttributeAsset) {
+			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+				if (judgement.getOperation() == OperationType.READ) {
+					if (judgement.getBound() == BoundType.LOWER) {
+						ObjectAsset objAsset = new Asset.ObjectAsset(
+								((AttributeAsset) judgement.getAsset()).getSource());
+						int priority = judgement.getPriority();
+						if (resolution.equals(ResolutionType.PERMISSIVE)) {
+							priority -= 1;
+						} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
+							priority += 1;
+						}
+						consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(), objAsset,
+								priority, judgement.getBound()));
+					}
+				}
+			}
 		}
-		
+
 		return consequences;
 	}
 

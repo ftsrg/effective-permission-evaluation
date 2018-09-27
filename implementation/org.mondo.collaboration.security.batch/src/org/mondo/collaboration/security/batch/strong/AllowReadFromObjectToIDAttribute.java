@@ -8,7 +8,9 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
+import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Consequence;
@@ -16,31 +18,34 @@ import org.mondo.collaboration.security.batch.Judgement;
 
 import com.google.common.collect.Sets;
 
-public class AllowReadFromObjectToIDAttribute extends Consequence{
+public class AllowReadFromObjectToIDAttribute extends Consequence {
 	private AllowReadFromObjectToIDAttribute() {
 	}
-	
+
 	public static Consequence instance = new AllowReadFromObjectToIDAttribute();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement) {
+	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
-		if(judgement.getAsset() instanceof ObjectAsset) {
-			if(judgement.getAccess() == AccessibilityLevel.ALLOW) {
-				if(judgement.getOperation() == OperationType.READ) {
-					EObject object = ((ObjectAsset)judgement.getAsset()).getObject();
-				    EList<EAttribute> eAllAttributes = object.eClass().getEAllAttributes();
-			        for (EAttribute eAttribute : eAllAttributes) {
-			        	if(eAttribute.isID()){
-			        		AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
-				    	    consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset, judgement.getPriority()));
-			        	}
-			        }
-			    }
-		    }
+		if (judgement.getAsset() instanceof ObjectAsset) {
+			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+				if (judgement.getOperation() == OperationType.READ) {
+					if (judgement.getBound() == BoundType.LOWER) {
+						EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
+						EList<EAttribute> eAllAttributes = object.eClass().getEAllAttributes();
+						for (EAttribute eAttribute : eAllAttributes) {
+							if (eAttribute.isID()) {
+								AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
+								consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
+										attrAsset, judgement.getPriority(), judgement.getBound()));
+							}
+						}
+					}
+				}
+			}
 		}
-		
+
 		return consequences;
 	}
 
