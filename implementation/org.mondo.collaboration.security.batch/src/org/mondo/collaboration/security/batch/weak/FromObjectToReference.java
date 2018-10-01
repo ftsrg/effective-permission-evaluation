@@ -34,7 +34,7 @@ public class FromObjectToReference extends Consequence {
 	}
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
@@ -46,25 +46,6 @@ public class FromObjectToReference extends Consequence {
 					consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
 							referenceAsset, Constants.WEAK_PRIORITY, judgement.getBound()));
 				}
-//				EList<EReference> eReferences = source.eClass().getEAllReferences();
-//				for (EReference reference : eReferences) {
-//					if (reference.isMany()) {
-//						@SuppressWarnings("unchecked")
-//						EList<EObject> targets = (EList<EObject>) source.eGet(reference);
-//						for (EObject target : targets) {
-//							ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-//							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
-//									Constants.WEAK_PRIORITY, judgement.getBound()));
-//						}
-//					} else {
-//						EObject target = (EObject) source.eGet(reference);
-//						if (target != null) {
-//							ReferenceAsset refAsset = new Asset.ReferenceAsset(source, reference, target);
-//							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
-//									Constants.WEAK_PRIORITY, judgement.getBound()));
-//						}
-//					}
-//				}
 			}
 		}
 

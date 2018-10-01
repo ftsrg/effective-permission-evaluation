@@ -22,7 +22,7 @@ public class AllowReadFromReferenceToSourceTargetObject extends Consequence {
 	public static Consequence instance = new AllowReadFromReferenceToSourceTargetObject();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ReferenceAsset) {
@@ -31,16 +31,10 @@ public class AllowReadFromReferenceToSourceTargetObject extends Consequence {
 					if (judgement.getBound() == BoundType.LOWER) {
 						EObject source = ((ReferenceAsset) judgement.getAsset()).getSource();
 						EObject target = ((ReferenceAsset) judgement.getAsset()).getTarget();
-						int priority = judgement.getPriority();
-						if (resolution.equals(ResolutionType.PERMISSIVE)) {
-							priority -= 1;
-						} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
-							priority += 1;
-						}
 						consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
-								new Asset.ObjectAsset(source), priority, judgement.getBound()));
+								new Asset.ObjectAsset(source), judgement.getPriority(), judgement.getBound()));
 						consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
-								new Asset.ObjectAsset(target), priority, judgement.getBound()));
+								new Asset.ObjectAsset(target), judgement.getPriority(), judgement.getBound()));
 					}
 				}
 			}

@@ -142,10 +142,10 @@ public class RuleManager {
 		while (!judgementStorage.allJudgementProcessed()) {
 			Judgement dominant = judgementStorage.chooseDominant();
 			if (dominant.getPriority() > Constants.WEAK_PRIORITY) {
-				propagateStrongConsequences(dominant, resolution);
+				propagateStrongConsequences(dominant);
 			}
 			if (dominant.getPriority() > Constants.DEFAULT_PRIORITY) {
-				propagateWeakConsequences(dominant, resolution);
+				propagateWeakConsequences(dominant);
 			}
 			judgementStorage.resolveConflict(dominant);
 		}
@@ -183,22 +183,23 @@ public class RuleManager {
 
 	private void addExplicitPermission(Rule rule, Asset asset, ResolutionType resolution) {
 		AccessibilityLevel access = rule.getAccess();
-		int priority = calculatePriority(rule.getPriority(), resolution, access);
+		int lowerPriority = calculatePriority(rule.getPriority(), resolution, BoundType.LOWER);
+		int upperPriority = calculatePriority(rule.getPriority(), resolution, BoundType.UPPER);
 		if (access == AccessibilityLevel.OBFUSCATE) {
-			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
-			judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, lowerPriority, BoundType.LOWER));
+			judgementStorage.add(new Judgement(access, OperationType.READ, asset, upperPriority, BoundType.UPPER));
 			numOfExplicits += 2;
 		} else {
 			OperationType operation = rule.getOperation();
 			if (operation == OperationType.READWRITE) {
-				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.LOWER));
-				judgementStorage.add(new Judgement(access, OperationType.READ, asset, priority, BoundType.UPPER));
-				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.LOWER));
-				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, priority, BoundType.UPPER));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, lowerPriority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.READ, asset, upperPriority, BoundType.UPPER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, lowerPriority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, OperationType.WRITE, asset, upperPriority, BoundType.UPPER));
 				numOfExplicits += 4;
 			} else if (operation == OperationType.READ || operation == OperationType.WRITE) {
-				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.LOWER));
-				judgementStorage.add(new Judgement(access, operation, asset, priority, BoundType.UPPER));
+				judgementStorage.add(new Judgement(access, operation, asset, lowerPriority, BoundType.LOWER));
+				judgementStorage.add(new Judgement(access, operation, asset, upperPriority, BoundType.UPPER));
 				numOfExplicits += 2;
 			}
 		}
@@ -347,9 +348,9 @@ public class RuleManager {
 		}
 	}
 
-	private void propagateWeakConsequences(Judgement judgement, ResolutionType resolution) {
+	private void propagateWeakConsequences(Judgement judgement) {
 		for (Consequence weakConsequence : weakConsequences) {
-			Set<Judgement> consequences = weakConsequence.propagate(judgement, resolution);
+			Set<Judgement> consequences = weakConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
 				if (!judgementStorage.conflictWithProcessed(j)) {
 					judgementStorage.add(j);
@@ -359,9 +360,9 @@ public class RuleManager {
 		}
 	}
 
-	private void propagateStrongConsequences(Judgement judgement, ResolutionType resolution) {
+	private void propagateStrongConsequences(Judgement judgement) {
 		for (Consequence strongConsequence : strongConsequences) {
-			Set<Judgement> consequences = strongConsequence.propagate(judgement, resolution);
+			Set<Judgement> consequences = strongConsequence.propagate(judgement);
 			for (Judgement j : consequences) {
 				judgementStorage.add(j);
 				numOfConsequences++;
@@ -482,19 +483,13 @@ public class RuleManager {
 		return numOfExplicits;
 	}
 
-	public int calculatePriority(int priority, ResolutionType resolution, AccessibilityLevel access) {
-		int newPrio = priority * 3;
-		if (resolution == ResolutionType.PERMISSIVE) {
-			if (access == AccessibilityLevel.OBFUSCATE)
-				newPrio -= 1;
-			if (access == AccessibilityLevel.DENY)
-				newPrio -= 2;
+	public int calculatePriority(int priority, ResolutionType resolution, BoundType bound) {
+		int newPrio = priority * 2;
+		if (resolution == ResolutionType.PERMISSIVE && bound == BoundType.UPPER) {
+			newPrio -= 1;
 		}
-		if (resolution == ResolutionType.RESTRICTIVE) {
-			if (access == AccessibilityLevel.OBFUSCATE)
-				newPrio -= 1;
-			if (access == AccessibilityLevel.ALLOW)
-				newPrio -= 2;
+		if (resolution == ResolutionType.RESTRICTIVE && bound == BoundType.LOWER) {
+			newPrio -= 1;
 		}
 		return newPrio;
 	}

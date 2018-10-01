@@ -25,7 +25,7 @@ public class ObfuscateReadFromObjectToAttribute extends Consequence {
 	public static Consequence instance = new ObfuscateReadFromObjectToAttribute();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
@@ -40,14 +40,8 @@ public class ObfuscateReadFromObjectToAttribute extends Consequence {
 						consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
 								attrAsset, judgement.getPriority(), judgement.getBound()));
 					} else {
-						int priority = judgement.getPriority();
-						if (resolution.equals(ResolutionType.PERMISSIVE)) {
-							priority -= 1;
-						} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
-							priority += 1;
-						}
 						consequences.add(new Judgement(AccessibilityLevel.DENY, judgement.getOperation(), attrAsset,
-								priority, judgement.getBound()));
+								judgement.getPriority(), judgement.getBound()));
 					}
 				}
 			}

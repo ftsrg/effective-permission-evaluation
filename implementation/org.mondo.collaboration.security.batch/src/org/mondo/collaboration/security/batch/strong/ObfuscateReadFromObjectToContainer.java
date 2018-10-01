@@ -23,7 +23,7 @@ public class ObfuscateReadFromObjectToContainer extends Consequence {
 	public static Consequence instance = new ObfuscateReadFromObjectToContainer();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
@@ -35,14 +35,8 @@ public class ObfuscateReadFromObjectToContainer extends Consequence {
 							judgement.getPriority(), judgement.getBound()));
 					ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(),
 							object.eContainmentFeature(), object);
-					int priority = judgement.getPriority();
-					if (resolution.equals(ResolutionType.PERMISSIVE)) {
-						priority += 1;
-					} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
-						priority -= 1;
-					}
 					consequences.add(new Judgement(AccessibilityLevel.ALLOW, judgement.getOperation(), refAsset,
-							priority, judgement.getBound()));
+							judgement.getPriority(), judgement.getBound()));
 				}
 			}
 		}

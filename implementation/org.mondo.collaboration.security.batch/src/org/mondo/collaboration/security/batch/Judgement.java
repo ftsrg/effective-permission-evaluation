@@ -3,6 +3,8 @@ package org.mondo.collaboration.security.batch;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
 
+import com.google.common.base.Objects;
+
 public class Judgement {
 	
 	private Asset asset;
@@ -53,14 +55,7 @@ public class Judgement {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + asset.hashCode();
-		result = prime * result + operation.hashCode();
-		result = prime * result + access.hashCode();
-		result = prime * result + priority;
-		result = prime * result + bound.hashCode();
-		return result;
+		return Objects.hashCode(asset, operation, access, priority, bound);
 	}
 	
 	@Override

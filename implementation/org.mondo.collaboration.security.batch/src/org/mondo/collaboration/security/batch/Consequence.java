@@ -29,7 +29,7 @@ import com.google.common.collect.Sets;
 
 public abstract class Consequence {
 
-	public abstract Set<Judgement> propagate(Judgement judgement, ResolutionType reoslution);
+	public abstract Set<Judgement> propagate(Judgement judgement);
 	public void setRuleManager(RuleManager manager) {}
 	
 	public static final class DefaultConsequenceTypes {

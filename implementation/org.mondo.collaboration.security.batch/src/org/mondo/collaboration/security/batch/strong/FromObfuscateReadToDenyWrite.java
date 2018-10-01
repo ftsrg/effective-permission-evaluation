@@ -21,18 +21,12 @@ public class FromObfuscateReadToDenyWrite extends Consequence {
 	public static Consequence instance = new FromObfuscateReadToDenyWrite();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAccess() == AccessibilityLevel.OBFUSCATE) {
-			int priority = judgement.getPriority();
-			if (resolution.equals(ResolutionType.PERMISSIVE)) {
-				priority -= 1;
-			} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
-				priority += 1;
-			}
-			consequences.add(new Judgement(AccessibilityLevel.DENY, OperationType.WRITE, judgement.getAsset(), priority,
-					judgement.getBound()));
+			consequences.add(new Judgement(AccessibilityLevel.DENY, OperationType.WRITE, judgement.getAsset(),
+					judgement.getPriority(), judgement.getBound()));
 		}
 
 		return consequences;

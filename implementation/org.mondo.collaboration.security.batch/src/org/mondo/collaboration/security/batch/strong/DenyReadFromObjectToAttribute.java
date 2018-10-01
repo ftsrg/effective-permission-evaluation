@@ -25,7 +25,7 @@ public class DenyReadFromObjectToAttribute extends Consequence {
 	public static Consequence instance = new DenyReadFromObjectToAttribute();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {

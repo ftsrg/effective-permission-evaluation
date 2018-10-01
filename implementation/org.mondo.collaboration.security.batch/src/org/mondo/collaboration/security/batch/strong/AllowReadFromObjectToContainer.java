@@ -24,7 +24,7 @@ public class AllowReadFromObjectToContainer extends Consequence {
 	public static Consequence instance = new AllowReadFromObjectToContainer();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
@@ -34,14 +34,8 @@ public class AllowReadFromObjectToContainer extends Consequence {
 						EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
 						if (object.eContainer() != null) {
 							ObjectAsset objAsset = new Asset.ObjectAsset(object.eContainer());
-							int obfPriority = judgement.getPriority();
-							if (resolution.equals(ResolutionType.PERMISSIVE)) {
-								obfPriority -= 1;
-							} else if (resolution.equals(ResolutionType.RESTRICTIVE)) {
-								obfPriority += 1;
-							}
 							consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
-									objAsset, obfPriority, judgement.getBound()));
+									objAsset, judgement.getPriority(), judgement.getBound()));
 							ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(),
 									object.eContainmentFeature(), object);
 							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,

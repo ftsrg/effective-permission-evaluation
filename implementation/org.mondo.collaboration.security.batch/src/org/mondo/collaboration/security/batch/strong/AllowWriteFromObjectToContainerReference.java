@@ -23,7 +23,7 @@ public class AllowWriteFromObjectToContainerReference extends Consequence {
 	public static Consequence instance = new AllowWriteFromObjectToContainerReference();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {

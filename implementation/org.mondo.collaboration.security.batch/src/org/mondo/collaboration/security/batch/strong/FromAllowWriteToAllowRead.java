@@ -20,7 +20,7 @@ public class FromAllowWriteToAllowRead extends Consequence {
 	public static Consequence instance = new FromAllowWriteToAllowRead();
 
 	@Override
-	public Set<Judgement> propagate(Judgement judgement, ResolutionType resolution) {
+	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getOperation() == OperationType.WRITE) {
