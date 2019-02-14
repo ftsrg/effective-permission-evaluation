@@ -6,7 +6,6 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
 import org.mondo.collaboration.security.batch.Asset.ReferenceAsset;
@@ -28,7 +27,7 @@ public class AllowReadFromObjectToContainer extends Consequence {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
-			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+			if (judgement.getAccess() != AccessibilityLevel.DENY) {
 				if (judgement.getOperation() == OperationType.READ) {
 					if (judgement.getBound() == BoundType.LOWER) {
 						EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
@@ -38,7 +37,7 @@ public class AllowReadFromObjectToContainer extends Consequence {
 									objAsset, judgement.getPriority(), judgement.getBound()));
 							ReferenceAsset refAsset = new Asset.ReferenceAsset(object.eContainer(),
 									object.eContainmentFeature(), object);
-							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), refAsset,
+							consequences.add(new Judgement(AccessibilityLevel.ALLOW, judgement.getOperation(), refAsset,
 									judgement.getPriority(), judgement.getBound()));
 						}
 					}

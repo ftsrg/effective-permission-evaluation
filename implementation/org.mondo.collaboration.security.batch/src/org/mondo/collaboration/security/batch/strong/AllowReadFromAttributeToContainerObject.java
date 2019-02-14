@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
@@ -26,7 +25,7 @@ public class AllowReadFromAttributeToContainerObject extends Consequence {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof AttributeAsset) {
-			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+			if (judgement.getAccess() != AccessibilityLevel.DENY) {
 				if (judgement.getOperation() == OperationType.READ) {
 					if (judgement.getBound() == BoundType.LOWER) {
 						ObjectAsset objAsset = new Asset.ObjectAsset(

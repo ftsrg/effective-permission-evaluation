@@ -7,11 +7,10 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
-import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
@@ -32,8 +31,8 @@ public class DenyReadFromIDAttributeToContainerObject extends Consequence {
 				if (judgement.getOperation() == OperationType.READ) {
 					if (judgement.getBound() == BoundType.UPPER) {
 						EAttribute attribute = ((AttributeAsset) judgement.getAsset()).getAttribute();
-						EObject object = ((AttributeAsset) judgement.getAsset()).getSource();
 						if (attribute.isID()) {
+						    EObject object = ((AttributeAsset) judgement.getAsset()).getSource();
 							ObjectAsset objAsset = new Asset.ObjectAsset(object);
 							consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), objAsset,
 									judgement.getPriority(), judgement.getBound()));

@@ -8,11 +8,10 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
-import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
+import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
 
@@ -29,7 +28,7 @@ public class AllowReadFromObjectToIDAttribute extends Consequence {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if (judgement.getAsset() instanceof ObjectAsset) {
-			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
+			if (judgement.getAccess() != AccessibilityLevel.DENY) {
 				if (judgement.getOperation() == OperationType.READ) {
 					if (judgement.getBound() == BoundType.LOWER) {
 						EObject object = ((ObjectAsset) judgement.getAsset()).getObject();
@@ -37,7 +36,7 @@ public class AllowReadFromObjectToIDAttribute extends Consequence {
 						for (EAttribute eAttribute : eAllAttributes) {
 							if (eAttribute.isID()) {
 								AttributeAsset attrAsset = new Asset.AttributeAsset(object, eAttribute);
-								consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(),
+								consequences.add(new Judgement(AccessibilityLevel.OBFUSCATE, judgement.getOperation(),
 										attrAsset, judgement.getPriority(), judgement.getBound()));
 							}
 						}

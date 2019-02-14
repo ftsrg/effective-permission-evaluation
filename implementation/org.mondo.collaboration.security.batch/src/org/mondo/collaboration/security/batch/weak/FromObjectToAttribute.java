@@ -7,7 +7,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.Asset;
 import org.mondo.collaboration.security.batch.Asset.AttributeAsset;
 import org.mondo.collaboration.security.batch.Asset.ObjectAsset;
@@ -29,15 +28,17 @@ public class FromObjectToAttribute extends Consequence {
 	public Set<Judgement> propagate(Judgement judgement) {
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
-		if (judgement.getAsset() instanceof ObjectAsset) {
+		if (judgement.getAsset() instanceof ObjectAsset) { // RW
 			if (judgement.getAccess() == AccessibilityLevel.ALLOW) {
-				EObject source = ((ObjectAsset) judgement.getAsset()).getObject();
-				EList<EAttribute> eAllAttributes = source.eClass().getEAllAttributes();
-				for (EAttribute eAttribute : eAllAttributes) {
-					AttributeAsset attrAsset = new Asset.AttributeAsset(source, eAttribute);
-					consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset,
-							Constants.WEAK_PRIORITY, judgement.getBound()));
-				}
+			    if (judgement.getBound() == BoundType.LOWER) {			        
+			        EObject source = ((ObjectAsset) judgement.getAsset()).getObject();
+			        EList<EAttribute> eAllAttributes = source.eClass().getEAllAttributes();
+			        for (EAttribute eAttribute : eAllAttributes) {
+			            AttributeAsset attrAsset = new Asset.AttributeAsset(source, eAttribute);
+			            consequences.add(new Judgement(judgement.getAccess(), judgement.getOperation(), attrAsset,
+			                    Constants.WEAK_PRIORITY, judgement.getBound()));
+			        }
+			    }
 			}
 		}
 

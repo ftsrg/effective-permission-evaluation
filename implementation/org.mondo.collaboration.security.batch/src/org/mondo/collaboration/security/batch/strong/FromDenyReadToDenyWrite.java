@@ -5,11 +5,9 @@ import java.util.Set;
 
 import org.mondo.collaboration.policy.rules.AccessibilityLevel;
 import org.mondo.collaboration.policy.rules.OperationType;
-import org.mondo.collaboration.policy.rules.ResolutionType;
 import org.mondo.collaboration.security.batch.BoundType;
 import org.mondo.collaboration.security.batch.Consequence;
 import org.mondo.collaboration.security.batch.Judgement;
-import org.mondo.collaboration.security.batch.weak.FromObjectToAttribute;
 
 import com.google.common.collect.Sets;
 
@@ -25,7 +23,7 @@ public class FromDenyReadToDenyWrite extends Consequence{
 		HashSet<Judgement> consequences = Sets.newLinkedHashSet();
 
 		if(judgement.getOperation() == OperationType.READ) {
-			if(judgement.getAccess() == AccessibilityLevel.DENY) {
+			if(judgement.getAccess() != AccessibilityLevel.ALLOW) {
 				if (judgement.getBound() == BoundType.UPPER) {
 				consequences.add(new Judgement(judgement.getAccess(), OperationType.WRITE, judgement.getAsset(),
 				         judgement.getPriority(), judgement.getBound()));

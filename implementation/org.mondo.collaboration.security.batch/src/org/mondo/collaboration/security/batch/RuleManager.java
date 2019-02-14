@@ -141,10 +141,8 @@ public class RuleManager {
 		numOfConsequences = 0;
 		while (!judgementStorage.allJudgementProcessed()) {
 			Judgement dominant = judgementStorage.chooseDominant();
-			if (dominant.getPriority() > Constants.WEAK_PRIORITY) {
-				propagateStrongConsequences(dominant);
-			}
 			if (dominant.getPriority() > Constants.DEFAULT_PRIORITY) {
+				propagateStrongConsequences(dominant);
 				propagateWeakConsequences(dominant);
 			}
 			judgementStorage.resolveConflict(dominant);

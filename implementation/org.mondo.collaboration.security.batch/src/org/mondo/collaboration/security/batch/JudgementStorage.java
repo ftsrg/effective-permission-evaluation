@@ -67,6 +67,12 @@ public class JudgementStorage {
 		for (Judgement other : Lists.newArrayList(conflicts)) {
 			if (dominate(judgement, other)) {
 				resolutionStep(judgement, other);
+			} else {
+			    final String msg = String.format(
+			            "Resolution impossible: selected dominant judgement %s cannot overrule contradicting judgment %s", 
+			            judgement, other);
+                LOGGER.error(msg);
+                throw new IllegalStateException(msg);
 			}
 		}
 	}
@@ -118,6 +124,7 @@ public class JudgementStorage {
 		add(newOther);
 	}
 	
+	// TODO diff is a bug 
 	private int getNewPriority(Judgement dominant, Judgement dominated) {
 		int oldPriority = dominated.getPriority();
 		int diff = dominant.getAccess().getValue() - dominated.getAccess().getValue();
@@ -148,7 +155,9 @@ public class JudgementStorage {
 				if (highestLowerBound.equals(lowestUpperBound)) {
 					effectiveJudgements.add(new Judgement(highestLowerBound, operation, asset));
 				} else {
-					LOGGER.info("Highest lower bound is not equal to the lowest upper bound: " + asset);
+					final String msg = "Highest lower bound is not equal to the lowest upper bound: " + asset;
+                    LOGGER.error(msg);
+                    throw new IllegalStateException(msg);
 				}
 			}
 		}
@@ -222,14 +231,20 @@ public class JudgementStorage {
 	}
 
 	private void removeFromPermissionSet(Judgement j) {
-		if (!permissionSet.get(j.getAsset()).get(j.getOperation()).get(j.getBound()).remove(j))
-			LOGGER.info("Error removing from permissionSet");
+		if (!permissionSet.get(j.getAsset()).get(j.getOperation()).get(j.getBound()).remove(j)) {
+		    final String msg = "Error removing from permissionSet";
+            LOGGER.error(msg);
+            throw new IllegalStateException(msg);
+		    
+		}
 	}
 
 	private void removeFromUnprocessed(Judgement judgement) {
 		Collection<Judgement> judgements = unprocessed.get(judgement.getPriority());
 		if (!judgements.remove(judgement)) {
-			LOGGER.info("Error removing from unprocessed: " + judgement);
+			final String msg = "Error removing from unprocessed: " + judgement;
+            LOGGER.error(msg);
+            throw new IllegalStateException(msg);
 		}
 	}
 
