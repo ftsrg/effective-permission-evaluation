@@ -334,10 +334,12 @@ public class RuleManager {
 				.add(new Judgement(access, OperationType.READ, asset, Constants.DEFAULT_PRIORITY, BoundType.LOWER));
 		judgementStorage
 				.add(new Judgement(access, OperationType.READ, asset, Constants.DEFAULT_PRIORITY, BoundType.UPPER));
+		
+		AccessibilityLevel accessW = access == AccessibilityLevel.OBFUSCATE ? AccessibilityLevel.DENY : access;
 		judgementStorage
-				.add(new Judgement(access, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.LOWER));
+				.add(new Judgement(accessW, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.LOWER));
 		judgementStorage
-				.add(new Judgement(access, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.UPPER));
+				.add(new Judgement(accessW, OperationType.WRITE, asset, Constants.DEFAULT_PRIORITY, BoundType.UPPER));
 
 		if (asset instanceof ReferenceAsset) {
 			ReferenceAsset referenceAsset = (ReferenceAsset) asset;
