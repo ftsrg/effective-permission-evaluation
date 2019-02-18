@@ -41,6 +41,11 @@ public class JudgementStorage {
 		if (permissionSetContains(judgement)) {
 			return;
 		}
+		if (judgement.getAccess() == AccessibilityLevel.OBFUSCATE &&
+		        judgement.getOperation() == OperationType.WRITE) {
+		    throw new IllegalArgumentException(
+		            "Meaningless op/level combination: " + judgement);
+		}
 		addToPermissionSet(judgement);
 		addToUnprocessed(judgement);
 	}

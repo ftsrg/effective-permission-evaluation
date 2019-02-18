@@ -25,7 +25,7 @@ public class FromDenyReadToDenyWrite extends Consequence{
 		if(judgement.getOperation() == OperationType.READ) {
 			if(judgement.getAccess() != AccessibilityLevel.ALLOW) {
 				if (judgement.getBound() == BoundType.UPPER) {
-				consequences.add(new Judgement(judgement.getAccess(), OperationType.WRITE, judgement.getAsset(),
+				consequences.add(new Judgement(AccessibilityLevel.DENY, OperationType.WRITE, judgement.getAsset(),
 				         judgement.getPriority(), judgement.getBound()));
 				}
 		    }
